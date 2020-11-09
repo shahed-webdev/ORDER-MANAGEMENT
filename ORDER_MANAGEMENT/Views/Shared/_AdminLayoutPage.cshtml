@@ -30,21 +30,19 @@
 <body>
     <div id="sidedrawer" class="d-print-none z-depth-1">
         @Html.Partial("_LoginPartial")
-        <ul id="manuItem">
-            <li></li>
-        </ul>
+        <ul id="menuItem"></ul>
     </div>
 
     <div id="header">
         <nav class="mb-1 navbar navbar-expand-lg navbar-dark blue-gradient">
-        <div class="container-fluid">
-            <div class="d-flex">
-                <a class="sidedrawer-toggle d-md-none js-show-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
-                <a class="sidedrawer-toggle d-none d-md-inline-block js-hide-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
+            <div class="container-fluid">
+                <div class="d-flex">
+                    <a class="sidedrawer-toggle d-md-none js-show-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
+                    <a class="sidedrawer-toggle d-none d-md-inline-block js-hide-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
 
-                <div class="navbar-brand">ORDER MANAGEMENT</div>
+                    <div class="navbar-brand">ORDER MANAGEMENT</div>
+                </div>
             </div>
-        </div>
         </nav>
     </div>
 
@@ -81,8 +79,9 @@
     <script src="/JS/Moment.js"></script>
     <!--Sidebar-->
     <script src="//cdn.muicss.com/mui-latest/js/mui.min.js"></script>
-    <script src="/JS/sideManuLink.js?v=1.1"></script>
-    <script src="/JS/Basic_Index.js"></script>
+
+    <script src="~/JS/menu-links.js?v=1"></script>
+    <script src="~/JS/sidedrawer-show-hide.js"></script>
 
 
     <!--scroll-->

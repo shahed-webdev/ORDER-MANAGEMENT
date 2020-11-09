@@ -78,7 +78,7 @@ namespace ORDER_MANAGEMENT.Controllers
 
         //Side Menu
         [Authorize(Roles = "Admin, Sub-admin")]
-        public string GetSideManu()
+        public string GetSideMenu()
         {
             var data = _db.PageLinks.GetSideMenuByUser(User.Identity.Name);
             return JsonConvert.SerializeObject(data);

@@ -18,8 +18,10 @@
 #sidedrawer ul.sub-manu li a.active { color: #263238; font-weight:400; }
 
  /*Sidebar link*/
-.sub-manu { display:none;}
-#sidedrawer .sub-manu.in { display: block !important; }
+.sub-menu { display: none; transition: opacity 1s ease-out; opacity: 0; }
+.sub-menu.active { display: block; opacity: 1; }
+
+#sidedrawer ul li a.link-active { color: #e53935 !important; pointer-events: none }
 #sidedrawer .fa-caret-right { float: right; color: #b0b0b0; }
 #sidedrawer strong.open .fas.fa-caret-right:before { content: "\f0d7"; font-family: 'Font Awesome 5 Free'; }
 

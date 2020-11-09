@@ -29,8 +29,8 @@
 
 
 @section Scripts {
-  <script>
-    const url = "@Url.Action("GetOutletList")";
+    <script>
+        const url = "@Url.Action("GetOutletList")";
 
         function initMap() {
             const bounds = new google.maps.LatLngBounds();
@@ -79,11 +79,11 @@
                 });
             });
 
-            const listener = google.maps.event.addListener(map, "idle", function () {
+            const listener = google.maps.event.addListener(map, "idle", function() {
                 if (map.getZoom() > 16) map.setZoom(16);
                 google.maps.event.removeListener(listener);
             });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPcn0V7X_HZkmfmEKcIwx9qSXpMRUyqAc&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4vVA6oR4emTgxL8DC3fAg5EmJWCPeNds&callback=initMap"></script>
 }
