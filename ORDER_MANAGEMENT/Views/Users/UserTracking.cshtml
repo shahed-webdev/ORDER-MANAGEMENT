@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-@section Styles{  
+@section Styles{
     <style>
         #map { width: 100%; height: 500px; }
 
@@ -42,10 +42,10 @@
 </div>
 
 
-@section Scripts {  
+@section Scripts{
     <script>
-    function formatDate(date) {
-            const monthNames = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct","Nov", "Dec"],
+        function formatDate(date) {
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 day = date.getDate(),
                 monthIndex = date.getMonth(),
                 year = date.getFullYear();
@@ -53,219 +53,220 @@
             return `${day} ${monthNames[monthIndex]} ${year}`;
         }
 
-    $(function () {
-        $('.mdb-select').materialSelect();
+        $(function() {
+            $('.mdb-select').materialSelect();
 
-        $('.datepicker').pickadate({
-            format: 'dd mmm yyyy',
-            onSet: function (context) {
-                $("#selectedDate").val(new Date(context.select).toDateString());
-            }
-        }).val(formatDate(new Date()))
+            $('.datepicker').pickadate({
+                format: 'dd mmm yyyy',
+                onSet: function(context) {
+                    $("#selectedDate").val(new Date(context.select).toDateString());
+                }
+            }).val(formatDate(new Date()))
 
-        let ddl = $("#dlUser");
-        $.get("@Url.Action("GetUserDDL")", response => {
-            if (response) {
-                $.each(response, (i, item) => {
-                    ddl.append($('<option/>', { value: item.value, text: item.label }));
-                });
-            };
+            const ddl = $("#dlUser");
+            $.get("@Url.Action("GetUserDDL")", response => {
+                if (response) {
+                    $.each(response, (i, item) => {
+                        ddl.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                };
+            });
         });
-    });
 
-    document.getElementById("btnFind").addEventListener('click', () => {
-        initMap();
-    });
+        document.getElementById("btnFind").addEventListener('click', () => {
+            initMap();
+        });
 
-    function initMap() {
-        let args = {
-            zoom: 15,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            mapTypeControl: false,
-            panControl: false,
-            styles: [{
-                "stylers": [{
-                    "saturation": -100
+        function initMap() {
+            const args = {
+                zoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                panControl: false,
+                styles: [{
+                    "stylers": [{
+                        "saturation": -100
+                    }, {
+                        "gamma": 1
+                    }]
                 }, {
-                    "gamma": 1
-                }]
-            }, {
-                "elementType": "labels.text.stroke",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "poi.business",
-                "elementType": "labels.text",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "poi.business",
-                "elementType": "labels.icon",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "poi.place_of_worship",
-                "elementType": "labels.text",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "poi.place_of_worship",
-                "elementType": "labels.icon",
-                "stylers": [{
-                    "visibility": "off"
-                }]
-            }, {
-                "featureType": "road",
-                "elementType": "geometry",
-                "stylers": [{
-                    "visibility": "simplified"
-                }]
-            }, {
-                "featureType": "water",
-                "stylers": [{
-                    "visibility": "on"
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
                 }, {
-                    "saturation": 50
+                    "featureType": "poi.business",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
                 }, {
-                    "gamma": 0
+                    "featureType": "poi.business",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
                 }, {
-                    "hue": "#50a5d1"
-                }]
-            }, {
-                "featureType": "administrative.neighborhood",
-                "elementType": "labels.text.fill",
-                "stylers": [{
-                    "color": "#333333"
-                }]
-            }, {
-                "featureType": "road.local",
-                "elementType": "labels.text",
-                "stylers": [{
-                    "weight": 0.5
+                    "featureType": "poi.place_of_worship",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
                 }, {
-                    "color": "#333333"
-                }]
-            }, {
-                "featureType": "transit.station",
-                "elementType": "labels.icon",
-                "stylers": [{
-                    "gamma": 1
+                    "featureType": "poi.place_of_worship",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
                 }, {
-                    "saturation": 50
+                    "featureType": "road",
+                    "elementType": "geometry",
+                    "stylers": [{
+                        "visibility": "simplified"
+                    }]
+                }, {
+                    "featureType": "water",
+                    "stylers": [{
+                        "visibility": "on"
+                    }, {
+                        "saturation": 50
+                    }, {
+                        "gamma": 0
+                    }, {
+                        "hue": "#50a5d1"
+                    }]
+                }, {
+                    "featureType": "administrative.neighborhood",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                        "color": "#333333"
+                    }]
+                }, {
+                    "featureType": "road.local",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "weight": 0.5
+                    }, {
+                        "color": "#333333"
+                    }]
+                }, {
+                    "featureType": "transit.station",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "gamma": 1
+                    }, {
+                        "saturation": 50
+                    }]
                 }]
-            }]
-        };
+            };
 
-        let bounds = new google.maps.LatLngBounds(),
-            map = new google.maps.Map(document.getElementById("map"), args),
-            infoWindow = new google.maps.InfoWindow(),
-            marker;
+            let bounds = new google.maps.LatLngBounds(),
+                map = new google.maps.Map(document.getElementById("map"), args),
+                infoWindow = new google.maps.InfoWindow(),
+                marker;
 
-        map.setTilt(45);
+            map.setTilt(45);
 
-        let date = $("#selectedDate").val() || new Date().toDateString(),
-            RegID = parseInt($("#dlUser").find("option:selected").val());
+            let date = $("#selectedDate").val() || new Date().toDateString(),
+                RegID = parseInt($("#dlUser").find("option:selected").val());
 
-        $.get("@Url.Action("TrackingByUser","Basic")", { RegID, date }, res => {
-            if (!res || res.length < 1) return;
+            $.get("@Url.Action("TrackingByUser", "Basic")", { RegID, date }, res => {
+                if (!res || res.length < 1) return;
 
-            const data = JSON.parse(res),
-                infoWindowContent = [],
-                polylineCoordinates = [],
-                lat_lng = [];
+                const data = JSON.parse(res),
+                    infoWindowContent = [],
+                    polylineCoordinates = [],
+                    lat_lng = [];
 
-            $.each(data, (i, info) => {
-                let imgSrc = info.Photo ? 'data:image/png;base64,' + info.Photo : '/CSS/image/DefaultImage.jpg';
+                $.each(data, (i, info) => {
+                    let imgSrc = info.Photo ? 'data:image/png;base64,' + info.Photo : '/CSS/image/DefaultImage.jpg';
 
-                infoWindowContent.push(
-                    [`<div class="marker-info">
+                    infoWindowContent.push(
+                        [`<div class="marker-info">
                            <div class="approve-ico"><img class="rounded-circle img-thumbnail" src="${imgSrc}"/></div>
                            <h5>${info.Name}</h5>
                            <p>${info.Mobile}</p>
                            <p>${info.Address}</p>
                            <p>CheckIn Time: ${moment(info.CheckInTime).format("h:mm a")}</p>
                         </div>`
-                    ]);
+                        ]);
 
-                const lat = parseFloat(info.Lat),
-                      lng = parseFloat(info.Lon),
-                      position = new google.maps.LatLng(lat, lng);
+                    const lat = parseFloat(info.Lat),
+                        lng = parseFloat(info.Lon),
+                        position = new google.maps.LatLng(lat, lng);
 
-                lat_lng.push(position);
-                bounds.extend(position);
+                    lat_lng.push(position);
+                    bounds.extend(position);
 
-                marker = new google.maps.Marker({
-                    position, map,
-                    //icon: `https://cdn.mapmarker.io/api/v1/font-awesome/v5/icon-stack?hoffset=-1&size=50&color=e6164d&icon=fa-store`,
-                    title: info.Name,
-                    label: info.Name.charAt(0).toUpperCase(),
-                    zIndex: 1,
-                    optimized: false
+                    marker = new google.maps.Marker({
+                        position, map,
+                        //icon: `https://cdn.mapmarker.io/api/v1/font-awesome/v5/icon-stack?hoffset=-1&size=50&color=e6164d&icon=fa-store`,
+                        title: info.Name,
+                        label: info.Name.charAt(0).toUpperCase(),
+                        zIndex: 1,
+                        optimized: false
+                    });
+
+                    polylineCoordinates.push({ lat, lng });
+
+                    google.maps.event.addListener(marker, 'click', ((marker, i) => {
+                        return () => {
+                            infoWindow.setContent(infoWindowContent[i][0]);
+                            infoWindow.open(map, marker);
+                            map.setZoom(15);
+                            map.setCenter(marker.getPosition())
+                        }
+                    })(marker, i));
                 });
 
-                polylineCoordinates.push({ lat, lng });
 
-                google.maps.event.addListener(marker, 'click', ((marker, i) => {
-                    return () => {
-                        infoWindow.setContent(infoWindowContent[i][0]);
-                        infoWindow.open(map, marker);
-                        map.setZoom(15);
-                        map.setCenter(marker.getPosition())
-                    }
-                })(marker, i));
-            });
+                map.fitBounds(bounds);
 
+                //Initialize the Direction Service
+                let service = new google.maps.DirectionsService();
 
-            map.fitBounds(bounds);
+                //Loop and Draw Path Route between the Points on MAP
+                for (let i = 0; i < lat_lng.length; i++) {
+                    if ((i + 1) < lat_lng.length) {
+                        let src = lat_lng[i],
+                            des = lat_lng[i + 1];
 
-            //Initialize the Direction Service
-            let service = new google.maps.DirectionsService();
+                        service.route({
+                            origin: src,
+                            destination: des,
+                            travelMode: google.maps.DirectionsTravelMode.WALKING
+                        }, (result, status) => {
+                            if (status == google.maps.DirectionsStatus.OK) {
+                                //Initialize the Path Array
+                                let path = new google.maps.MVCArray();
 
-            //Loop and Draw Path Route between the Points on MAP
-            for (let i = 0; i < lat_lng.length; i++) {
-                if ((i + 1) < lat_lng.length) {
-                    let src = lat_lng[i],
-                        des = lat_lng[i + 1];
+                                //Set the Path Stroke Color
+                                let poly = new google.maps.Polyline({
+                                    map,
+                                    geodesic: true,
+                                    strokeColor: '#FF0000',
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3
+                                });
 
-                    service.route({
-                        origin: src,
-                        destination: des,
-                        travelMode: google.maps.DirectionsTravelMode.WALKING
-                    }, (result, status) => {
-                        if (status == google.maps.DirectionsStatus.OK) {
-                            //Initialize the Path Array
-                            let path = new google.maps.MVCArray();
+                                poly.setPath(path);
 
-                            //Set the Path Stroke Color
-                            let poly = new google.maps.Polyline({
-                                map,
-                                geodesic: true,
-                                strokeColor: '#FF0000',
-                                strokeOpacity: 1.0,
-                                strokeWeight: 3
-                            });
-
-                            poly.setPath(path);
-
-                            for (let i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
-                                path.push(result.routes[0].overview_path[i]);
+                                for (let i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
+                                    path.push(result.routes[0].overview_path[i]);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
 
-            let listener = google.maps.event.addListener(map, "idle", function () {
-                if (map.getZoom() > 16) map.setZoom(16);
-                google.maps.event.removeListener(listener);
+                let listener = google.maps.event.addListener(map, "idle", function() {
+                    if (map.getZoom() > 16) map.setZoom(16);
+                    google.maps.event.removeListener(listener);
+                });
             });
-        });
-    }
+        }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPcn0V7X_HZkmfmEKcIwx9qSXpMRUyqAc"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4vVA6oR4emTgxL8DC3fAg5EmJWCPeNds"></script>
 }
 
