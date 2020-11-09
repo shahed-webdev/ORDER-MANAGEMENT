@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+        .error-color td { color: red; }
+        .used-error { font-size: 0.8rem; color: red; }
+    </style>
+}
+
+<div class="m-3">
+    <div class="row">
+        <div class="col justify-content-center align-self-center">
+            <h3>Products</h3>
+        </div>
+        <div class="col text-right">
+            <a href="/Products/Create" class="btn-floating btn-success" title="Add New">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="form-group w-50">
+        <label>Select Category</label>
+        <select id="Categoryddl" class="form-control selectpicker" multiple></select>
+    </div>
+
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Product Code
+                </th>
+                <th>
+                    SKU
+                </th>
+                <th>
+                    Size
+                </th>
+                <th>
+                    MRP
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th style="width:50px">
+                    Edit
+                </th>
+                <th style="width:50px">
+                    Delete
+                </th>
+            </tr>
+        </thead>
+        <tbody id="table_row">
+            <tr><td colspan="8">Select Category</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="quantityModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-notify modal-success" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <p class="heading lead">Add Quantity</p>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="white-text">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Quantity <span id="show-quantity" class="badge badge-pill badge-success"></span></label>
+                        <input id="AddQantity_Textbox" type="number" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <button id="btnAddQantity" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+    <script>
+        $(function () {
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+
+
+            //Get category
+            $.get("@Url.Action("GetCategoryDDL")", function (response) {
+                var select = $('#Categoryddl');
+
+                if (response != null) {
+                    $.each(response, function (i, item) {
+                        select.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                    select.selectpicker("refresh");
+                };
+            });
+
+            //category Change
+            $('#Categoryddl').change(function () {
+                var Ids = [];
+                    
+                $('#Categoryddl :selected').each(function (i, selected) {
+                    Ids[i] = parseInt($(selected).val());
+                });
+
+                loadTabledata(Ids);
+            });
+
+
+            //Delete click
+            $('#DataTable').on("click", ".delete", function (evt) {
+                evt.preventDefault();
+                var row = $(this).closest("tr"),
+                    delete_att = $(this),
+                    url = $(this).attr('href');
+
+                row.removeClass("error-color");
+
+                if (url == null) return;
+                if (confirm("Are you sure you want to delete?")) {
+                    $.post(url, function (response) {
+                        if (response === '0') {
+                            row.addClass("error-color");
+                            delete_att.removeAttr("href");
+                            return;
+                        }
+                        row.hide();
+                    });
+                }
+            });
+
+            //show quantity modal
+            $('#DataTable').on("click", ".quantity", function (evt) {
+                evt.preventDefault();
+
+                $('#quantityModal').modal('show');
+                $("#show-quantity").text($(this).text());
+                $("#btnAddQantity").attr("data-pid", $(this).attr("data-id"));
+            });
+
+            //Update Quantity
+            $('#btnAddQantity').on("click", function () {
+                var url = "@Url.Action("AddQuantity")",
+                    ProductID = $(this).attr("data-pid"),
+                    Quantity = parseInt($("#AddQantity_Textbox").val());
+
+                console.log(ProductID)
+
+                if (isNaN(Quantity)) return;
+                if (ProductID === null) return;
+
+                $.post(url, { ProductID, Quantity }, function (response) {
+                    if (response === '1') {
+                        $('#quantityModal').modal('hide');
+                        $("#AddQantity_Textbox").val('');
+                        $("#btnAddQantity").removeAttr("data-id");
+                        ProductID = null;
+
+                        var Ids = [];
+                        $('#Categoryddl :selected').each(function (i, selected) {
+                            Ids[i] = parseInt($(selected).val());
+                        });
+
+                        loadTabledata(Ids);
+                    }
+                })
+            });
+        });
+
+        function loadTabledata(Ids) {
+            var url = "@Url.Action("GetCategoryProdents")",
+                row = $('#table_row');
+
+            row.children().remove();
+
+            if (Ids == '') {
+                row.append('<tr><td colspan="8">No Record found!</td></tr>');
+                return;
+            }
+
+            $.get(url, { Ids: JSON.stringify(Ids) }, function (response) {
+                if (response != null) {
+
+                    var obj = JSON.parse(response)
+                    var trow = '';
+                    $.each(obj, function (i, item) {
+                        trow += '<tr><td>' + item.ProductName + '</td>';
+                        trow += '<td>' + item.ProductCode + '</td>';
+                        trow += '<td>' + item.SKU + '</td>';
+                        trow += '<td>' + item.Size + '</td>';
+                        trow += '<td>' + item.MRP + '</td>';
+                        trow += '<td><a class="quantity blue-text font-weight-bold" data-id=' + item.ProductID + '>' + item.Quantity + '</a></td>';
+                        trow += '<td><a class="fas fa-edit" href="/Products/Edit/' + item.ProductID + '"></a></td>';
+                        trow += '<td><a class="delete fas fa-trash-alt" href="/Products/Delete/' + item.ProductID + '"></a></td></tr>';
+                    });
+                    row.append(trow).hide().fadeIn('slow');
+                }
+            })
+        }
+    </script>
+}

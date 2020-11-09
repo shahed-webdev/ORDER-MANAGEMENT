@@ -1,0 +1,104 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.OutletListVM>
+@{
+    ViewBag.Title = "Outlet";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+
+<div class="m-3">
+    <h3 class="mb-3">Outlet</h3>
+
+    <div class="table-responsive">
+        <table id="DataTable" class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Outlet Name
+                    </th>
+                    <th>
+                        Proprietor
+                    </th>
+                    <th>
+                        Phone
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Address
+                    </th>
+                    <th>
+                        Due Range
+                    </th>
+                    <th style="width:80px">
+                        Is Approved
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td>
+                        @item.OutletName
+                    </td>
+                    <td>
+                        @item.ProprietorName
+                    </td>
+                    <td>
+                        @item.Phone
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.Address
+                    </td>
+                    <td>
+                        <input type="number" value="@item.DueRangeLimit" class="dueRange form-control" />
+                    </td>
+                    <td>
+                        <button class="Approve btn btn-sm btn-light m-0" data-id="@item.OutletID" data-approved="@item.IsApproved" disabled="disabled">Approve</button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#DataTable').DataTable({
+                "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }]
+            });
+        });
+
+        $(".Approve").each(function () {
+            var isApproved = $(this).data("approved");
+            if (isApproved == 'False')
+                $(this).addClass("btn-primary").removeClass("btn-light").removeAttr("disabled", "disabled").text("Approve");
+            else
+                $(this).text("Approved");
+        });
+
+        $('#DataTable').on("click", ".Approve", function () {
+            var url = "@Url.Action("Approved")",
+                OutletID = $(this).data("id"),
+                DueRange = $(this).closest("tr").find(".dueRange").val(),
+                btn = $(this);
+
+            if (isNaN(parseInt(DueRange))) {
+                return;
+            }
+
+            $.get(url, {OutletID, DueRange}, response => {
+                if (response !== 0) {
+                    btn.addClass("btn-light").removeClass("btn-primary").attr("disabled", "disabled").text("Approved");
+                }
+            });
+        });
+    </script>
+}

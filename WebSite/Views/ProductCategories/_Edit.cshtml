@@ -1,0 +1,37 @@
+﻿@model ORDER_MANAGEMENT.Data.ProductCategory
+
+@{
+    Layout = null;
+}
+
+
+<div class="modal-dialog modal-notify modal-success" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <p class="heading lead">Update ProductCategories</p>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            @using (Ajax.BeginForm("Edit", "ProductCategories", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnUpdateSuccess" }, new { role = "form" }))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ProductCategoryID)
+
+                <div class="form-group">
+                    <label>Product Category Name</label>
+                    @Html.EditorFor(model => model.ProductCategoryName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductCategoryName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+
+

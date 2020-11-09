@@ -1,0 +1,123 @@
+﻿@model ORDER_MANAGEMENT.Data.UserDashboardVM
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_User_LayoutPage.cshtml";
+}
+
+
+
+<section class="section team-section p-4">
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card card-cascade cascading-admin-card user-card">
+                <div class="admin-up d-flex justify-content-start">
+                    <i class="fas fa-users info-color py-4 mr-3 z-depth-2"></i>
+                    <div class="data">
+                        <h5 class="font-weight-bold dark-grey-text">
+                            Edit Profile - <span class="text-muted"> Complete your profile</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="card-body card-body-cascade">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form12" class="form-control form-control-sm">
+                                <label for="form12" class="">Name</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form3" class="form-control form-control-sm">
+                                <label for="form3" class="">Father's Name</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form4" class="form-control form-control-sm" disabled="">
+                                <label for="form4" class="disabled">Mother's Name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form5" class="form-control form-control-sm">
+                                <label for="form5" class="">Present Address</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form5" class="form-control form-control-sm">
+                                <label for="form5" class="">Permanent Address</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form7" class="form-control form-control-sm">
+                                <label for="form7" class="">Blood Group</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form8" class="form-control form-control-sm">
+                                <label for="form8" class="">Personal Contact</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form9" class="form-control form-control-sm">
+                                <label for="form9" class="">EmergencyContact</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form5" class="form-control form-control-sm">
+                                <label for="form5" class="">Office Email</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="md-form form-sm mb-0">
+                                <input type="text" id="form5" class="form-control form-control-sm">
+                                <label for="form5" class="">Personal Email</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-12">
+                            <div class="md-form form-sm mb-0">
+                               Photo <input type="file" id="form5">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" value="Update" class="btn btn-dark my-4" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card profile-card">
+                <div class="avatar z-depth-1-half mb-4">
+                    <img src="~/CSS/image/DefaultImage.jpg" class="rounded-circle" />
+                </div>
+                <div class="card-body pt-0 mt-0">
+                    <div class="text-center">
+                        <h3 class="mb-3 font-weight-bold"><strong>@Model.Name</strong></h3>
+                        <h6 class="font-weight-bold cyan-text mb-4">@Model.HierarchyName</h6>
+                    </div>
+                    <ul class="striped list-unstyled">
+                        <li><strong>Rank:</strong> @Model.Rank</li>
+                        <li><strong>Designation:</strong> @Model.Designation</li>
+                        <li><strong>Office Email:</strong> @Model.OfficeEmail</li>
+                        <li><strong>Personal Contact:</strong> @Model.PersonalContact</li>
+                        <li><strong>Joining Date :</strong> @Model.JoiningDate.ToString("d MMM yyyy")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

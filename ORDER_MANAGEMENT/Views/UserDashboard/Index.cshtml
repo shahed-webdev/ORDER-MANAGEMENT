@@ -1,0 +1,173 @@
+﻿@model ORDER_MANAGEMENT.Data.UserDashboardVM
+@{
+    ViewBag.Title = "User Dashboard";
+    Layout = "~/Views/Shared/_User_LayoutPage.cshtml";
+}
+
+@section Styles {
+    <style>
+        .icoSize { font-size: 17px; color: #ff006e}
+        .report thead tr th{ font-size:15px}
+        .report tbody tr td { font-weight: bold}
+    </style>
+}
+
+<div class="px-4">
+    <section class="mt-md-4 pt-md-2 pb-4 mb-4">
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                <div class="card card-cascade cascading-admin-card">
+                    <div class="admin-up">
+                        <i class="fas fa-bullseye primary-color mr-3 z-depth-2"></i>
+                        <div class="data">
+                            <p class="text-uppercase">Target</p>
+                            <h4 class="font-weight-bold dark-grey-text">৳@Model.TargetReport.Target</h4>
+                        </div>
+                    </div>
+                    <div class="card-body card-body-cascade">
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: @Model.TargetReport.Achieved_Percentage%" aria-valuenow="@Model.TargetReport.Achieved_Percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="card-text"> Achieved Percentage (@($"{Model.TargetReport.Achieved_Percentage:n2}")%)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-xl-0 mb-4">
+                <div class="card card-cascade cascading-admin-card">
+                    <div class="admin-up">
+                        <i class="fas fa-trophy success-color mr-3 z-depth-2"></i>
+                        <div class="data">
+                            <p class="text-uppercase">Achieved</p>
+                            <h4 class="font-weight-bold dark-grey-text">৳@Model.TargetReport.Achieved</h4>
+                        </div>
+                    </div>
+                    <div class="card-body card-body-cascade">
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @Model.TargetReport.Achieved_Percentage%" aria-valuenow="@Model.TargetReport.Achieved_Percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="card-text">
+                            Achieved Percentage (@($"{Model.TargetReport.Achieved_Percentage:n2}")%)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-md-0 mb-4">
+                <div class="card card-cascade cascading-admin-card">
+                    <div class="admin-up">
+                        <i class="fas fa-user-plus light-blue lighten-1 mr-3 z-depth-2"></i>
+                        <div class="data">
+                            <p class="text-uppercase">Assigned</p>
+                            <h4 class="font-weight-bold dark-grey-text">৳@Model.TargetReport.Assinged</h4>
+                        </div>
+                    </div>
+
+                    <div class="card-body card-body-cascade">
+                        <div class="progress mb-3">
+                            <div class="progress-bar light-blue lighten-1" role="progressbar" style="width: @Model.TargetReport.Assinged_Percentage%" aria-valuenow='@Model.TargetReport.Assinged_Percentage' aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="card-text">
+                            Assigned Percentage (@($"{Model.TargetReport.Assinged_Percentage:n2}")%)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-0">
+                <div class="card card-cascade cascading-admin-card">
+                    <div class="admin-up">
+                        <i class="fas fa-user-minus red accent-2 mr-3 z-depth-2"></i>
+                        <div class="data">
+                            <p class="text-uppercase">Assignable</p>
+                            <h4 class="font-weight-bold dark-grey-text">৳@Model.TargetReport.Assignable</h4>
+                        </div>
+                    </div>
+
+                    <div class="card-body card-body-cascade">
+                        <div class="progress mb-3">
+                            <div class="progress-bar red accent-2" role="progressbar" style="width: @Model.TargetReport.Assinged_Percentage%" aria-valuenow='@Model.TargetReport.Assinged_Percentage' aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="card-text">Assigned Percentage (@($"{Model.TargetReport.Assinged_Percentage:n2}")%)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section team-section">
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card card-cascade narrower z-depth-1 pb-4">
+                    <div class="view view-cascade gradient-card-header aqua-gradient narrower py-4 mx-4 mb-3 text-center">
+                        <strong class="white-text mx-3">Report From</strong>
+                    </div>
+                    <div class="px-4">
+                        <div class="table-responsive">
+                            <table class="report table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th><strong>Assign</strong></th>
+                                        <th class="text-right"><strong>Target/Achieved</strong></th>
+                                        <th class="text-center"><strong>Equipment</strong></th>
+                                        <th class="text-right"><strong>Per&nbsp;Equipment&nbsp;Sale</strong></th>
+                                        <th style="width:50px"><strong>Tracking</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ReportFrom)
+                                    {
+                                    <tr>
+                                        <td>
+                                            <a class="blue-text" href="/TargetAssigns/Create/@item.RegistrationID">@item.Name</a>
+                                            <small class="d-block text-muted">@item.HierarchyName</small>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="deep-orange-text d-block">
+                                                <i class="fas fa-bullseye"></i>
+                                                ৳@item.TargetAmount
+                                            </span>
+                                            <span class="text-success d-block">
+                                                <i class="fas fa-trophy"></i>
+                                                ৳@item.AchievedAmount
+                                            </span>
+                                        </td>
+                                        <td class="text-center">@item.Equipment</td>
+                                        <td class="text-right">৳@item.PerEquipmentAmount</td>
+                                        <td class=" text-center"><a href="/UserDashboard/Tracking/@item.RegistrationID"><i class="fas fa-map-marked-alt icoSize"></i></a></td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card card-cascade cascading-admin-card">
+                    <div class="admin-up d-flex justify-content-start">
+                        <i class="fas fa-user-tie warning-color-dark py-4 mr-3 z-depth-2"></i>
+                        <div class="data">
+                            <h5 class="font-weight-bold dark-grey-text">
+                                Reported To - <span class="text-muted">@Model.ReportTo.Name</span>
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="card-body card-body-cascade">
+                        <ul class="striped list-unstyled">
+                            <li><strong>Hierarchy Name:</strong> @Model.ReportTo.HierarchyName</li>
+                            <li><strong>Rank:</strong> @Model.ReportTo.Rank</li>
+                            <li><strong>Personal Contact:</strong> @Model.ReportTo.PersonalContact</li>
+                            <li><strong>Office Email :</strong> @Model.ReportTo.OfficeEmail</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+

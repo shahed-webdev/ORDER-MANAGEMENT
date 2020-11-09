@@ -1,0 +1,109 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.Region>
+
+@{
+    ViewBag.Title = "Regions";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <style>
+        .error-color td { color: red; }
+        .used-error { font-size: 0.8rem; color: red; }
+    </style>
+}
+
+<div class="m-3">
+    <div class="row">
+        <div class="col justify-content-center align-self-center">
+            <h3>Regions</h3>
+        </div>
+        <div class="col text-right">
+            <a id="CreateClick" data-url="@Url.Action("Create","Regions")" class="btn-floating btn-success" title="Add New" data-toggle="modal">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Region Name
+                </th>
+                <th style="width:50px">
+                    Edit
+                </th>
+                <th style="width:50px">
+                    Delete
+                </th>
+            </tr>
+        </thead>
+        <tbody id="table-row">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RegionName)
+                    </td>
+                    <td>
+                        <a class="fas fa-edit" href="/Regions/Edit/@item.RegionID"></a>
+                    </td>
+                    <td>
+                        <a style="color:#ff0000" class="delete fas fa-trash-alt" href="/Regions/Delete/@item.RegionID"></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Insert Modal -->
+    <div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        $(function () {
+            //Delete click
+            $(".delete").on("click", function (evt) {
+                evt.preventDefault();
+
+                var row = $(this).closest("tr");
+                var btnDelete = $(this);
+                var url = $(this).attr('href');
+
+                $('#table-row em').remove();
+                $('#table-row tr').removeClass("error-color");
+
+                if (!url) return;
+
+                if (confirm("Are you sure you want to delete?")) {
+                    $.post(url, function (response) {
+                        if (response === '0') {
+                            row.addClass("error-color").after('<em class="used-error">This data already used in others place</em>');
+                            btnDelete.removeAttr("href");
+                            return;
+                        }
+                        row.hide();
+                    });
+                }
+            });
+        });
+
+        //Insert
+        $("#CreateClick").on("click", function () {
+            $.get($(this).data("url"), function (data) {
+                $('#InsertModal').html(data).modal('show');
+            });
+        });
+        function OnCreateSuccess(data) {
+            if (data != "success") {
+                $('#InsertModal').html(data);
+                return;
+            }
+
+            $('#InsertModal').html(data).modal('hide');
+            location.reload();
+        }
+    </script>   
+}

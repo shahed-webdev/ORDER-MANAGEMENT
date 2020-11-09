@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Assign SR";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+    </style>
+}
+
+
+<div class="card">
+    <div class="card-body">
+        <h3 class="mb-3">Assign SR</h3>
+        <div id="assign-container" class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Region</label>
+                    <select id="dlRegion" name="RegionID" class="form-control selectpicker" multiple></select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>Area</label>
+                    <select id="dlArea" name="AreaID" class="form-control selectpicker" multiple></select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>Territory</label>
+                    <select id="dlTerritory" name="TerritoryIDs" class="form-control selectpicker" multiple></select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>Distributor</label>
+                    <select id="dlDistributor" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+
+        <table id="DataTable" class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Assign
+                    </th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        User Name
+                    </th>
+                    <th>
+                        Assign To
+                    </th>
+                    <th>
+                        Reporting To
+                    </th>
+                    <th>
+                        Personal Contact
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="table-row">
+                <tr><td colspan="6"><strong>Select Distributor</strong></td></tr>
+            </tbody>
+        </table>
+        <em id="error-m" class="red-text"></em>
+
+        <div class="form-group">
+            <button id="btn-assign" disabled="disabled" type="submit" class="btn btn-default"><i class="fas fa-check mr-1"></i>Assign</button>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+    <script>
+        $(function () {
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+
+            //Get: Region
+            var dlRegion = $('#dlRegion');
+            $.get("/Basic/GetRegionDDL", function (response) {
+                if (response !== null) {
+                    $.each(response, function (i, item) {
+                        dlRegion.append($('<option/>', { value: item.RegionID, text: item.RegionName }));
+                    });
+                    dlRegion.selectpicker("refresh");
+                };
+            });
+        })
+
+       //Region Change
+        $('#dlRegion').change(function () {
+            let Ids = [],
+                url = "@Url.Action("GetAreaByRegion","Basic")",
+                areaSelect = $('#dlArea'),
+                territorySelect = $('#dlTerritory'),
+                distributorSelect = $('#dlDistributor');
+
+            areaSelect.empty();
+            territorySelect.empty();
+            distributorSelect.empty();
+
+            $('#dlRegion :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids !== null && Ids !== '') {
+                $.get(url, { Ids: JSON.stringify(Ids) }, function (response) {
+                    if (response !== null) {
+                        $.each(response, function (i, item) {
+                            areaSelect.append($('<option/>', { value: item.AreaID, text: item.AreaName }));
+                        });
+                        areaSelect.selectpicker("refresh");
+                    };
+                });
+            }
+
+            territorySelect.selectpicker("refresh");
+        });
+
+
+        //Area Change
+        $('#dlArea').change(function () {
+            let Ids = [],
+                url = "@Url.Action("GetTerritoryTable", "Basic")",
+                territorySelect = $('#dlTerritory'),
+                distributorSelect = $('#dlDistributor');
+
+            territorySelect.empty();
+            distributorSelect.empty();
+
+            $('#dlArea :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids !== null && Ids !== '') {
+                $.get(url, { Ids: JSON.stringify(Ids) }, function (response) {
+                    if (response != null) {
+                        $.each(response, function (i, item) {
+                            territorySelect.append($('<option/>', { value: item.TerritoryID, text: item.TerritoryName }));
+                        });
+                        territorySelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+        //Territory Change
+        $('#dlTerritory').change(function () {
+            let Ids = [],
+                url = "@Url.Action("GetDistributorddlList")",
+                distributorSelect = $('#dlDistributor');
+
+            distributorSelect.empty();
+
+            $('#dlTerritory :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids !== null && Ids !== '') {
+                $.ajax({
+                    url,
+                    type: 'POST',
+                    data: { Ids: JSON.stringify(Ids) },
+                    success: function (data) {
+                        if (data.length) {
+                            distributorSelect.append($('<option/>', { value: '', text: "[ SELECT ]" }));
+                            $.each(data, function (i, item) {
+                                distributorSelect.append($('<option/>', { value: item.value, text: item.label }));
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+       //Distributor Change
+        $('#dlDistributor').change(function () {
+            let Id = parseInt($(this).val());
+
+            if (Id) bindData(Id);
+        });
+
+
+        function bindData(Id) {
+            let url = "@Url.Action("GetTerritorybyDistributor")",
+                row = $('#table-row'),
+                html = '';
+                
+                row.children().remove();
+
+            if (!Id) {
+                row.append('<tr><td colspan="6"><strong>Select Distributor</strong></td></tr>');
+                return;
+            }
+
+            $.ajax({
+                url,
+                type: 'POST',
+                data: { Id },
+                success: function (data) {
+                    if (data.length) {
+                        $.each(data, function (i, item) {
+                        html += `<tr>
+                        <td>
+                          <input value="${item.RegistrationID}" type="checkbox" class="form-check-input" id="${item.RegistrationID}">
+                          <label class="form-check-label" for="${item.RegistrationID}"></label>
+                        </td>
+                        <td>${item.Name}</td>
+                        <td>${item.UserName}</td>
+                        ${isAssign(item.AssingedToDistributor)}
+                        <td>${item.ReportingTo}</td>
+                        <td>${item.PersonalContact}</td>
+                       </tr>`
+                        });
+
+                        row.append(html).hide().fadeIn();
+                        $('#btn-assign').removeAttr('disabled');
+                    }
+                }
+            });
+        }
+
+
+        function isAssign(data) {
+            return `<td class="${data ? 'text-success' : 'text-danger'}">${data ? '<i class="fas fa-check-circle mr-1"></i>' + data : '<i class="fas fa-times-circle"></i> Unassigned'}</td>`
+        }
+
+        $('#btn-assign').click(function () {
+            var Ids = [],
+                Id = parseInt($('#dlDistributor').val());
+
+            $("#DataTable input:checked").each(function () {
+                Ids.push(parseInt($(this).val()));
+            }); 
+
+            $("#error-m").text('');
+
+            if (!Ids.length) {
+                $("#error-m").text('Select minimum one SR');
+                return
+            };
+
+            $.ajax({
+                url:'/Distributor/AssignTerritory',
+                type: 'POST',
+                data: { Id, Ids: JSON.stringify(Ids) },
+                success: function (data) {
+                    let Id = parseInt($('#dlDistributor').val());
+                    if (Id) bindData(Id);
+                }
+            });
+        });
+
+        $('#assign-container .form-control').change(function () {
+            row = $('#table-row');
+
+            if (row.length >1)
+            row.children().remove();
+
+
+            $("#error-m").text('');
+
+            //disable submit
+            $('#btn-assign').attr('disabled', 'disabled');
+        })
+    </script>
+}
+

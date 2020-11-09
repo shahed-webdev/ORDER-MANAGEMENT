@@ -1,0 +1,263 @@
+﻿@model ORDER_MANAGEMENT.Data.EquipmentDistributionVM
+@{
+    ViewBag.Title = "Equipment Distribution";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles{
+    <style>
+        #outlet-info, #equipment-info { display: none }
+    </style>
+}
+
+    <div class="m-md-3">
+        <h3 class="mb-3">Equipment Distribution</h3>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible">
+                @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="card card-body mb-4">
+                <div class="md-form mb-2">
+                    <input placeholder="Find Outlet" type="text" id="inputFind" class="form-control" autocomplete="off" />
+                </div>
+
+                <div id="outlet-info">
+                    <input type="hidden" name="OutletID" id="OutletID" />
+                    <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
+                        <div class="mb-2">
+                            <i class="fas fa-store indigo-text"></i>
+                            <span id="outletName"></span>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-user indigo-text"></i>
+                            <span id="proprietor"></span>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-phone indigo-text"></i>
+                            <span id="phone"></span>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-map-marker-alt indigo-text"></i>
+                            <span id="address"></span>
+                        </div>
+                    </div>
+                    <small id="title-header" class="text-muted"></small>
+                </div>
+            </div>
+
+            <div class="card card-body mb-4">
+                <div class="md-form mb">
+                    <input placeholder="Find Equipment" type="text" id="inputEquipment" class="form-control" autocomplete="off" />
+                </div>
+
+                <div id="equipment-info">
+                    <input type="hidden" name="EquipmentID" id="EquipmentID" />
+                    <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
+                        <div class="mb-2">
+                            <strong>Code:</strong>
+                            <span id="code"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Name:</strong>
+                            <span id="equipmentName"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Type:</strong>
+                            <span id="equipmentTypeName"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Size:</strong>
+                            <span id="size"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-body mb-4">
+                <div class="form-row">
+                    <div class="md-form col-md-6">
+                        <label for="Value">Value</label>
+                        @Html.EditorFor(model => model.Value, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Value, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="md-form col-md-6">
+                        <label for="Location">Location</label>
+                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="md-form col-md-4">
+                        <label for="InstalledDate">Installed Date</label>
+                        @Html.EditorFor(model => model.InstalledDate, new { htmlAttributes = new { @class = "form-control datepicker", type="text" } })
+                        @Html.ValidationMessageFor(model => model.InstalledDate, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="md-form col-md-4">
+                        <label for="TechnicianName">Technician Name</label>
+                        @Html.EditorFor(model => model.TechnicianName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TechnicianName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="md-form col-md-4">
+                        <label for="InChargeName">In charge Name</label>
+                        @Html.EditorFor(model => model.InChargeName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InChargeName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="md-form col-md-4 pt-2">
+                        @Html.RadioButtonFor(model => model.RentStatus, "Free", new { id = "radioFree", @class = "form-check-input" })
+                        <label class="form-check-label" for="radioFree">Free</label>
+
+                        @Html.RadioButtonFor(model => model.RentStatus, "Rent", new { id = "radioRent", @class = "form-check-input" })
+                        <label class="form-check-label" for="radioRent">Rent</label>
+
+                        @Html.ValidationMessageFor(model => model.RentStatus, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="md-form col-md-4">
+                        <label for="RentPrice">Rent Price</label>
+                        @Html.EditorFor(model => model.RentPrice, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.RentPrice, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="md-form col-md-4">
+                        <label for="RentInterval">Rent Interval</label>
+                        @Html.EditorFor(model => model.RentInterval, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                        @Html.ValidationMessageFor(model => model.RentInterval, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="md-form">
+                    <input id="btnSubmit" type="submit" value="Submit" class="btn blue-gradient" />
+                </div>
+            </div>
+        }
+    </div>    
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+    <script>
+        $(function() {
+            $('.datepicker').pickadate();
+
+            getElement("#OutletID").value = "";
+            getElement("#EquipmentID").value = "";
+        });
+
+        $("input[name='RentStatus']").click(function() {
+            if ($(this).val() === "Rent") {
+                $("#RentPrice").removeAttr("disabled").val("");
+                $("#RentInterval").removeAttr("disabled").val("");
+            } else {
+                $("#RentPrice").attr("disabled", true);
+                $("#RentInterval").attr("disabled", true);
+            }
+        });
+
+
+        //outlet autocomplete
+        $("#inputFind").typeahead({
+            minLength: 1,
+            displayText: function(item) {
+                return `${item.OutletName}: (${item.RegionName} > ${item.AreaName} > ${item.TerritoryName})`;
+            },
+            afterSelect: function(item) {
+                this.$element[0].value = ''
+            },
+            source: function(request, result) {
+                $.ajax({
+                    url: "/EquipmentDistribution/FindOutlet",
+                    data: JSON.stringify({ 'prefix': request }),
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) { result(response); }
+                });
+            },
+            updater: function(item) {
+                showOutletInfo(item);
+                return item;
+            }
+        });
+
+        function showOutletInfo(data) {
+            getElement("#outlet-info").style.display = "block";
+
+            getElement("#title-header").textContent = `${data.AreaName} - ${data.RegionName} - ${data.TerritoryName}`;
+            getElement("#OutletID").value = data.OutletID;
+            getElement("#outletName").textContent = data.OutletName;
+            getElement("#proprietor").textContent = data.ProprietorName;
+            getElement("#phone").textContent = data.Phone;
+            getElement("#address").textContent = data.Address;
+        }
+
+        function getElement(selector) {
+            return document.querySelectorAll(selector)[0];
+        }
+
+        //outlet autocomplete
+        $("#inputEquipment").typeahead({
+            minLength: 1,
+            displayText: function(item) {
+                return `${item.Code}: (${item.EquipmentName}, ${item.Size})`;
+            },
+            afterSelect: function(item) {
+                this.$element[0].value = ""
+            },
+            source: function(request, result) {
+                $.ajax({
+                    url: "/EquipmentDistribution/FindEquipment",
+                    data: JSON.stringify({ 'prefix': request }),
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) { result(response); }
+                });
+            },
+            updater: function(item) {
+                showEquipmentInfo(item);
+                return item;
+            }
+        });
+
+        function showEquipmentInfo(data) {
+            getElement("#equipment-info").style.display = "block";
+
+            getElement("#EquipmentID").value = data.EquipmentID;
+            getElement("#equipmentName").textContent = data.EquipmentName;
+            getElement("#equipmentTypeName").textContent = data.EquipmentTypeName;
+            getElement("#code").textContent = data.Code;
+            getElement("#size").textContent = data.Size;
+        }
+
+        $("#btnSubmit").click(function(e) {
+            const outletId = getElement("#OutletID").value;
+            const equipmentId = getElement("#EquipmentID").value;
+
+            if (outletId === "") {
+                getElement("#inputFind").focus();
+                e.preventDefault();
+                return;
+            }
+
+            if (equipmentId === "") {
+                getElement("#inputEquipment").focus();
+                e.preventDefault();
+                return;
+            }
+        });
+    </script>
+}

@@ -1,0 +1,85 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.DistributorListWithUserVM>
+@{
+    ViewBag.Title = "Distributor";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+
+<div class="m-3">
+    <h3 class="mb-3">Distributor</h3>
+
+    <div class="table-responsive">
+        <table id="DataTable" class="table table-sm table-bordered nowrap">
+            <thead>
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Mobile
+                    </th>
+                    <th>
+                        Territory
+                    </th>
+                    <th>
+                        Report To
+                    </th>
+                    <th>
+                        Due Amount
+                    </th>
+                    <th>
+                        Due Range
+                    </th>
+                    <th style="width:100px">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.Mobile
+                        </td>
+                        <td>
+                            @item.TerritoryName
+                        </td>
+                        <td>
+                            @item.ReportTo_User.Name
+                        </td>
+                        <td>
+                            @item.TotalDue
+                        </td>
+                        <td>
+                            @item.DueRangeLimit
+                        </td>
+                        <td>
+                            @{ if (item.IsApproved)
+                                {
+                                    <a class="text-primary" href="/Distributor/Update/@item.DistributorID"><i class="fas fa-edit mr-1"></i>Update</a>
+                                }
+                                else
+                                {
+                                    <a class="text-success" href="/Distributor/Approved/@item.DistributorID"><i class="fas fa-check mr-1"></i>Approve</a>
+                                }
+                            }
+                        </td>
+                      </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        $('#DataTable').DataTable({ "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }] });
+    });
+</script>
+}

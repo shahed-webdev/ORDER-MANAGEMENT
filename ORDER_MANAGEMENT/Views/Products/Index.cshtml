@@ -1,0 +1,222 @@
+﻿
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+        .error-color td { color: red; }
+        .used-error { font-size: 0.8rem; color: red; }
+    </style>
+}
+
+    <div class="card card-body m-md-3">
+        <div class="row">
+            <div class="col justify-content-center align-self-center">
+                <h3>Products</h3>
+            </div>
+            <div class="col text-right">
+                <a href="/Products/Create" class="btn-floating blue-gradient" title="Add New">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label>Select Category</label>
+                    @Html.DropDownList("MainCategory", null,"[ SELECT ]", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label>Select Sub Category</label>
+                    <select id="selectSubCategory" class="form-control select-picker" multiple></select>
+                </div>
+            </div>
+        </div>
+
+        <table id="DataTable" class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Product Code</th>
+                    <th>SKU</th>
+                    <th>Size</th>
+                    <th>MRP</th>
+                    <th>Quantity</th>
+                    <th style="width:50px">Edit</th>
+                    <th style="width:50px">Delete</th>
+                </tr>
+            </thead>
+        </table>
+
+        <!-- Modal -->
+        <div class="modal fade" id="quantityModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog cascading-modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-header blue-gradient white-text">
+                        <h4 class="m-0"><i class="fas fa-plus-circle"></i> Add Quantity</h4>
+                        <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>
+                                <strong id="showProductName"></strong>
+                                <span id="show-quantity" class="badge badge-pill badge-success"></span>
+                            </label>
+                            <input id="inputAddQuantity" type="number" class="form-control" />
+                        </div>
+                        <div class="text-center mt-1-half">
+                            <button id="btnAddQuantity" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Add <i class="fas fa-check ml-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+    <script>
+        $(function() {
+            $(".select-picker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+
+            //Get sub-category
+            $("#MainCategory").change(function() {
+                const url = "@Url.Action("GetSubCategory")";
+                const id = $(this).val();
+                var select = $('#selectSubCategory');
+
+                select.empty();
+                select.selectpicker("refresh");
+                $("#table_row").empty()
+
+                if (!id) return;
+
+                $.get(url, { id }, function(response) {
+                    if (response.length) {
+                        $.each(response, function(i, item) {
+                            select.append($('<option/>', { value: item.value, text: item.label }));
+                        });
+                        select.selectpicker("refresh");
+                    };
+                });
+            });
+
+            //category Change
+            $('#selectSubCategory').change(function() {
+                dataTable.filter = [];
+                $('#selectSubCategory :selected').each(function(i, selected) {
+                    dataTable.filter[i] = parseInt($(selected).val());
+                });
+
+                dataTable.getData();
+            });
+
+
+            //Delete click
+            $('#DataTable').on("click", ".delete", function(evt) {
+                evt.preventDefault();
+                const row = $(this).closest("tr");
+                const deleteAtt = $(this);
+                const url = $(this).attr('href');
+
+                row.removeClass("error-color");
+
+                if (url == null) return;
+                if (confirm("Are you sure you want to delete?")) {
+                    $.post(url, function(response) {
+                        if (response === '0') {
+                            row.addClass("error-color");
+                            deleteAtt.removeAttr("href");
+                            return;
+                        }
+                        row.hide();
+                    });
+                }
+            });
+
+            //show quantity modal
+            $('#DataTable').on("click", ".quantity", function(evt) {
+                evt.preventDefault();
+
+                $('#quantityModal').modal('show');
+                $("#showProductName").text($(this).attr("data-name"));
+                $("#show-quantity").text($(this).text());
+                $("#btnAddQuantity").attr("data-pid", $(this).attr("data-id"));
+            });
+
+            //Update Quantity
+            $('#btnAddQuantity').on("click", function() {
+                const url = "@Url.Action("AddQuantity")";
+                var productId = $(this).attr("data-pid");
+                const quantity = parseInt($("#inputAddQuantity").val());
+
+                if (isNaN(quantity) || !productId) return;
+
+                $.post(url, { productId, quantity }, function(response) {
+                    if (response === '1') {
+                        $('#quantityModal').modal('hide');
+                        $("#inputAddQuantity").val('');
+                        $("#btnAddQuantity").removeAttr("data-id");
+                        productId = null;
+
+                        dataTable.getData();
+                    }
+                })
+            });
+        });
+
+        var dataTable = {
+            table: null,
+            filter: [],
+            init: function() {
+                dataTable.table = $("#DataTable").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    ajax: {
+                        url: "/Products/GetCategoryProduct",
+                        type: "POST",
+                        data: function(d) {
+                            d.filter = dataTable.filter
+                        }
+                    },
+                    columns:
+                    [
+                        { data: "ProductName" },
+                        { data: "ProductCode" },
+                        { data: "SKU" },
+                        { data: "Size" },
+                        { data: "MRP" },
+                        { data: "Quantity", "render": function (data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
+                        { data: "ProductID", "render": function(data) { return `<a href="/Products/Edit?id=${data}" class="edit"><i class="fas fa-edit"></i></a>`; } },
+                        { data: "ProductID", "render": function(data) { return `<a href="/Products/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }
+                    ],
+                    columnDefs: [
+                        { 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },
+                        { 'sortable': false, 'targets': [6, 7] }
+                    ]
+                });
+            },
+            getData: function() {
+                dataTable.table ? dataTable.table.ajax.reload() : dataTable.init();
+            }
+        }
+    </script>
+}

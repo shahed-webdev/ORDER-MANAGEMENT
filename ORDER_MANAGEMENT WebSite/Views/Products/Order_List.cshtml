@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.DistributorOrdered>
+@{
+    ViewBag.Title = "Ordered Product";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="m-3">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="mb-3">Ordered Product</h3>
+
+            <table id="DataTable" class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Receipt
+                        </th>
+                        <th>
+                            Distributor
+                        </th>
+                        <th>
+                            Order By
+                        </th>
+                        <th>
+                            Order Date
+                        </th>
+                        <th>
+                            Territory
+                        </th>
+                        <th>
+                            Order Amount
+                        </th>
+                        <th>
+                            Discount
+                        </th>
+                        <th>
+                            Total Amount
+                        </th>
+                        <th style="width:50px">
+                            Approve
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                #@item.DistributorOrder_SN
+                            </td>
+                            <td>
+                                @item.DistributorName
+                            </td>
+                            <td>
+                                @item.OrderBy_Name
+                            </td>
+                            <td>
+                                @item.InsertDate
+                            </td>
+                            <td>
+                                @item.TerritoryName
+                            </td>
+                            <td>
+                                @item.OrderTotalPrice
+                            </td>
+                            <td>
+                                @item.OrderDiscount
+                            </td>
+                            <td>
+                                @item.OrderNetPrice
+                            </td>
+                            <td>
+                                <a class="text-primary" href="/Products/ApproveProduct/@item.DistributorOrderID">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#DataTable').DataTable({
+                "aoColumnDefs": [
+                    { 'bSortable': false, 'aTargets': [8] }
+                ]
+            });
+        });
+    </script>
+}

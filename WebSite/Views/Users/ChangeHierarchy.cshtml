@@ -1,0 +1,212 @@
+﻿@model ORDER_MANAGEMENT.Data.ChangeUserVM
+
+@{
+    ViewBag.Title = "Change Hierarchy And Territory";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+    </style>
+}
+
+
+@using (Html.BeginForm("ChangeHierarchy", "Users", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model=> Model.user.RegistrationID)
+
+  <div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="mb-3">Change Hierarchy And Territory</h3>
+            <ul class="list-group list-group-horizontal list-group-item-light mb-3">
+                <li class="list-group-item">Name: @Model.user.Registration.Name</li>
+                <li class="list-group-item">User Name: @Model.user.Registration.UserName</li>
+                <li class="list-group-item">Designation: @Model.user.Registration.Designation</li>
+                <li class="list-group-item">Hierarchy Name: @Model.user.Organization_hierarchy.HierarchyName</li>
+                <li class="list-group-item">Reported To: @Model.user.Upper_Registration.Name</li>
+            </ul>
+
+
+            <div class="form-group">
+                <label>Hierarchy</label>
+                @Html.DropDownListFor(model => model.Rank, Model.Hierarchies, "[ HIERARCHY ]", new { @class = "form-control", id = "dlHierarchy", required = "required" })
+                @Html.ValidationMessageFor(model => model.Rank, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Reported To</label>
+                @Html.DropDownListFor(model => model.UpperRegistrationID, Model.UpperUsers, "[ Reported To ]", new { @class = "form-control", id = "dlUser" })
+                @Html.ValidationMessageFor(model => model.UpperRegistrationID, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Region</label>
+                @Html.ListBoxFor(model => model.RegionIDs, new MultiSelectList(Model.Regions, "Value", "Text", Model.RegionIDs), new { @class = "form-control selectpicker", multiple = "multiple", id = "dlRegion", required = "required" })
+                @Html.ValidationMessageFor(model => model.RegionIDs, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Area</label>
+                @Html.ListBoxFor(model => model.AreaIDs, new MultiSelectList(Model.Areas, "Value", "Text", Model.AreaIDs), new { @class = "form-control selectpicker", multiple = "multiple", id = "dlArea", required = "required" })
+                @Html.ValidationMessageFor(model => model.AreaIDs, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Territory</label>
+                @Html.ListBoxFor(model => model.TerritoryIDs, new MultiSelectList(Model.Territorys, "Value", "Text", Model.TerritoryIDs), new { @class = "form-control selectpicker", multiple = "multiple", id = "dlTerritory", required = "required" })
+                @Html.ValidationMessageFor(model => model.TerritoryIDs, "", new { @class = "text-danger" })
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn btn-default" />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+</div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/JS/bootstrap-select.js"></script>
+
+    <script>
+        //Hierarchy
+        $('#dlHierarchy').change(function () {
+            var rank = $(this).val(),
+                regID = $("#user_RegistrationID").val(),
+                userSelect = $('#dlUser'),
+                regionSelect = $('#dlRegion'),
+                areaSelect = $('#dlArea'),
+                territorySelect = $('#dlTerritory'),
+                url = "@Url.Action("Dll_user")";
+
+            userSelect.empty();
+            regionSelect.empty();
+            areaSelect.empty();
+            territorySelect.empty();
+
+            $(".selectpicker").selectpicker("refresh");
+
+            if (rank != null && rank != '') {
+                $.get(url, { rank, regID }, function (users) {
+                    if (users != null && !jQuery.isEmptyObject(users)) {
+                        userSelect.append($('<option/>', { value: "", text: "[ SELECT USER ]" }));
+
+                        $.each(users, function (i, user) {
+                            userSelect.append($('<option/>', { value: user.RegistrationID, text: user.Name }));
+                        });
+                    };
+                });
+            }
+        });
+
+        //User
+        $('#dlUser').change(function () {
+            var RegistrationID = $(this).val();
+            var regionSelect = $('#dlRegion');
+            var areaSelect = $('#dlArea');
+            var territorySelect = $('#dlTerritory');
+            var url = "@Url.Action("Dll_region")";
+
+            regionSelect.empty();
+            areaSelect.empty();
+            territorySelect.empty();
+
+            regionSelect.selectpicker("refresh");
+            areaSelect.selectpicker("refresh");
+            territorySelect.selectpicker("refresh");
+
+            if (RegistrationID != null && RegistrationID != '') {
+                $.get(url, { RegistrationID }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, region) {
+                            regionSelect.append($('<option/>', { value: region.RegionID, text: region.RegionName}));
+                        });
+                        regionSelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+        //Region
+        $('#dlRegion').change(function () {
+            var Ids = [];
+            var RegistrationID = $('#dlUser :selected').val();
+            var areaSelect = $('#dlArea');
+            var territorySelect = $('#dlTerritory');
+            var url = "@Url.Action("Dll_area")";
+
+            areaSelect.empty();
+            territorySelect.empty();
+
+            areaSelect.selectpicker("refresh");
+            territorySelect.selectpicker("refresh");
+
+            $('#dlRegion :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids != null && Ids != '') {
+                $.get(url, { RegistrationID, Ids: JSON.stringify(Ids)}, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, area) {
+                            areaSelect.append($('<option/>', { value: area.AreaID, text: area.AreaName}));
+                        });
+
+                        areaSelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+        //Area
+        $('#dlArea').change(function () {
+            var Ids = [];
+            var UpperRegistrationID = $('#dlUser :selected').val();
+            var RegistrationID = $('#user_RegistrationID').val();
+            var territorySelect = $('#dlTerritory');
+            var url = "@Url.Action("Dll_territory")";
+
+            territorySelect.empty();
+            territorySelect.selectpicker("refresh");
+
+            $('#dlArea :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids != null && Ids != '') {
+                $.get(url, { UpperRegistrationID, Ids: JSON.stringify(Ids), RegistrationID}, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, territory) {
+                            territorySelect.append($('<option/>', { value: territory.TerritoryID, text: territory.TerritoryName }));
+                        });
+
+                        territorySelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+
+        $(function () {
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+        })
+    </script>
+}
+
+

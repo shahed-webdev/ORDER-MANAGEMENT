@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "Equipments";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles
+{
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet"/>
+    <style>
+        #DataTable tbody .not-assign { color: #dc143c; font-size: 18px;}
+        #DataTable tbody .assign { color: #32cd32; font-size: 18px; cursor: pointer }
+    </style>
+}
+
+<div class="card card-body m-md-3">
+    <h3 class="mb-3">Equipments</h3>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label for="EquipmentType">Select Equipment Type</label>
+                @Html.DropDownList("EquipmentType", null, new { @class = "form-control multi-select", multiple = "multiple" })
+            </div>
+        </div>
+        <div class="col text-right">
+            <a id="CreateClick" data-url="@Url.Action("Create", "EquipmentAdd")" class="btn-floating blue-gradient" title="Add New" data-toggle="modal">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Equipment Name</th>
+                <th>Size</th>
+                <th style="width: 100px">IsDistributed</th>
+                <th style="width: 50px">Edit</th>
+                <th style="width: 50px">Delete</th>
+            </tr>
+        </thead>
+    </table>
+
+    <!-- Insert Modal -->
+    <div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
+    <!-- Update Modal -->
+    <div class="modal fade" id="UpdateModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/JS/bootstrap-select.js"></script>
+    <script>
+        $(function() {
+            $('.multi-select').selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 10
+            });
+        });
+
+        //EquipmentType change
+        $('#EquipmentType').change(function() {
+            const isSelected = $(this).val();
+            if (!isSelected) return;
+
+            dataTable.filter = [];
+            $('#EquipmentType :selected').each(function(i, selected) {
+                dataTable.filter[i] = parseInt($(selected).val());
+            });
+
+            dataTable.getData();
+        });
+
+
+        var dataTable = {
+            table: null,
+            filter: [],
+            init: function() {
+                dataTable.table = $("#DataTable").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "/EquipmentAdd/GetAll",
+                        type: "POST",
+                        data: function(d) {
+                            d.filter = dataTable.filter
+                        }
+                    },
+                    columns:
+                    [
+                        {
+                            data: "Code", "render": function(data, type, row, meta) {
+                                return row.IsDistributed ? `<a href="/EquipmentAdd/Details/${row.EquipmentID}" class="blue-text">${data}</a>` : data;
+                            }
+                        },
+                        { data: "EquipmentName" },
+                        { data: "Size" },
+                        {
+                            data: "IsDistributed", "searchable": false, "sortable": false, "render": function(data, type, row, meta) {
+                                return data ? `<i title='${row.OutletName}, ${row.Address}' class="fas fa-check-circle assign"></i>` : `<i class="fas fa-times-circle not-assign"></i>`;
+                            }
+                        },
+                        { data: "EquipmentID", "searchable": false, "sortable": false, "render": function(data) { return `<a href="/EquipmentAdd/Edit?id=${data}" class="edit"><i class="fas fa-edit"></i></a>`; } },
+                        { data: "EquipmentID", "searchable": false, "sortable": false, "render": function(data) { return `<a href="/EquipmentAdd/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }
+                    ]
+                });
+            },
+            getData: function() {
+                dataTable.table ? dataTable.table.ajax.reload() : dataTable.init();
+            }
+        }
+
+
+        //Insert
+        $("#CreateClick").on("click", function() {
+            $.get($(this).data("url"), function(data) {
+                $('#InsertModal').html(data).modal('show');
+            });
+        });
+
+        function OnCreateSuccess(data) {
+            if (data !== "success") {
+                $('#InsertModal').html(data);
+                return;
+            }
+            bindAddedData();
+        }
+
+        function bindAddedData() {
+            dataTable.filter = [];
+
+            dataTable.filter.push(parseInt($("#EquipmentTypeID").val()));
+            dataTable.getData();
+
+            $('form').find("input[type=text]").val("");
+            $('#EquipmentType').empty().selectpicker("refresh");
+        }
+
+        //reload modal on close
+        $('#InsertModal').on('hidden.bs.modal', function() {
+            location.reload();
+        })
+
+        //Update click
+        $('#DataTable').on("click", ".edit", function(evt) {
+            evt.preventDefault();
+            const url = $(this).attr("href");
+
+            $.get(url, function(data) {
+                $('#UpdateModal').html(data).modal('show');
+            });
+        });
+
+        function OnUpdateSuccess(data) {
+            if (data !== "success") {
+                $('#UpdateModal').html(data);
+                return;
+            }
+
+            $('#UpdateModal').html(data).modal('hide');
+            dataTable.getData();
+        }
+
+        //Delete click
+        $('#DataTable').on("click", ".delete", function(evt) {
+            evt.preventDefault();
+            var row = $(this).closest("tr");
+            var deleteAtt = $(this);
+            const url = $(this).attr('href');
+            row.removeClass("error-color");
+
+            if (!url) return;
+            if (confirm("Are you sure you want to delete?")) {
+                $.post(url, function(response) {
+                    if (response === '0') {
+                        row.addClass("error-color");
+                        deleteAtt.removeAttr("href");
+                        return;
+                    }
+                    row.hide();
+                });
+            }
+        });
+    </script>
+}

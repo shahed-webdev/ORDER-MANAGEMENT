@@ -1,0 +1,79 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.DistributorOrdered>
+@{
+    ViewBag.Title = "Order Return";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+
+<div class="m-md-3 card card-body">
+    <h3 class="mb-3">Order Return</h3>
+
+    <div class="table-responsive">
+        <table id="DataTable" class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        Receipt
+                    </th>
+                    <th>
+                        Distributor
+                    </th>
+                    <th>
+                        Territory
+                    </th>
+                    <th>
+                        Total Price
+                    </th>
+                    <th>
+                        Discount
+                    </th>
+                    <th>
+                        Net
+                    </th>
+                    <th style="width:80px">
+                        Details
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            #@item.DistributorOrder_SN
+                        </td>
+                        <td>
+                            @item.DistributorName
+                        </td>
+                        <td>
+                            @item.TerritoryName
+                        </td>
+                        <td>
+                            @item.OrderTotalPrice
+                        </td>
+                        <td>
+                            @item.OrderDiscount
+                        </td>
+                        <td>
+                            @item.OrderNetPrice
+                        </td>
+                        <td>
+                            <a href="ReturnDetails/@item.DistributorOrderID" class="blue-text">Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#DataTable').DataTable({
+                "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }]
+            });
+        });
+    </script>
+}

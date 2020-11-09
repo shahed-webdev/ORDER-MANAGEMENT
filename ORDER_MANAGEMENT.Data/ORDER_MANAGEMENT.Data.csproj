@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DataTables.AspNet.Core" Version="2.0.2" />
+    <PackageReference Include="DataTables.AspNet.Mvc5" Version="2.0.2" />
+    <PackageReference Include="EntityFramework" Version="6.2.0" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+    <PackageReference Include="System.Linq.Dynamic" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ImageServerConfig\" />
+  </ItemGroup>
+
+</Project>

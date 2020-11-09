@@ -1,0 +1,183 @@
+﻿@model ORDER_MANAGEMENT.Data.ProductVM
+
+@{
+    ViewBag.Title = "Update Product";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="mb-3">Update Product</h3>
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ProductID)
+               
+                <div class="form-group">
+                    <label>Category</label>
+                    @Html.DropDownList("MainCategory", null,"[ SELECT ]", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label>Sub Category</label>
+                    @Html.DropDownList("ProductCategoryID", null, "[ SELECT ]", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ProductCategoryID, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Product Name</label>
+                    @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Product Code</label>
+                    @Html.EditorFor(model => model.ProductCode, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductCode, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>SKU</label>
+                    @Html.EditorFor(model => model.SKU, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SKU, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Size</label>
+                    @Html.EditorFor(model => model.Size, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>MRP</label>
+                    @Html.EditorFor(model => model.MRP, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MRP, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+                
+                <div class="md-form">
+                    @Html.Hidden("ProductImage")
+                    <div class="file-field">
+                        <div class="btn aqua-gradient btn-rounded btn-sm float-left">
+                            <span><i class="fas fa-upload mr-2" aria-hidden="true"></i>Choose file</span>
+                            <input type="file" id="upload" value="Choose a Image" onchange="clearImage(this)">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload your file">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div id="upload-demo" style="display:none;"></div>
+                    @{
+                        var imgSrc = "";
+                        if (Model.ProductImage != null)
+                        {
+                            imgSrc = $"data:image/png;base64,{Convert.ToBase64String(Model.ProductImage)}";
+                        }
+                    }
+                    <img id="prevImage" src="@imgSrc" alt=""/>
+                    <a id="doneButton" class="btn-floating btn-lg blue-gradient" style="display:none;"><i class="fas fa-crop-alt"></i></a>
+                </div>
+
+                <div class="form-group mt-3">
+                    <input type="submit" value="Upate" class="btn blue-gradient" />
+                </div>
+
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        var $uploadCrop,
+            opt = {
+                viewport: { width: 200, height: 200 },
+                boundary: { width: 250, height: 250 },
+                showZoomer: false,
+                enableResize: true,
+                enableOrientation: true
+            };
+
+        $(function () {
+            $('#ProductImage').val('');
+            $uploadCrop = $('#upload-demo').croppie(opt);
+
+            $('#upload').on('change', function () {
+                readFile(this);
+            });
+
+            $('#doneButton').on('click', function () {
+                $uploadCrop.croppie('result', { type: 'base64' }).then(function (res) {
+                    $('#ProductImage').val(res.split(',')[1]);
+                    $('#upload-demo').hide();
+                    $('#doneButton').hide();
+                    $('#prevImage').attr('src', res);
+                });
+            });
+        });
+
+        function readFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $uploadCrop.croppie('bind', { url: e.target.result });
+
+                    $('#ProductImage').val('');
+                    $('#upload-demo').show();
+                    $('#doneButton').show();
+                    $('#prevImage').attr('src', '');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearImage(ctrl) {
+            if ($(ctrl).val() === "") {
+                $('#upload-demo').croppie('destroy');
+                $uploadCrop = $('#upload-demo').croppie(opt);
+            }
+        }
+
+        //Get sub-category
+        $("#MainCategory").change(function() {
+            const url = "@Url.Action("GetSubCategory")";
+            const id = $(this).val();
+            var select = $('#ProductCategoryID');
+
+            select.empty();
+
+            if (!id) return;
+
+            $.get(url, { id }, function(response) {
+                if (response.length) {
+                    select.append($('<option/>', { value: "", text: "[ SELECT ]" }));
+                    $.each(response, function(i, item) {
+                        select.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                };
+            });
+        });
+    </script>
+}
+
+
+
+

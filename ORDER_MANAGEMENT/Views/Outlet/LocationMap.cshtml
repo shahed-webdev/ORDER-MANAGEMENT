@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Outlet Location";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+@section Styles{
+    <style>
+        #map { width: 100%; height: 500px; }
+
+        .marker-info { text-align: center; }
+        .marker-info h5 { margin-bottom: 8px; font-weight: bold; color: #575E62; }
+        .marker-info p { margin-bottom: 6px; color: #575E62; }
+
+        .approve-ico { position: relative; width: 70px; margin: auto; }
+        .approve-ico i { box-shadow: 0 2px 7px 1px rgba(0,0,0,0.3); position: absolute; top: 2px; right: -3px; font-size: 17px; border-radius: 50%; padding: 2px; background-color: #fff; }
+        .approve-ico .fa-check-circle { color: #00C851; }
+        .approve-ico .fa-times-circle { color: #ff4444 }
+        .approve-ico img { height: 70px; width: 70px; }
+    </style>
+}
+
+<h3 class="mb-3">Outlet Location <span id="count-User" class="badge badge-pill badge-primary"></span></h3>
+
+<div class="card card-body">
+    <div id="map"></div>
+</div>
+
+
+@section Scripts {
+  <script>
+    const url = "@Url.Action("GetOutletList")";
+
+        function initMap() {
+            const bounds = new google.maps.LatLngBounds();
+            const map = new google.maps.Map(document.getElementById("map"), { mapTypeId: 'roadmap' });
+            const infoWindow = new google.maps.InfoWindow();
+            let marker;
+
+            map.setTilt(45);
+
+            $.get(url, res => {
+                const data = JSON.parse(res);
+                const infoWindowContent = [];
+                document.getElementById("count-User").innerHTML = data.length;
+
+                $.each(data, (i, info) => {
+                    const imgSrc = info.Photo ? `data:image/png;base64,${info.Logo}` : '/CSS/image/NoImage.png';
+                    const isApprove = info.IsApproved ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+
+                    infoWindowContent.push(
+                        [`<div class="marker-info">
+                           <div class="approve-ico">${isApprove}<img class="rounded-circle img-thumbnail" src="${imgSrc}"/></div>
+                           <h5>${info.OutletName}</h5>
+                           <p>${info.Phone}</p>
+                           <p>${info.Address}</p>
+                        </div>`
+                        ]);
+
+                    const position = new google.maps.LatLng(parseFloat(info.Lat), parseFloat(info.Lon));
+                    bounds.extend(position);
+
+                    marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        icon: `https://cdn.mapmarker.io/api/v1/font-awesome/v5/icon-stack?hoffset=-1&size=50&color=aa00ff&icon=fa-store`,
+                        title: info.Name
+                    });
+
+                    google.maps.event.addListener(marker, 'click', ((clickedMarker, index) => {
+                        return () => {
+                            infoWindow.setContent(infoWindowContent[index][0]);
+                            infoWindow.open(map, clickedMarker);
+                        }
+                    })(marker, i));
+
+                    map.fitBounds(bounds);
+                });
+            });
+
+            const listener = google.maps.event.addListener(map, "idle", function () {
+                if (map.getZoom() > 16) map.setZoom(16);
+                google.maps.event.removeListener(listener);
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPcn0V7X_HZkmfmEKcIwx9qSXpMRUyqAc&callback=initMap"></script>
+}

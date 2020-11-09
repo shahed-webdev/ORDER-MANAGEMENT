@@ -1,0 +1,62 @@
+﻿@model ORDER_MANAGEMENT.Data.RoutePlanMV
+@{Layout = null;}
+
+
+
+<div class="modal-dialog cascading-modal modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-plus-circle"></i> Add Route Plan</h4>
+            <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            @using (Ajax.BeginForm("CreateRoutePlan", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCreateSuccess" }, new { role = "form" }))
+            {
+                <div class="form-group">
+                    <label>Route Name</label>
+                    @Html.EditorFor(model => model.RouteName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.RouteName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>Plan Type</label>
+                    <select class="form-control" id="PlanType" name="PlanType">
+                        <option>Weekly</option>
+                        <option>Date to Date</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>End Date</label>
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @foreach (var item in Model.WeekDays)
+                    {
+                        <div class="form-check form-check-inline">
+                            <input type="checkbox" name="SelectedDays" value="@item.Value" class="form-check-input" id="@item.Text">
+                            <label class="form-check-label" for="@item.Value">@item.Text</label>
+                        </div>
+                    }
+                    @Html.ValidationMessageFor(model => model.SelectedDays, "", new { @class = "text-danger"})
+                </div>
+                <hr />
+                <div class="form-group">
+                    @Html.EditorFor(x => x.IsActive, new { htmlAttributes = new { @class = "custom-cb" }})
+                    <label class="form-check-label" for="IsActive">Is Active</label>
+                </div>
+
+                <button type="submit" class="btn btn-success mb-1 waves-effect waves-light">Create <i class="fas fa-check ml-1"></i></button>
+            }
+        </div>
+    </div>
+</div>
+
+

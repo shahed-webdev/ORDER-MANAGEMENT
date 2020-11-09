@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Order Management</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Material Design Bootstrap -->
+    @*<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet" />*@
+    <link href="~/MDB/css/mdb_core.css" rel="stylesheet" />
+    <!-- datatables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css" />
+    <!-- datatables responsive -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap4.min.css" />
+    <!-- Sidebar -->
+    <link href="~/CSS/SideNavbar.css" rel="stylesheet" />
+    <!-- Image croper -->
+    <link href="~/CSS/Croper.css" rel="stylesheet" />
+    <!-- custom -->
+    <link href="~/CSS/Custom.css" rel="stylesheet" />
+    @RenderSection("Styles", false)
+</head>
+<body>
+    <div id="sidedrawer" class="d-print-none z-depth-1">
+        @Html.Partial("_LoginPartial")
+        <ul id="manuItem">
+            @*<li>
+                    <a href="/Dashboard/Index">
+                        <strong> <span class="fas fa-tachometer-alt"></span> Dashboard</strong>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Dashboard/UserProfile">
+                        <strong> <span class="fas fa-user-circle"></span> Profile</strong>
+                    </a>
+                </li>
+                <li>
+                    <strong><span class="fas fa-cog"></span> Basic Setting <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Regions", "../Regions/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Areas", "../Areas/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Territories", "../Territories/Index")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-user-tie"></span> Sub-Admin <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Sign Up", "../Account/Register")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Sub-Admins", "../SubAdmin/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Page Access", "../SubAdmin/PageAccess")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-users"></span> Users <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Hierarchy", "../Hierarchy/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Users", "../Users/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("User Tracking", "../Users/UserTracking")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-shopping-cart"></span> Product <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Product Categories", "../ProductCategories/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Products", "../Products/Index")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-user-tie"></span> Distributor <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Distributor", "../Distributor/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Location Map", "../Distributor/MapLocation")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Change Discount", "../Distributor/ChangeDiscount")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Order List", "../Products/Order_List")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Order Return", "../Distributor/OrderReturn")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-store"></span> Outlet <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Outlets", "../Outlet/Index")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Location Map", "../Outlet/LocationMap")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Order List", "../Outlet/OrderList")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-route"></span> Route Plan <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Create Plan", "../RoutePlan/Assign")
+                        </li>
+                        <li>
+                            @Html.ActionLink("Route Plan", "../RoutePlan/Index")
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <strong><span class="fas fa-bullseye"></span> Target <i class="fas fa-caret-right"></i></strong>
+                    <ul class="sub-manu">
+                        <li>
+                            @Html.ActionLink("Targets", "../Targets/Index")
+                        </li>
+                    </ul>
+                </li>*@
+            <li></li>
+        </ul>
+    </div>
+
+    <div id="header">
+        <div class="bg-main z-depth-1">
+            <div class="container-fluid">
+                <div class="d-flex flex-sm-row flex-column">
+                    <a class="sidedrawer-toggle d-md-none js-show-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
+                    <a class="sidedrawer-toggle d-none d-md-inline-block js-hide-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
+
+                    @*<div class="logo-waper text-center text-sm-left">
+                            logo
+                        </div>*@
+                    <div class="InsInfo text-center text-sm-left">
+                        <a href="#" title="Go Deshboard" class="white-text" id="InstitutionName">ORDER MANAGEMENT</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main id="content-wrapper" style="min-height:750px">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer id="footer" class="page-footer mt-4 wow fadeIn bg-main p-0 d-print-none">
+        <div class="footer-copyright text-center py-3">
+            © @DateTime.Now.Year Copyright: <a href="#">ordermanagement.com</a>
+        </div>
+    </footer>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- MDB core JavaScript -->
+    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/js/mdb.min.js"></script>*@
+    <script type="text/javascript" src="/MDB/js/mdb_core.js"></script>
+    <!-- datatables -->
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+    <!-- datatables responsive -->
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <!-- Image croper -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.4/croppie.min.js"></script>
+    <!--notify js-->
+    <script src="/JS/notify.min.js"></script>
+    <!--moment js-->
+    <script src="/JS/Moment.js"></script>
+    <!--Sidebar-->
+    <script src="//cdn.muicss.com/mui-latest/js/mui.min.js"></script>
+    <script src="/JS/sideManuLink.js?v=1.1"></script>
+    <script src="/JS/Basic_Index.js"></script>
+
+
+    <!--scroll-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $(function () {
+            //User login Info
+            let url = "@Url.Action("GetUserLogedInInfo", "Basic")";
+            $.get(url, response => {
+                let data = JSON.parse(response);
+                if (!data) return;
+
+                if (data.Photo)
+                    $("#loginUserPhoto").attr("src", `data:image/png;base64,${data.Photo}`);
+
+                $("#loginUserName").html(`<strong class="p-0"><i class="fas fa-user"></i> ${data.Name}</strong>`);
+            });
+
+
+            //Back to top
+            $('body').append('<div id="toTop" class="btn btn-primary">TOP</div>');
+            $(window).scroll(function () {
+                if ($(this).scrollTop() != 0) {
+                    $('#toTop').fadeIn();
+                } else {
+                    $('#toTop').fadeOut();
+                }
+            });
+
+            $('#toTop').click(function () {
+                $("html, body").animate({ scrollTop: 0 }, 600);
+                return false;
+            });
+
+
+            // Animations initialization
+            new WOW().init();
+
+            //Nice Scroll
+            $("#sidedrawer").niceScroll({
+                cursorcolor: "#a4a4a4", // change cursor color in hex
+                cursorwidth: "7px", // cursor width in pixel (you can also write "5px")
+                cursorborder: "1px solid #a4a4a4", // css definition for cursor border
+                cursorborderradius: "3px", // border radius in pixel for cursor
+                emulatetouch: true // enable cursor-drag scrolling like touch devices in desktop computer
+            })
+
+            $("#sidedrawer").mouseover(function () {
+                $("#sidedrawer").getNiceScroll().resize();
+            });
+        });
+
+        //selectpicker error
+        if ($.fn.selectpicker)
+            $.fn.selectpicker.Constructor.BootstrapVersion = '4';
+    </script>
+</body>
+</html>

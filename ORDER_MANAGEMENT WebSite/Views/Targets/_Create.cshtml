@@ -1,0 +1,52 @@
+﻿@model ORDER_MANAGEMENT.Data.TargetVM
+
+@{
+    Layout = null;
+}
+
+
+<div class="modal-dialog cascading-modal" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-plus-circle"></i> Add Target</h4>
+            <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            @using (Ajax.BeginForm("Create", "Targets", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCreateSuccess" }, new { role = "form" }))
+            {
+                <div class="form-group">
+                    <label>Target Title</label>
+                    @Html.EditorFor(model => model.Target_Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Target_Title, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Start Date</label>
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Total Target Amount</label>
+                    @Html.EditorFor(model => model.Total_TargetAmount, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Total_TargetAmount, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="text-center mt-1-half">
+                    <button type="submit" class="btn btn-success mb-1 waves-effect waves-light">Create <i class="fas fa-check ml-1"></i></button>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+
+

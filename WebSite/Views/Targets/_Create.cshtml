@@ -1,0 +1,52 @@
+﻿@model ORDER_MANAGEMENT.Data.TargetVM
+
+@{
+    Layout = null;
+}
+
+
+<div class="modal-dialog modal-notify modal-success" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <p class="heading lead">Add Target</p>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            @using (Ajax.BeginForm("Create", "Targets", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCreateSuccess" }, new { role = "form" }))
+            {
+                <div class="form-group">
+                    <label>Target Title</label>
+                    @Html.EditorFor(model => model.Target_Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Target_Title, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Start Date</label>
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Total Target Amount</label>
+                    @Html.EditorFor(model => model.Total_TargetAmount, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Total_TargetAmount, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+
+

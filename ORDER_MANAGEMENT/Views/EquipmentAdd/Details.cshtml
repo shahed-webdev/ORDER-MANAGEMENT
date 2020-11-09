@@ -1,0 +1,205 @@
+﻿@using Microsoft.Ajax.Utilities
+@using ORDER_MANAGEMENT.Data
+@model ORDER_MANAGEMENT.Data.EquipmentDetails
+@{
+    ViewBag.Title = "Equipment Details";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles{
+    <style>
+        #outlet-info { display: none }
+        .list-group li strong { display: block }
+    </style>
+}
+
+<div class="m-md-3">
+    <h3>@Model.EquipmentName</h3>
+    <small class="text-muted mb-3 d-block">
+        <strong>@Model.Code</strong>,
+        <strong>Type:</strong> @Model.EquipmentTypeName
+        <strong>Size:</strong> @Model.Size
+    </small>
+
+    <div class="mb-4">
+        <input id="currentOutletId" type="hidden" value=" @Model.CurrentOutlet.OutletInfo.OutletID" />
+        <div class="card card-body mb-3">
+            <h4 class="mb-3 font-weight-bold">
+                <i class="fas fa-store"></i>
+                @Model.CurrentOutlet.OutletInfo.OutletName
+                <small class="text-muted font-small">
+                    <i class="fas fa-map-marker-alt"></i>
+                    @Model.CurrentOutlet.OutletInfo.TerritoryName
+                </small>
+            </h4>
+   
+            <ul class="list-group list-group-horizontal-lg text-center mb-2">
+                <li class="list-group-item flex-fill">
+                    <small>Value</small>
+                    <strong>@Model.CurrentOutlet.Value</strong>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <small>Location</small>
+                    <strong>@Model.CurrentOutlet.Location</strong>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <small>Installed Date</small>
+                    <strong>@Model.CurrentOutlet.InstalledDate.ToString("d MMM yyyy")</strong>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <small>In charge</small>
+                    <strong>@Model.CurrentOutlet.InChargeName</strong>
+                </li>
+                <li class="list-group-item flex-fill">
+                    <small>Status</small>
+                    @{
+                        var status = Model.CurrentOutlet.RentStatus;
+                        if (status == "Free")
+                        {<strong>@Model.CurrentOutlet.RentStatus</strong>
+                    }
+                    else
+                    {
+                        <strong>
+                            @Model.CurrentOutlet.RentStatus:
+                            @Model.CurrentOutlet.RentPrice/@Model.CurrentOutlet.RentInterval
+                        </strong>
+                    }
+                    }
+
+                </li>
+            </ul>
+        </div>
+        @{
+            if (Model.DistributionDetails.Count > 0)
+            {
+                <div class="card card-body mb-3">
+                    <strong>Previous Record</strong>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Outlet&nbsp;Name</th>
+                                    <th>Territory&nbsp;Name</th>
+                                    <th>Value</th>
+                                    <th>Location</th>
+                                    <th>Installed&nbsp;Date</th>
+                                    <th>In&nbsp;charge</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.DistributionDetails)
+                                {
+                                    <tr>
+                                        <td>@item.OutletInfo.OutletName</td>
+                                        <td>@item.OutletInfo.TerritoryName</td>
+                                        <td>@item.Value</td>
+                                        <td>@item.Location</td>
+                                        <td>@item.InstalledDate.ToString("d MMM yyyy")</td>
+                                        <td>@item.InChargeName</td>
+                                        <td>
+                                            @{
+                                                var rentStatus = item.RentStatus;
+                                                if (rentStatus == "Free")
+                                                {
+                                                    @item.RentStatus
+                                                }
+                                                else
+                                                {
+
+                                                    <span>
+                                                        @item.RentStatus:
+                                                        @item.RentPrice/ @item.RentInterval
+                                                    </span>
+
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+
+    @Html.Partial("_ChangeEquipment", new EquipmentDistributionVM());
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+    <script>
+        $(function () {
+            $('.datepicker').pickadate();
+
+            getElement("#OutletID").value = "";
+        });
+
+        $("input[name='RentStatus']").click(function () {
+            if ($(this).val() === "Rent") {
+                $("#RentPrice").removeAttr("disabled").val("");
+                $("#RentInterval").removeAttr("disabled").val("");
+            } else {
+                $("#RentPrice").attr("disabled", true);
+                $("#RentInterval").attr("disabled", true);
+            }
+        });
+
+        var currentOutletId = getElement("#currentOutletId").value;
+
+        //outlet autocomplete
+        $("#inputFind").typeahead({
+            minLength: 1,
+            displayText: function (item) {
+                return `${item.OutletName}: (${item.RegionName} > ${item.AreaName} > ${item.TerritoryName})`;
+            },
+            afterSelect: function (item) {
+                this.$element[0].value = ''
+            },
+            source: function (request, result) {
+                $.ajax({
+                    url: "/EquipmentAdd/FindOutlet",
+                    data: JSON.stringify({ 'prefix': request, currentOutletId: currentOutletId }),
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) { result(response); }
+                });
+            },
+            updater: function (item) {
+                showOutletInfo(item);
+                return item;
+            }
+        });
+
+        function showOutletInfo(data) {
+            getElement("#outlet-info").style.display = "block";
+
+            getElement("#title-header").textContent = `${data.AreaName} - ${data.RegionName} - ${data.TerritoryName}`;
+            getElement("#OutletID").value = data.OutletID;
+            getElement("#outletName").textContent = data.OutletName;
+            getElement("#proprietor").textContent = data.ProprietorName;
+            getElement("#phone").textContent = data.Phone;
+            getElement("#address").textContent = data.Address;
+        }
+
+        function getElement(selector) {
+            return document.querySelectorAll(selector)[0];
+        }
+
+        $("#btnSubmit").click(function (e) {
+            const outletId = getElement("#OutletID").value;
+
+            if (outletId === "") {
+                getElement("#inputFind").focus();
+                e.preventDefault();
+                return;
+            }
+        });
+    </script>
+}

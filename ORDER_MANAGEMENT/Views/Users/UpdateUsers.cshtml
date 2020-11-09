@@ -1,0 +1,255 @@
+﻿@model ORDER_MANAGEMENT.Data.UpdateUserVM
+
+@{
+    ViewBag.Title = "Update User";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+    </style>
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model=> Model.user.RegistrationID)
+
+  <div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="mb-4">Update: <small class="mb-3 text-muted">@Model.user.Registration.Name</small></h3>
+            
+
+            <div class="form-group">
+                <label>Name</label>
+                @Html.EditorFor(model => model.user.Registration.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.Name, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Father's Name</label>
+                @Html.EditorFor(model => model.user.Registration.FatherName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.FatherName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Mother's Name</label>
+                @Html.EditorFor(model => model.user.Registration.MotherName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.MotherName, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <label>Present Address</label>
+                @Html.EditorFor(model => model.user.Registration.PresentAddress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.PresentAddress, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Permanent Address</label>
+                @Html.EditorFor(model => model.user.Registration.PermanentAddress, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.PermanentAddress, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Blood Group</label>
+                @Html.EditorFor(model => model.user.Registration.BloodGroup, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.BloodGroup, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Personal Contact</label>
+                @Html.EditorFor(model => model.user.Registration.PersonalContact, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.PersonalContact, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Emergency Contact</label>
+                @Html.EditorFor(model => model.user.Registration.EmergencyContact, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.EmergencyContact, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Office Email</label>
+                @Html.EditorFor(model => model.user.Registration.OfficeEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.OfficeEmail, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Personal Email</label>
+                @Html.EditorFor(model => model.user.Registration.PersonalEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.user.Registration.PersonalEmail, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Hierarchy</label>
+                @Html.DropDownListFor(model => model.Rank, Model.Hierarchies, "[ HIERARCHY ]", new { @class = "form-control", id = "dlHierarchy", required = "required" })
+                @Html.ValidationMessageFor(model => model.Rank, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Reported To</label>
+                @Html.DropDownListFor(model => model.UpperRegistrationID, Model.UpperUsers, "[ Reported To ]", new { @class = "form-control", id = "dlUser" })
+                @Html.ValidationMessageFor(model => model.UpperRegistrationID, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Region</label>
+                @Html.ListBoxFor(model => model.RegionIDs, new MultiSelectList(Model.Regions, "Value", "Text", Model.RegionIDs), new { @class = "form-control select-picker", multiple = "multiple", id = "dlRegion", required = "required" })
+                @Html.ValidationMessageFor(model => model.RegionIDs, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Area</label>
+                @Html.ListBoxFor(model => model.AreaIDs, new MultiSelectList(Model.Areas, "Value", "Text", Model.AreaIDs), new { @class = "form-control select-picker", multiple = "multiple", id = "dlArea", required = "required" })
+                @Html.ValidationMessageFor(model => model.AreaIDs, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Territory</label>
+                @Html.ListBoxFor(model => model.TerritoryIDs, new MultiSelectList(Model.Territorys, "Value", "Text", Model.TerritoryIDs), new { @class = "form-control select-picker", multiple = "multiple", id = "dlTerritory", required = "required" })
+                @Html.ValidationMessageFor(model => model.TerritoryIDs, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Update" class="btn blue-gradient" />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
+
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+        </div>
+</div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/JS/bootstrap-select.js"></script>
+
+    <script>
+        //Hierarchy
+        $('#dlHierarchy').change(function () {
+            const rank = $(this).val();
+            const regId = $("#user_RegistrationID").val();
+            var userSelect = $('#dlUser');
+            const regionSelect = $('#dlRegion');
+            const areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
+
+            userSelect.empty();
+            regionSelect.empty();
+            areaSelect.empty();
+            territorySelect.empty();
+
+            $(".select-picker").selectpicker("refresh");
+
+            if (rank !== null) {
+                const url = "@Url.Action("Dll_user")";
+                $.get(url, { rank, regId }, function (users) {
+                    if (users != null && !jQuery.isEmptyObject(users)) {
+                        userSelect.append($('<option/>', { value: "", text: "[ SELECT USER ]" }));
+
+                        $.each(users, function (i, user) {
+                            userSelect.append($('<option/>', { value: user.RegistrationID, text: user.Name }));
+                        });
+                    };
+                });
+            }
+        });
+
+        //User
+        $('#dlUser').change(function () {
+            const registrationId = $(this).val();
+            var regionSelect = $('#dlRegion');
+            const areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
+
+            regionSelect.empty();
+            areaSelect.empty();
+            territorySelect.empty();
+
+            regionSelect.selectpicker("refresh");
+            areaSelect.selectpicker("refresh");
+            territorySelect.selectpicker("refresh");
+
+            if (registrationId !== null && registrationId !== '') {
+                const url = "@Url.Action("Dll_region")";
+                $.get(url, { registrationId }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, region) {
+                            regionSelect.append($('<option/>', { value: region.RegionID, text: region.RegionName}));
+                        });
+                        regionSelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+        //Region
+        $('#dlRegion').change(function () {
+            var ids = [];
+            const registrationId = $('#dlUser :selected').val();
+            var areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
+
+            areaSelect.empty();
+            territorySelect.empty();
+
+            areaSelect.selectpicker("refresh");
+            territorySelect.selectpicker("refresh");
+
+            $('#dlRegion :selected').each(function (i, selected) {
+                ids[i] = parseInt($(selected).val());
+            });
+
+            if (ids.length) {
+                const url = "@Url.Action("Dll_area")";
+                $.get(url, { registrationId, Ids: JSON.stringify(ids)}, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, area) {
+                            areaSelect.append($('<option/>', { value: area.AreaID, text: area.AreaName}));
+                        });
+
+                        areaSelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+        //Area
+        $('#dlArea').change(function () {
+            var ids = [];
+            const upperRegistrationId = $('#dlUser :selected').val();
+            const registrationId = $('#user_RegistrationID').val();
+            var territorySelect = $('#dlTerritory');
+
+            territorySelect.empty();
+            territorySelect.selectpicker("refresh");
+
+            $('#dlArea :selected').each(function (i, selected) {
+                ids[i] = parseInt($(selected).val());
+            });
+
+            if (ids.length) {
+                const url = "@Url.Action("Dll_territory")";
+                $.get(url, { upperRegistrationId, Ids: JSON.stringify(ids), registrationId}, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, territory) {
+                            territorySelect.append($('<option/>', { value: territory.TerritoryID, text: territory.TerritoryName }));
+                        });
+
+                        territorySelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+
+        $(function () {
+            $(".select-picker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+        })
+    </script>
+}
+
+

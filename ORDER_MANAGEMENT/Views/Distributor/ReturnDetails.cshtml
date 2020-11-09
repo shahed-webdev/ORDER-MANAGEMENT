@@ -1,0 +1,160 @@
+﻿@model ORDER_MANAGEMENT.Data.DistributorOrderReturnDetails
+@{
+    ViewBag.Title = "Approve Returned Product";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles{
+    <style>
+        #total-Area span { font-size: 1.1rem; font-weight: bold; margin-left: 28px; }
+    </style>
+}
+
+    <div class="m-3">
+        <div class="card">
+            <div class="card-body pb-0">
+                <h3 class="mb-3">Approve Returned Product</h3>
+
+                <ul class="list-group list-group-horizontal list-group-item-light mb-3">
+                    <li class="list-group-item"><strong>Receipt:</strong> #@Model.OrderInfo.DistributorOrder_SN</li>
+                    <li class="list-group-item"><strong>Name:</strong>  @Model.OrderInfo.DistributorName</li>
+                    <li class="list-group-item"><strong>Territory:</strong>  @Model.OrderInfo.TerritoryName</li>
+                    <li class="list-group-item"><strong>Order By:</strong>  @Model.OrderInfo.OrderBy_Name</li>
+                    <li class="list-group-item"><strong>Address:</strong>  @Model.OrderInfo.DistributorAddress</li>
+                </ul>
+
+                <table id="DataTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Code
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Order Quantity
+                            </th>
+                            <th>
+                                Unit Price
+                            </th>
+                            <th>
+                                Line Total
+                            </th>
+                            <th>
+                                Return Quantity
+                            </th>
+                            <th>
+                                Return Amount
+                            </th>
+                            <th style="width:50px">
+                                Approve
+                            </th>
+                            <th style="width:50px">
+                                Reject
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.OrderReturnItems.Count; i++)
+                        {
+                        <tr>
+                            <td>
+                                @Model.OrderReturnItems[i].ProductCode
+                            </td>
+                            <td>
+                                @Model.OrderReturnItems[i].ProductName
+                            </td>
+                            <td>
+                                @Model.OrderReturnItems[i].OrderQuantity
+                            </td>
+                            <td>
+                                @Model.OrderReturnItems[i].UnitPrice
+                            </td>
+                            <td>
+                                @(Model.OrderReturnItems[i].UnitPrice * Model.OrderReturnItems[i].OrderQuantity)
+                            </td>
+                            <td>
+                                <strong>@Model.OrderReturnItems[i].ReturnQuantity</strong>
+                            </td>
+                            <td>
+                                @Html.EditorFor(m => m.OrderReturnItems[i].ReturnAmount, new { htmlAttributes = new { @class = "form-control ReturnAmount", placeholder = "Return Amount", type = "number" } })
+                            </td>
+                            <td>
+                                <a class="Approve" data-id="@Model.OrderReturnItems[i].DistributorProductReturnID"><i class="fas fa-check-circle fa-2x text-success"></i></a>
+                            </td>
+                            <td>
+                                <a class="Reject" data-id="@Model.OrderReturnItems[i].DistributorProductReturnID"><i class="fas fa-times-circle fa-2x text-danger"></i></a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <div id="total-Area" class="d-flex justify-content-end align-items-center mb-2">
+                    <span>
+                        Discount: ৳@Model.OrderInfo.OrderDiscount
+                    </span>
+
+                    <span>
+                        Grand Total: ৳@Model.OrderInfo.OrderNetPrice
+                    </span>
+                </div>
+
+                <div class="form-group text-right">
+                    @Html.ActionLink("Back to List", "OrderReturn")
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            //Approve click
+            $('#DataTable').on("click", ".Approve", function () {
+                let url = "@Url.Action("ReturnApproved")",
+                    Id = $(this).data("id"),
+                    ReturnAmount = $(this).closest("tr").find(".ReturnAmount").val(),
+                    row = $(this).closest("tr");
+
+                if (isNaN(parseInt(ReturnAmount))) return;
+
+                let data = { Id, ReturnAmount };
+
+                $.get(url, data, response => {
+                    if (response !== 0) {
+                        row.fadeOut().remove();
+
+                        let rowCount = $('#DataTable >tbody >tr').length;
+                        if (rowCount < 1) {
+                            window.location.href = "/Distributor/OrderReturn"
+                        }
+                    }
+                });
+            });
+
+            //Reject click
+            $('#DataTable').on("click", ".Reject", function () {
+                let url = "@Url.Action("RejectReturn")",
+                    Id = $(this).data("id"),
+                    row = $(this).closest("tr");
+
+                $.get(url, { Id }, response => {
+                    if (response !== 0) {
+                        row.fadeOut().remove();
+
+                        let rowCount = $('#DataTable >tbody >tr').length;
+                        if (rowCount < 1) {
+                            window.location.href = "/Distributor/OrderReturn"
+                        }
+                    }
+                });
+            });
+        });  
+    </script>
+}

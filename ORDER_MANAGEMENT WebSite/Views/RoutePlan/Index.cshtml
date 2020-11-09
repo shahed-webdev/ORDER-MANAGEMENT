@@ -1,0 +1,113 @@
+﻿
+@{
+    ViewBag.Title = "Route Plan";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <style>
+        #DataTable th { background-color: #f4fbff; color: #333; }
+        #DataTable td{ vertical-align: middle;}
+
+        .thoutlet{color: #4285f4; }
+        .thdistributor { color: #007E33 }
+
+        .outlet .uType { margin: 6px 0; display: inline-block; color: #4285f4 !important; font-size: 14px; margin: 0 3px; padding: 3px 8px; font-weight: normal; border-radius: 5px; box-shadow: 0 2px 3px 0 rgba(0,0,0,.16),0 1px 5px 0 rgba(0,0,0,.18) !important; }
+        .distributor .uType { color: #007E33 !important; font-size: 14px; margin: 0 3px; padding: 3px 8px; font-weight: normal; border-radius: 5px; box-shadow: 0 2px 3px 0 rgba(0,0,0,.16),0 1px 5px 0 rgba(0,0,0,.18) !important; }
+        .days { background-color: #00C851; color: #fff; font-size: 14px; margin: 0 3px; padding: 3px 8px; font-weight: normal; border-radius: 5px; box-shadow: 0 2px 3px 0 rgba(0,0,0,.16),0 1px 5px 0 rgba(0,0,0,.18) !important; }
+        .no-days { background-color: #ddd; color: #777; font-size: 14px; margin: 0 3px; padding: 3px 8px; font-weight: normal; border-radius: 5px; box-shadow: 0 2px 3px 0 rgba(0,0,0,.16),0 1px 5px 0 rgba(0,0,0,.18) !important; }
+    </style>
+}
+
+<div class="m-3">
+    <h3 class="mb-3">Route Plan</h3>
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    User Name
+                </th>
+                <th>
+                    Route Name
+                </th>
+                <th>
+                    <span class="thoutlet">Outlet</span> &
+                    <span class="thdistributor">Distributor</span>
+                </th>
+                <th>
+                    Days
+                </th>
+            </tr>
+        </thead>
+        <tbody id="table-row"></tbody>
+    </table>
+</div>
+
+
+@section Scripts {
+<script>
+    $(function () {
+        let url = "@Url.Action("RouteUserList")",
+            table_row = $('#table-row');
+
+        table_row.children().remove();
+
+        $.get(url, response => {
+            if (response) {
+                console.log(response)
+
+                let trow = '';
+                $.each(response, (i, item) => {
+                    trow += `<tr>
+                        <td>${item.UserName}</td>
+                        <td>${routeDetails(item.RouteDetails)}</td>
+                        <td class="${item.points.length && item.points[i].Type === 'Outlet' ? 'outlet' : 'distributor'}">${pointsUser(item.points)}</td>
+                        <td>${daylist(item.RouteDetails.WeekDays)}</td>
+                      </tr>`;
+                });
+
+                table_row.append(trow).hide().fadeIn(1500);
+            } else {
+                table_row.append('<tr><td colspan="4">No Records</td></tr>');
+            }
+        });
+    });
+
+    function routeDetails(data) {
+        let html = '',
+            start = moment(data.StartDate).format('DD MMM YYYY'),
+            end = moment(data.EndDate).format('DD MMM YYYY');
+
+
+        html += `<strong>
+                   <i id="statusIco" class="${data.IsActive ? 'fas green-text' : 'far grey-text'} fa-check-circle"></i>
+                   ${data.RouteName} 
+                </strong>
+                <p class='m-0'>
+                 <strong>${data.PlanType}</strong>
+                 (${start} - ${end})
+                </p>`
+        return html;
+    };
+
+    function pointsUser(data) {
+        let html = '';
+        $.each(data, (i, p) => {
+            html += `<span title='${p.Type}' class='uType'>
+                    <i class="fas ${p.Type === 'Outlet' ? 'fa-store' :'fa-user-tie'}"></i>
+                    ${p.Name}</span>`
+        });
+
+        return html;
+    };
+
+    function daylist(data) {
+        let html = '';
+        $.each(data, (i, p) => {
+            html += `<span class="${p.Selected ? 'days' :'no-days'}">${p.Text}</span>`
+        });
+
+        return html;
+    }
+</script>
+}

@@ -1,0 +1,317 @@
+﻿
+@{
+    ViewBag.Title = "Route Plan";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles{
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+        .modal-dialog.cascading-modal { margin-top: 5%; }
+        .custom-cb { position: relative !important; opacity: 1 !important; }
+
+        #successNotify { display: none }
+
+        #PlanDetails { display: none; padding: 16px; text-align: center; margin: 15px 0; }
+        #PlanDetails h4 { margin-bottom: 5px; font-size: 18px; }
+        #PlanDetails p { margin-bottom: 0; color: #6c757d; font-size: 15px; }
+    </style>
+}
+
+
+<div class="container">
+    <div id="plan-wraper" class="card card-body">
+        <div class="row">
+            <div class="col justify-content-center align-self-center">
+                <h3>Route Plan</h3>
+            </div>
+            <div class="col text-right">
+                <a id="CreateClick" data-url="@Url.Action("CreateRoutePlan")" class="btn-floating blue-gradient" title="Add New" data-toggle="modal">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+
+        <div id="successNotify" class="alert alert-success">Assigned successfully!</div>
+
+        <div class="form-group">
+            <label>Route Plan Name</label>
+            <select id="dlRoutePlan" class="form-control"></select>
+        </div>
+
+        <section id="PlanDetails" class="z-depth-1">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6 col-lg-3">
+                    <h4>
+                        <i id="statusIco" class="fa-check-circle"></i>
+                        <span>Status</span>
+                    </h4>
+                    <p id="Status"></p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4>
+                        <i class="fas fa-route blue-text"></i>
+                        <span>Plan Type</span>
+                    </h4>
+                    <p id="PlanType"></p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4>
+                        <i class="fas fa-calendar-day purple-text"></i>
+                        <span>Days</span>
+                    </h4>
+                    <p id="Days"></p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4>
+                        <i class="fas fa-calendar-alt pink-text"></i>
+                        <span>Date</span>
+                    </h4>
+                    <p id="Date"></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="form-group">
+            <label>Users</label>
+            <select id="dlUser" class="form-control"></select>
+        </div>
+
+        <div class="form-group">
+            <div class="custom-control custom-radio custom-control-inline">
+                <input value="Distributor" type="radio" class="custom-control-input" id="1" name="typeRadio" checked>
+                <label class="custom-control-label" for="1">Distributor</label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+                <input value="Outlet" type="radio" class="custom-control-input" id="2" name="typeRadio">
+                <label class="custom-control-label" for="2">Outlet</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="labelName">Distributor</label>
+            <select id="distributorSelect" class="form-control selectpicker" multiple></select>
+        </div>
+
+        <div class="form-group">
+            <button id="btnAssign" class="btn blue-gradient">Assign</button>
+        </div>
+        <div id="errorContaier"></div>
+    </div>
+</div>
+
+<!-- Insert Modal -->
+<div class="modal fade" id="InsertModal" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.6/dist/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        $(function () {
+            bindDdl("@Url.Action("ddlRoutePlan")", "dlRoutePlan");
+            bindDdl("@Url.Action("ddlUnassignUserDdl")", "dlUser");
+
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+        });
+
+        //remove error
+        $("#plan-wraper .form-control").on("focus", function () {
+            $("#errorContaier").html('');
+        });
+
+
+        //Insert Modal
+        $("#CreateClick").on("click", function () {
+            $.get($(this).data("url"), function (data) {
+                $('#InsertModal').html(data).modal('show');
+            });
+        });
+
+        function OnCreateSuccess(data) {
+            if (data !== "success") {
+                $('#InsertModal').html(data);
+                return;
+            }
+
+            $('#InsertModal').html(data).modal('hide');
+            bindDdl("@Url.Action("ddlRoutePlan")", "dlRoutePlan");
+        }
+
+          //RoutePlan Change
+        $('#dlRoutePlan').change(function () {
+            let url = "@Url.Action("RouteDetails")",
+                Id = $(this).val(),
+                PlanType = $("#PlanType"),
+                Date = $("#Date"),
+                Days = $("#Days"),
+                Status = $("#Status"),
+                statusIco = $("#statusIco"),
+                PlanDetails = $("#PlanDetails");
+
+            if (Id) {
+                $.get(url, { Id }, res => {
+                    if (res) {
+                        PlanType.text(res.PlanType);
+                        Date.text(moment(res.StartDate).format('DD MMM YYYY') + " - " + moment(res.EndDate).format('DD MMM YYYY'));
+                        Days.text(res.SelectedDays);
+
+                        if (res.IsActive) {
+                            Status.text("Active");
+                            statusIco.addClass("fas green-text").removeClass("far grey-text");
+                        } else {
+                            Status.text("Inactive");
+                            statusIco.addClass("far grey-text").removeClass("fas green-text");
+                        }
+
+                        PlanDetails.hide().slideDown();
+                    };
+                });
+            } else {
+                PlanDetails.slideUp();
+            }
+        });
+
+         //type radio Change
+            $('input[type=radio][name=typeRadio]').change(function () {
+                let Id = parseInt($("#dlUser").find("option:selected").val()),
+                    select = $("#distributorSelect"),
+                    type = this.value,
+                    labelName = $("#labelName"),
+                    url;
+
+                if (type === 'Distributor') {
+                    url = "@Url.Action("DistributorDDL")"
+                    labelName.text("Distributor");
+                }
+
+                else {
+                    url = "@Url.Action("OutletDDL")"
+                    labelName.text("Outlet");
+                }
+
+            select.empty();
+
+
+            if (Id) {
+                $.get(url, { Id }, response => {
+                    if (response) {
+                        $.each(response, (i, item) => {
+                            select.append($('<option/>', { value: item.value, text: item.label }));
+                        });
+
+                        select.selectpicker("refresh");
+                    }
+                });
+            }
+        });
+        //User chane
+            $('#dlUser').change(function () {
+            let Id = $(this).val(),
+                select = $("#distributorSelect"),
+                type = $("input[name='typeRadio']:checked").val(),
+                url;
+
+            if (type ==='Distributor')
+                url = "@Url.Action("DistributorDDL")"
+            else
+                url = "@Url.Action("OutletDDL")"
+
+            select.empty();
+
+
+            if (Id) {
+                $.get(url, { Id }, response => {
+                    if (response) {
+                        $.each(response, (i, item) => {
+                            select.append($('<option/>', { value: item.value, text: item.label }));
+                        });
+
+                        select.selectpicker("refresh");
+                    }
+                });
+            }
+        });
+
+        //submit
+        $("#btnAssign").on("click", function () {
+            let data = {},
+                RegistrationID = parseInt($("#dlUser").find("option:selected").val()),
+                RouteID = parseInt($("#dlRoutePlan").find("option:selected").val()),
+                points = [],
+                error = [],
+                url,
+                Type = $("input[name='typeRadio']:checked").val(),
+                errorContaier = $("#errorContaier");
+
+            errorContaier.html('');
+
+            if (!RouteID) {
+                error.push({ message: "Select Route Plan!" });
+            }
+
+            if (!RegistrationID) {
+                error.push({ message: "Select User!" });
+            }
+
+            $('#distributorSelect :selected').each(function (i, selected) {
+                points.push({ ID: parseInt($(selected).val()), Type });
+            });
+
+            if (points.length < 1) {
+                error.push({ message: "Select Distributor!" });
+            }
+
+            data = { RouteID, RegistrationID, points };
+
+            if (error.length) {
+                let html = '<ul>';
+                $.each(error, (i, item) => {
+                    html += `<li class="text-danger">${item.message}</li>`
+                });
+                html += '</ui>'
+                errorContaier.html(html);
+                return;
+            }
+
+
+            if (Type === 'Distributor')
+                url = "@Url.Action("AssignDistributors")";
+            else
+                url = "@Url.Action("AssignOutlets")";
+
+            $.post(url, { data }, res => {
+                if (res !== 0) {
+                    $("#successNotify").slideDown();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 2000);
+                }
+            });
+        });
+
+        function bindDdl(url, selector) {
+            let select = $('#' + selector);
+
+            select.empty();
+
+            select.append($('<option/>', { value: '', text: "[ SELECT ]" }));
+
+            $.get(url, response => {
+                if (response) {
+                    $.each(response, (i, item) => {
+                        select.append($('<option/>', { value: item.value, text: item.label}));
+                    });
+                };
+            });
+        }
+    </script>
+}

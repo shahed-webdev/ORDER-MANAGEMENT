@@ -1,0 +1,87 @@
+﻿@model ORDER_MANAGEMENT.Data.TargetAssignVM
+
+@{
+    ViewBag.Title = "Target Assign";
+    Layout = "~/Views/Shared/_User_LayoutPage.cshtml";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="mb-3">Target Assign <small class="font-weight-light text-capitalize font-italic text-primary">Assignable: @Model.TargetReport.Assignable</small></h3>
+                @Html.Hidden("RegistrationID", Model.user.RegistrationID)
+                <input type="hidden" name="Is_New_Target" id="Is_New_Target" />
+
+                <ul class="list-group list-group-horizontal list-group-item-light mb-3">
+                    <li class="list-group-item">Name: @Model.user.Name</li>
+                    <li class="list-group-item">Designation: @Model.user.Designation</li>
+                    <li class="list-group-item">Joining Date: @Model.user.JoiningDate.ToString("d MMM yyyy")</li>
+                </ul>
+
+
+                <div class="form-group">
+                    <label>Target</label>
+                    @Html.DropDownListFor(model => model.TargetID, new SelectList(Model.Target_Ddl, "TargetID", "Target_Title"), "[ TARGET ]", new { @class = "form-control d-block" })
+                    @Html.ValidationMessageFor(model => model.TargetID, "", new { @class = "text-danger" })
+                </div>
+
+                <div id="Tinfo"></div>
+
+                <div class="form-group">
+                    <label>Target Amount</label>
+                    @Html.EditorFor(model => model.TargetAmount, new { htmlAttributes = new { @class = "form-control", min = 0 } })
+                    @Html.ValidationMessageFor(model => model.TargetAmount, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+
+                @Html.ActionLink("Back to List", "Index", "UserDashboard")
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $('#TargetID').change(function () {
+            var TargetID = $(this).val(),
+                RegistrationID = $('#RegistrationID').val(),
+                url = "@Url.Action("ddl_UserTargetAmount")",
+                info = '';
+
+            $("#TargetAmount").val('');
+            $("#Tinfo").html(null);
+
+            if (TargetID != null && TargetID != '') {
+                $.get(url, { TargetID, RegistrationID }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+
+                        $("#Is_New_Target").val(response.Is_New_Target);
+                        $("#TargetAmount").attr({ "max": response.Assignable });
+
+                        if (!response.Is_New_Target) {
+                            $("#TargetAmount").val(response.User_Prev_Target_Amount);
+                        }
+
+                        info += '<ul class="list-group list-group-horizontal mb-3 text-info">';
+                        info += '<li class="list-group-item">Target: ' + response.Target + '</li>';
+                        info += '<li class="list-group-item">Assinged: ' + response.Assinged + '</li>';
+                        info += '<li class="list-group-item">Achieved: ' + response.Achieved + '</li>';
+                        info += '<li class="list-group-item">Assignable: ' + response.Assignable + '</li>';
+                        info += '</ul>';
+
+                        $("#Tinfo").html(info).hide().fadeIn();
+                    };
+                });
+            }
+        });
+    </script>
+}

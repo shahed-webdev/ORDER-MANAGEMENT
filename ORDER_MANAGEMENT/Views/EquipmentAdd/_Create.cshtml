@@ -1,0 +1,49 @@
+﻿@model ORDER_MANAGEMENT.Data.Equipment
+
+@{
+    Layout = null;
+}
+
+
+<div class="modal-dialog cascading-modal" role="document">
+    <div class="modal-content">
+        <div class="modal-header blue-gradient white-text">
+            <h4><i class="fas fa-plus-circle"></i> Add Equipment</h4>
+            <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            @using (Ajax.BeginForm("Create", "EquipmentAdd", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnCreateSuccess" }, new { role = "form"}))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+               
+                <div class="form-group">
+                    <label>Select Type</label>
+                    @Html.DropDownList("EquipmentTypeID", null, "[ SELECT ]", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EquipmentTypeID, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>Equipment Name</label>
+                    @Html.EditorFor(model => model.EquipmentName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EquipmentName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>Code</label>
+                    @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label>Size</label>
+                    @Html.EditorFor(model => model.Size, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+                </div>
+                <div class="text-center mt-1-half">
+                    <button type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Create <i class="fas fa-check ml-1"></i></button>
+                </div>
+            }
+        </div>
+    </div>
+    </div>
+

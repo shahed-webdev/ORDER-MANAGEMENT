@@ -1,0 +1,148 @@
+﻿@model ORDER_MANAGEMENT.Data.DistributorOrderApproved
+@{
+    ViewBag.Title = "Approve Product";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles{
+    <style>
+        #total-Area span { font-size: 1.1rem; font-weight: bold; margin-left: 28px; }
+        #total-Area .form-control { width: auto !important; display: inline; }
+    </style>
+}
+
+<div class="m-3">
+    <div class="card">
+        <div class="card-body pb-0">
+            <h3 class="mb-3">Approve Product</h3>
+            @using (Html.BeginForm())
+            {
+                @Html.HiddenFor(m => Model.OrderInfo.DistributorID)
+                @Html.HiddenFor(m => Model.OrderInfo.DistributorOrderID)
+
+                <ul class="list-group list-group-horizontal list-group-item-light mb-3">
+                    <li class="list-group-item"><strong>Receipt:</strong> @Model.OrderInfo.DistributorOrder_SN</li>
+                    <li class="list-group-item"><strong>Name:</strong>  @Model.OrderInfo.DistributorName</li>
+                    <li class="list-group-item"><strong>Territory:</strong>  @Model.OrderInfo.TerritoryName</li>
+                    <li class="list-group-item"><strong>Order By:</strong>  @Model.OrderInfo.OrderBy_Name</li>
+                    <li class="list-group-item"><strong>Address:</strong>  @Model.OrderInfo.DistributorAddress</li>
+                </ul>
+
+                <table id="DataTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Code
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Quantity
+                            </th>
+                            <th>
+                                Unit Price
+                            </th>
+                            <th>
+                                Line Total
+                            </th>
+                            <th>
+                                Reason
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.OrderProducts.Count; i++)
+                        {
+                            @Html.HiddenFor(m => m.OrderProducts[i].DistributorOrderListID)
+                            @Html.HiddenFor(m => m.OrderProducts[i].ProductID)
+                            <tr>
+                                <td>
+
+                                    @Model.OrderProducts[i].ProductCode
+                                </td>
+                                <td>
+                                    @Model.OrderProducts[i].ProductName
+                                </td>
+                                <td>
+                                    @Html.HiddenFor(m => m.OrderProducts[i].OrderQuantity)
+                                    @Html.EditorFor(m => m.OrderProducts[i].ChangedQuantity, new { htmlAttributes = new { @class = "form-control ChangedQuantity", required = "", min = "0" } })
+                                </td>
+                                <td>
+                                    <span class="UnitPrice">
+                                        @Html.DisplayFor(m => m.OrderProducts[i].UnitPrice)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="LineTotal">
+                                        @(Model.OrderProducts[i].UnitPrice * Model.OrderProducts[i].OrderQuantity)
+                                    </span>
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.OrderProducts[i].Reason, new { htmlAttributes = new { @class = "form-control", placeholder = "Reason" } })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <div id="total-Area" class="d-flex justify-content-end align-items-center">
+                    <span>
+                        Total Price: ৳ <b id="TotalPrice">@Model.OrderInfo.OrderTotalPrice</b> 
+                        @Html.HiddenFor(m => Model.OrderInfo.OrderTotalPrice)
+                    </span>
+                    <span>
+                        Discount: @Html.EditorFor(m => m.OrderInfo.OrderDiscount, new { htmlAttributes = new { @class = "form-control", required = "", min = "0", type = "number" } })
+                    </span>
+                    <span>
+                        Grand Total: ৳<b id="GrandTotal">@Model.OrderInfo.OrderNetPrice</b>  
+                    </span>
+                    <input type="submit" value="Approve" class="btn btn-primary" />
+                </div>
+
+                <div class="form-group text-right">
+                    @Html.ActionLink("Back to List", "Order_List")
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#DataTable').on("keypress keyup change focus input paste", ".ChangedQuantity", function () {
+                let ChangedQuantity = parseFloat($(this).val() || 0),
+                    UnitPrice = parseFloat($(this).closest("tr").find(".UnitPrice").text()),
+                    LineTotal = $(this).closest("tr").find(".LineTotal"),
+                    Discount = parseFloat($("#OrderInfo_OrderDiscount").val()),
+                    GrandTotal = $("#GrandTotal"),
+                    TotalPrice = $("#TotalPrice"),
+                    hiddenTotalPrice = $("#OrderInfo_OrderTotalPrice");
+
+                LineTotal.text(ChangedQuantity * UnitPrice).hide().fadeIn(50);
+
+                let total = 0;
+                $('.LineTotal').each(function () {
+                    total += parseFloat($(this).text())
+                });
+
+                TotalPrice.text(total);
+                hiddenTotalPrice.val(total);
+
+                GrandTotal.text(parseFloat(TotalPrice.text()) - Discount);
+            });
+
+            //discount change
+            $('#OrderInfo_OrderDiscount').on('input change paste', function () {
+                let Discount = parseFloat($(this).val() || 0),
+                    GrandTotal = $("#GrandTotal"),
+                    TotalPrice = $("#TotalPrice");
+
+                GrandTotal.text(parseFloat(TotalPrice.text()) - Discount);
+            });
+        });
+    </script>
+}

@@ -1,0 +1,264 @@
+﻿
+@{
+    ViewBag.Title = "Tracking";
+    Layout = "~/Views/Shared/_User_LayoutPage.cshtml";
+}
+
+@section Styles{
+    <style>
+        #map { width: 100%; height: 500px; }
+
+        .marker-info { text-align: center; }
+        .marker-info h5 { margin-bottom: 8px; font-weight: bold; color: #575E62; }
+        .marker-info p { margin-bottom: 6px; color: #575E62; }
+
+        .approve-ico img { height: 70px; width: 70px; margin: auto; }
+    </style>
+}
+
+<h3 class="mb-3">Tracking</h3>
+
+<div class="card card-body">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <div class="md-form">
+                <input type="text" class="form-control datepicker" id="dateTextBox" placeholder="Enter Date" />
+                <input type="hidden" id="selectedDate" />
+            </div>
+        </div>
+        <div class="col-auto">
+            <button id="btnFind" type="submit" class="btn btn-primary mb-0">Find</button>
+        </div>
+    </div>
+
+    <div id="map"></div>
+</div>
+
+
+@section Scripts {
+    <script>
+    function formatDate(date) {
+            const monthNames = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct","Nov", "Dec"],
+                day = date.getDate(),
+                monthIndex = date.getMonth(),
+                year = date.getFullYear();
+
+            return `${day} ${monthNames[monthIndex]} ${year}`;
+        };
+
+    function GetURLParameter() {
+            var sPageURL = window.location.href;
+            var indexOfLastSlash = sPageURL.lastIndexOf("/");
+
+            if (indexOfLastSlash > 0 && sPageURL.length - 1 != indexOfLastSlash)
+                return sPageURL.substring(indexOfLastSlash + 1);
+            else
+                return 0;
+        }
+
+
+    $(function () {
+        $('.datepicker').pickadate({
+            format: 'dd mmm yyyy',
+            onSet: function (context) {
+                $("#selectedDate").val(new Date(context.select).toDateString());
+            }
+        }).val(formatDate(new Date()));
+    });
+
+    document.getElementById("btnFind").addEventListener('click', () => {
+        initMap();
+    });
+
+        function initMap() {
+            let args = {
+                zoom: 15,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false,
+                panControl: false,
+                styles: [{
+                    "stylers": [{
+                        "saturation": -100
+                    }, {
+                        "gamma": 1
+                    }]
+                }, {
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "poi.business",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "poi.business",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "poi.place_of_worship",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "poi.place_of_worship",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "road",
+                    "elementType": "geometry",
+                    "stylers": [{
+                        "visibility": "simplified"
+                    }]
+                }, {
+                    "featureType": "water",
+                    "stylers": [{
+                        "visibility": "on"
+                    }, {
+                        "saturation": 50
+                    }, {
+                        "gamma": 0
+                    }, {
+                        "hue": "#50a5d1"
+                    }]
+                }, {
+                    "featureType": "administrative.neighborhood",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                        "color": "#333333"
+                    }]
+                }, {
+                    "featureType": "road.local",
+                    "elementType": "labels.text",
+                    "stylers": [{
+                        "weight": 0.5
+                    }, {
+                        "color": "#333333"
+                    }]
+                }, {
+                    "featureType": "transit.station",
+                    "elementType": "labels.icon",
+                    "stylers": [{
+                        "gamma": 1
+                    }, {
+                        "saturation": 50
+                    }]
+                }]
+            };
+
+            let bounds = new google.maps.LatLngBounds(),
+                map = new google.maps.Map(document.getElementById("map"), args),
+                infoWindow = new google.maps.InfoWindow(),
+                marker;
+
+            map.setTilt(45);
+
+            let date = $("#selectedDate").val() || new Date().toDateString(),
+                RegID = GetURLParameter();
+
+            $.get("@Url.Action("TrackingByUser","Basic")", { RegID, date }, res => {
+                if (!res || res.length < 1) return;
+
+                const data = JSON.parse(res),
+                    infoWindowContent = [],
+                    polylineCoordinates = [],
+                    lat_lng = [];
+
+                $.each(data, (i, info) => {
+                    let imgSrc = info.Photo ? 'data:image/png;base64,' + info.Photo : '/CSS/image/DefaultImage.jpg';
+
+                    infoWindowContent.push(
+                        [`<div class="marker-info">
+                           <div class="approve-ico"><img class="rounded-circle img-thumbnail" src="${imgSrc}"/></div>
+                           <h5>${info.Name}</h5>
+                           <p>${info.Mobile}</p>
+                           <p>${info.Address}</p>
+                           <p>CheckIn Time: ${moment(info.CheckInTime).format("h:mm a")}</p>
+                        </div>`
+                        ]);
+
+                    const lat = parseFloat(info.Lat),
+                        lng = parseFloat(info.Lon),
+                        position = new google.maps.LatLng(lat, lng);
+
+                    lat_lng.push(position);
+                    bounds.extend(position);
+
+                    marker = new google.maps.Marker({
+                        position, map,
+                        //icon: `https://cdn.mapmarker.io/api/v1/font-awesome/v5/icon-stack?hoffset=-1&size=50&color=e6164d&icon=fa-store`,
+                        title: info.Name,
+                        label: info.Name.charAt(0).toUpperCase(),
+                        zIndex: 1,
+                        optimized: false
+                    });
+
+                    polylineCoordinates.push({ lat, lng });
+
+                    google.maps.event.addListener(marker, 'click', ((marker, i) => {
+                        return () => {
+                            infoWindow.setContent(infoWindowContent[i][0]);
+                            infoWindow.open(map, marker);
+                            map.setZoom(15);
+                            map.setCenter(marker.getPosition())
+                        }
+                    })(marker, i));
+                });
+
+
+                map.fitBounds(bounds);
+
+                //Initialize the Direction Service
+                let service = new google.maps.DirectionsService();
+
+                //Loop and Draw Path Route between the Points on MAP
+                for (let i = 0; i < lat_lng.length; i++) {
+                    if ((i + 1) < lat_lng.length) {
+                        let src = lat_lng[i],
+                            des = lat_lng[i + 1];
+
+                        service.route({
+                            origin: src,
+                            destination: des,
+                            travelMode: google.maps.DirectionsTravelMode.WALKING
+                        }, (result, status) => {
+                            if (status == google.maps.DirectionsStatus.OK) {
+                                //Initialize the Path Array
+                                let path = new google.maps.MVCArray();
+
+                                //Set the Path Stroke Color
+                                let poly = new google.maps.Polyline({
+                                    map,
+                                    geodesic: true,
+                                    strokeColor: '#FF0000',
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3
+                                });
+
+                                poly.setPath(path);
+
+                                for (let i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
+                                    path.push(result.routes[0].overview_path[i]);
+                                }
+                            }
+                        });
+                    }
+                }
+
+                let listener = google.maps.event.addListener(map, "idle", function () {
+                    if (map.getZoom() > 16) map.setZoom(16);
+                    google.maps.event.removeListener(listener);
+                });
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPcn0V7X_HZkmfmEKcIwx9qSXpMRUyqAc"></script>
+}
+

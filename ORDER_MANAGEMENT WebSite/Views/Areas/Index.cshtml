@@ -1,0 +1,135 @@
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.Area>
+
+@{
+    ViewBag.Title = "Area";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item {
+            color: #2b9000
+        }
+        .error-color td {
+            color: red;
+        }
+        .used-error {
+            font-size: 0.8rem;
+            color: red;
+        }
+    </style>
+}
+
+<div class="m-3">
+    <div class="row">
+        <div class="col justify-content-center align-self-center">
+            <h3>Areas <small id="ItemCount" class="badge badge-pill badge-success"></small></h3>
+        </div>
+        <div class="col text-right">
+            <a href="/Areas/Create" class="btn-floating btn-success" title="Add New">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+
+    <div style="width:300px">
+        <div class="form-group">
+            <label>Select Region</label>
+            @Html.DropDownList("RegionID", null, htmlAttributes: new { @class = "form-control selectpicker", multiple = "multiple" })
+        </div>
+    </div>
+
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Area Name
+                </th>
+                <th style="width:50px">
+                    Edit
+                </th>
+                <th style="width:50px">
+                    Delete
+                </th>
+            </tr>
+        </thead>
+        <tbody id="table_row">
+            <tr><td colspan="3">No Data</td></tr>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+
+    <script>
+        $(function () {
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size:10
+            });
+        });
+
+        //Delete click
+        $("#DataTable").on("click", ".delete", function (evt) {
+            evt.preventDefault();
+            var row = $(this).closest("tr");
+            var delete_att = $(this);
+            var url = $(this).attr('href');
+
+            row.removeClass("error-color");
+            if (url == null) return;
+
+            if (confirm("Are you sure you want to delete?")) {
+                $.post(url, function (response) {
+                    if (response === '0') {
+                        row.addClass("error-color");
+                        delete_att.removeClass("delete").removeAttr("href");
+                        return;
+                    }
+                    row.hide();
+                });
+            }
+        });
+
+        //Region Change
+        $('#RegionID').change(function () {
+            var Ids = [],
+                url = "@Url.Action("GetAreaTable")",
+                ItemCount = $("#ItemCount"),
+                row = $('#table_row');
+
+            ItemCount.text(null);
+            row.children().remove();
+
+            $('#RegionID :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids != null && Ids != '') {
+                $.get(url, { Ids: JSON.stringify(Ids) }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        ItemCount.text(response.length).hide().fadeIn(1500);
+                        var trow = '';
+                        $.each(response, function (i, item) {
+                            trow += '<tr><td>' + item.AreaName + '</td>';
+                            trow += '<td><a class="fas fa-edit" href="/Areas/Edit/' + item.AreaID + '"></a></td>';
+                            trow += '<td><a class="delete fas fa-trash-alt" href="/Areas/Delete/' + item.AreaID + '"></a></td></tr>';
+                        });
+
+                        row.append(trow).hide().fadeIn(1500);
+                    };
+                });
+            } else {
+                row.append('<tr><td colspan="3">No Data</td></tr>');
+            }
+        });
+    </script>
+}

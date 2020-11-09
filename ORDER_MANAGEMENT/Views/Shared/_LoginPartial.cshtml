@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="manu-top-wraper">
+            <img id="loginUserPhoto" class="rounded-circle img-thumbnail" src="~/CSS/image/DefaultImage.jpg" style="height:100px; width:100px" />
+
+            <ul class="p-0 m-0">
+                <li class="nav-item" id="loginUserName"></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-decoration-none p-0" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @User.Identity.GetUserName()
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink">
+                        @if (Roles.IsUserInRole(User.Identity.Name, "User"))
+                        {
+                            <a class="dropdown-item" href="/UserDashboard/Index">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="dropdown-item" href="/Dashboard/Index">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a>
+                        }
+
+                        <a class="dropdown-item" href="/Manage/ChangePassword">
+                            <i class="fas fa-lock"></i>
+                            Change Password
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <hr />
+    }
+}
