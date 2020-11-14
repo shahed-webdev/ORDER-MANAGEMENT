@@ -8,6 +8,7 @@ namespace ORDER_MANAGEMENT.Data
         public Region()
         {
             Areas = new HashSet<Area>();
+            Depots = new HashSet<Depot>();
         }
 
         public int RegionID { get; set; }
@@ -17,5 +18,6 @@ namespace ORDER_MANAGEMENT.Data
         [Unique(ErrorMessage = "Region Name already exist !!", TargetModelType = typeof(Region), TargetPropertyName = "RegionName")]
         public string RegionName { get; set; }
         public virtual ICollection<Area> Areas { get; set; }
+        public virtual ICollection<Depot> Depots { get; set; }
     }
 }

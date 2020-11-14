@@ -11,6 +11,7 @@ namespace ORDER_MANAGEMENT.Data
             _context = context;
 
             Areas = new AreaRepository(_context);
+            Depots = new DepotRepository(_context);
             Equipments = new EquipmentRepository(_context);
             EquipmentTypes = new EquipmentTypeRepository(_context);
             EquipmentDistributions = new EquipmentDistributionRepository(_context);
@@ -46,7 +47,8 @@ namespace ORDER_MANAGEMENT.Data
             UserRoutes = new UserRouteRepository(_context);
         }
 
-        public IAreaRepository Areas { get; private set; }
+        public IAreaRepository Areas { get; }
+        public IDepotRepository Depots { get; }
         public IEquipmentRepository Equipments { get; }
         public IEquipmentTypeRepository EquipmentTypes { get; }
         public IEquipmentDistributionRepository EquipmentDistributions { get; }

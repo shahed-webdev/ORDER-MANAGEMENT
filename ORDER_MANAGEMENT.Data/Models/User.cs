@@ -27,6 +27,7 @@ namespace ORDER_MANAGEMENT.Data
         public virtual Route Route { get; set; }
         public virtual Registration Registration { get; set; }
         public virtual Registration Upper_Registration { get; set; }
+        public virtual Organization_hierarchy Organization_hierarchy { get; set; }
         public virtual ICollection<TargetAssign> TargetAssigns { get; set; }
         public virtual ICollection<TargetAssign> TargetAssigns_To { get; set; }
         public virtual ICollection<User_Territory> user_Territories { get; set; }
@@ -34,6 +35,5 @@ namespace ORDER_MANAGEMENT.Data
         public virtual ICollection<UserTrackingByDistributor> UserTrackingByDistributors { get; set; }
         public virtual ICollection<UserTrackingByOutlet> UserTrackingByOutlets { get; set; }
         public virtual ICollection<UserRoute> UserRoutes { get; set; }
-        public virtual Organization_hierarchy Organization_hierarchy { get; set; }
     }
 }

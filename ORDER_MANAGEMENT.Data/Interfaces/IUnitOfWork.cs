@@ -6,6 +6,7 @@ namespace ORDER_MANAGEMENT.Data
     public interface IUnitOfWork : IDisposable
     {
         IAreaRepository Areas { get; }
+        IDepotRepository Depots { get; }
         IEquipmentRepository Equipments { get; }
         IEquipmentTypeRepository EquipmentTypes { get; }
         IEquipmentDistributionRepository EquipmentDistributions { get; }

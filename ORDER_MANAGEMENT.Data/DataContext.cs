@@ -14,6 +14,7 @@ namespace ORDER_MANAGEMENT.Data
         public virtual DbSet<Area> Areas { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<ChangeLog> ChangeLogs { get; set; }
+        public virtual DbSet<Depot> Depots { get; set; }
         public virtual DbSet<Equipment> Equipments { get; set; }
         public virtual DbSet<EquipmentType> EquipmentTypes { get; set; }
         public virtual DbSet<EquipmentDistribution> EquipmentDistributions { get; set; }
@@ -63,6 +64,7 @@ namespace ORDER_MANAGEMENT.Data
             modelBuilder.Configurations.Add(new AreaConfiguration());
             modelBuilder.Configurations.Add(new AspNetRolesConfiguration());
             modelBuilder.Configurations.Add(new ChangeLogConfiguration());
+            modelBuilder.Configurations.Add(new DepotConfiguration());
             modelBuilder.Configurations.Add(new EquipmentConfiguration());
             modelBuilder.Configurations.Add(new EquipmentTypeConfiguration());
             modelBuilder.Configurations.Add(new EquipmentDistributionConfiguration());
