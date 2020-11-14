@@ -14,6 +14,7 @@ namespace ORDER_MANAGEMENT.Data
             this.UserTrackingByDistributors = new HashSet<UserTrackingByDistributor>();
             this.UserTrackingByOutlets = new HashSet<UserTrackingByOutlet>();
             this.UserRoutes = new HashSet<UserRoute>();
+            this.Depots = new HashSet<Depot>();
 
         }
         public int RegistrationID { get; set; }
@@ -35,5 +36,6 @@ namespace ORDER_MANAGEMENT.Data
         public virtual ICollection<UserTrackingByDistributor> UserTrackingByDistributors { get; set; }
         public virtual ICollection<UserTrackingByOutlet> UserTrackingByOutlets { get; set; }
         public virtual ICollection<UserRoute> UserRoutes { get; set; }
+        public virtual ICollection<Depot> Depots { get; set; }
     }
 }

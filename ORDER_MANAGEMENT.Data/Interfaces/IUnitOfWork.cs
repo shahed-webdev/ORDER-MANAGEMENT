@@ -7,6 +7,10 @@ namespace ORDER_MANAGEMENT.Data
     {
         IAreaRepository Areas { get; }
         IDepotRepository Depots { get; }
+        IDepotProductDamageRepository DepotProductDamages { get; }
+        IDepotProductReturnRepository DepotProductReturns { get; }
+        IDepotProductTransferRepository DepotProductTransfers { get; }
+        IDepotStockRepository DepotStocks { get; }
         IEquipmentRepository Equipments { get; }
         IEquipmentTypeRepository EquipmentTypes { get; }
         IEquipmentDistributionRepository EquipmentDistributions { get; }

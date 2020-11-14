@@ -12,6 +12,10 @@ namespace ORDER_MANAGEMENT.Data
 
             Areas = new AreaRepository(_context);
             Depots = new DepotRepository(_context);
+            DepotStocks = new DepotStockRepository(_context);
+            DepotProductDamages = new DepotProductDamageRepository(_context);
+            DepotProductReturns = new DepotProductReturnRepository(_context);
+            DepotProductTransfers = new DepotProductTransferRepository(_context);
             Equipments = new EquipmentRepository(_context);
             EquipmentTypes = new EquipmentTypeRepository(_context);
             EquipmentDistributions = new EquipmentDistributionRepository(_context);
@@ -49,6 +53,10 @@ namespace ORDER_MANAGEMENT.Data
 
         public IAreaRepository Areas { get; }
         public IDepotRepository Depots { get; }
+        public IDepotProductDamageRepository DepotProductDamages { get; }
+        public IDepotProductReturnRepository DepotProductReturns { get; }
+        public IDepotProductTransferRepository DepotProductTransfers { get; }
+        public IDepotStockRepository DepotStocks { get; }
         public IEquipmentRepository Equipments { get; }
         public IEquipmentTypeRepository EquipmentTypes { get; }
         public IEquipmentDistributionRepository EquipmentDistributions { get; }
