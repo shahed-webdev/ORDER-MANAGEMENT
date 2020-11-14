@@ -17,8 +17,8 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: Depot
         public ActionResult Depot()
         {
-            //var model = _db.Depots.GetAll();
-            return View();
+            var model = _db.Depots.GetAll();
+            return View(model);
         }
 
         // GET: Create
