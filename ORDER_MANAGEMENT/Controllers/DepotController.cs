@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using ORDER_MANAGEMENT.Data;
 
 namespace ORDER_MANAGEMENT.Controllers
 {
+    [Authorize(Roles = "Admin, Depot")]
     public class DepotController : Controller
     {
         private readonly IUnitOfWork _db;
@@ -19,6 +17,7 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: Depot
         public ActionResult Depot()
         {
+            //var model = _db.Depots.GetAll();
             return View();
         }
 
@@ -27,7 +26,7 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             using (var db = new DataContext())
             {
-                ViewBag.RegionID = db.Organization_hierarchy.Where(h => h.Rank > 1).Select(n => new SelectListItem { Value = n.Rank.ToString(), Text = n.HierarchyName }).ToList();
+                ViewBag.Hierarchy = db.Organization_hierarchy.Where(h => h.Rank > 1).Select(n => new SelectListItem { Value = n.Rank.ToString(), Text = n.HierarchyName }).ToList();
             }
             return View();
         }
@@ -36,7 +35,7 @@ namespace ORDER_MANAGEMENT.Controllers
         [HttpPost]
         public ActionResult Create(Depot model)
         {
-            ViewBag.RegionID = new SelectList(_db.Regions.GetDllRegion(), "RegionID", "RegionName", model.RegionID);
+            ViewBag.Hierarchy = new SelectList(_db.Regions.GetDllRegion(), "RegionID", "RegionName", model.RegionID);
 
             var exist = _db.Depots.Any(n => n.DepotName == model.DepotName);
             if (exist) ModelState.AddModelError("DepotName", "Depot Name already exist!");

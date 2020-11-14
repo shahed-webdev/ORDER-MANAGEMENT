@@ -1,8 +1,24 @@
-﻿
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.Depot>  
 @{
     ViewBag.Title = "Depot";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-<h2>Depot</h2>
+<div class="container">
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th>Depot Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @*@foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DepotName</td>
+            </tr>
+        }*@
+        </tbody>
+    </table>
+</div>
 

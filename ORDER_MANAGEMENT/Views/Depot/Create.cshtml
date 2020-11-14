@@ -6,24 +6,77 @@
 
 
 <div class="container">
-    <form action="Create">
-        <div class="form-group">
-            <label>Depot Name</label>
-            <input type="text" name="DepotName" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Hierarchy</label>
-            @Html.DropDownListFor(model => model.Rank, Model.Hierarchies, "[ SELECT HIERARCHY ]", new { @class = "form-control", id = "dlHierarchy" })
-            @Html.ValidationMessageFor(model => model.Rank, "", new { @class = "text-danger" })
-        </div>
-        <div class="form-group">
-            <label>User</label>
-            <select id="dlUser" name="UpperRegistrationID" class="form-control" required></select>
-        </div>
-        <div class="form-group">
-            <label>Region</label>
-            <select id="dlRegion" name="RegionID" class="form-control" required></select>
-        </div>
-    </form>
+    <div class="card card-body">
+        <h3 class="mb-3">Create Depot</h3>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label>Depot Name</label>
+                <input type="text" name="DepotName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Hierarchy</label>
+                @Html.DropDownList("Hierarchy", null, "[ SELECT HIERARCHY ]", new { @class = "form-control", id = "dlHierarchy" })
+            </div>
+            <div class="form-group">
+                <label>User</label>
+                <select id="dlUser" name="InchargeRegistrationId" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+                <label>Region</label>
+                <select id="dlRegion" name="RegionID" class="form-control" required></select>
+            </div>
+
+            <input type="submit" value="Submit" class="btn blue-gradient mb-1 waves-effect waves-light" />
+        }
+    </div>   
 </div>
 
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        //Hierarchy
+        $('#dlHierarchy').change(function () {
+            const rank = $(this).val();
+            var userSelect = $('#dlUser');
+            const regionSelect = $('#dlRegion');
+
+            userSelect.empty();
+            regionSelect.empty();
+
+            if (rank) {
+                const url = "/Users/Dll_user";
+                $.get(url, {rank}, function (users) {
+                    if (users != null && !jQuery.isEmptyObject(users)) {
+                        userSelect.append($('<option/>', { value: "", text: "[ SELECT USER ]"}));
+
+                        $.each(users, function (i, user) {
+                            userSelect.append($('<option/>', { value: user.RegistrationID, text: user.Name}));
+                        });
+                    };
+                });
+            }
+        });
+
+        //User
+        $('#dlUser').change(function () {
+            const id = $(this).val();
+            var regionSelect = $('#dlRegion');
+            regionSelect.empty();
+
+            if (id) {
+                const url = "/Users/Dll_region";
+                $.get(url, { RegistrationID:id }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, region) {
+                            regionSelect.append($('<option/>', { value: region.RegionID, text: region.RegionName}));
+                        });
+                    };
+                });
+            }
+        });
+    </script>
+}
