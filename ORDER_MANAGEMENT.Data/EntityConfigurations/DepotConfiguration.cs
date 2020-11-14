@@ -18,6 +18,10 @@ namespace ORDER_MANAGEMENT.Data
                 .WithMany(r => r.Depots)
                 .HasForeignKey(a => a.RegionID);
 
+            HasRequired(a => a.User)
+                .WithMany(r => r.Depots)
+                .HasForeignKey(a => a.InchargeRegistrationId);
+
         }
     }
 }
