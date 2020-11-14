@@ -1,0 +1,29 @@
+﻿@model ORDER_MANAGEMENT.Data.Depot
+@{
+    ViewBag.Title = "Create Depot";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+
+<div class="container">
+    <form action="Create">
+        <div class="form-group">
+            <label>Depot Name</label>
+            <input type="text" name="DepotName" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Hierarchy</label>
+            @Html.DropDownListFor(model => model.Rank, Model.Hierarchies, "[ SELECT HIERARCHY ]", new { @class = "form-control", id = "dlHierarchy" })
+            @Html.ValidationMessageFor(model => model.Rank, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            <label>User</label>
+            <select id="dlUser" name="UpperRegistrationID" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+            <label>Region</label>
+            <select id="dlRegion" name="RegionID" class="form-control" required></select>
+        </div>
+    </form>
+</div>
+
