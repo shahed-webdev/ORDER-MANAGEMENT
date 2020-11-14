@@ -8,10 +8,8 @@
 @section Styles {
     <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
     <style>
-        .selected .dropdown-item {
-            color: #2b9000
-        }
-    </style>
+        .selected .dropdown-item { color: #2b9000 }
+    </style>   
 }
 
 
@@ -133,12 +131,11 @@
     <script>
         //Hierarchy
         $('#dlHierarchy').change(function () {
-            var rank = $(this).val();
+            const rank = $(this).val();
             var userSelect = $('#dlUser');
-            var regionSelect = $('#dlRegion');
-            var areaSelect = $('#dlArea');
-            var territorySelect = $('#dlTerritory');
-            var url = "@Url.Action("Dll_user")";
+            const regionSelect = $('#dlRegion');
+            const areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
 
             userSelect.empty();
             regionSelect.empty();
@@ -147,7 +144,8 @@
 
             $(".selectpicker").selectpicker("refresh");
 
-            if (rank != null && rank != '') {
+            if (rank != null && rank !== '') {
+                const url = "@Url.Action("Dll_user")";
                 $.get(url, {rank}, function (users) {
                     if (users != null && !jQuery.isEmptyObject(users)) {
                         userSelect.append($('<option/>', { value: "", text: "[ SELECT USER ]"}));
@@ -162,11 +160,10 @@
 
         //User
         $('#dlUser').change(function () {
-            var RegistrationID = $(this).val();
+            const RegistrationID = $(this).val();
             var regionSelect = $('#dlRegion');
-            var areaSelect = $('#dlArea');
-            var territorySelect = $('#dlTerritory');
-            var url = "@Url.Action("Dll_region")";
+            const areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
 
             regionSelect.empty();
             areaSelect.empty();
@@ -176,7 +173,8 @@
             areaSelect.selectpicker("refresh");
             territorySelect.selectpicker("refresh");
 
-            if (RegistrationID != null && RegistrationID != '') {
+            if (RegistrationID != null && RegistrationID !== '') {
+                const url = "@Url.Action("Dll_region")";
                 $.get(url, { RegistrationID }, function (response) {
                     if (response != null && !jQuery.isEmptyObject(response)) {
                         $.each(response, function (i, region) {
@@ -192,10 +190,9 @@
         //Region
         $('#dlRegion').change(function () {
             var Ids = [];
-            var RegistrationID = $('#dlUser :selected').val();
+            const RegistrationID = $('#dlUser :selected').val();
             var areaSelect = $('#dlArea');
-            var territorySelect = $('#dlTerritory');
-            var url = "@Url.Action("Dll_area")";
+            const territorySelect = $('#dlTerritory');
 
             areaSelect.empty();
             territorySelect.empty();
@@ -206,7 +203,8 @@
                 Ids[i] = parseInt($(selected).val());
             });
 
-            if (Ids != null && Ids != '') {
+            if (Ids.length) {
+                const url = "@Url.Action("Dll_area")";
                 $.get(url, { RegistrationID, Ids: JSON.stringify(Ids)}, function (response) {
                     if (response != null && !jQuery.isEmptyObject(response)) {
                         $.each(response, function (i, area) {
@@ -222,9 +220,8 @@
         //Area
         $('#dlArea').change(function () {
             var Ids = [];
-            var UpperRegistrationID = $('#dlUser :selected').val();
+            const UpperRegistrationID = $('#dlUser :selected').val();
             var territorySelect = $('#dlTerritory');
-            var url = "@Url.Action("Dll_territory")";
 
             territorySelect.empty();
             territorySelect.selectpicker("refresh");
@@ -233,7 +230,8 @@
                 Ids[i] = parseInt($(selected).val());
             });
 
-            if (Ids != null && Ids != '') {
+            if (Ids.length) {
+                const url = "@Url.Action("Dll_territory")";
                 $.get(url, { UpperRegistrationID, Ids: JSON.stringify(Ids) }, function (response) {
                     if (response != null && !jQuery.isEmptyObject(response)) {
                         $.each(response, function (i, territory) {
