@@ -39,6 +39,7 @@
                 <th>Size</th>
                 <th>MRP</th>
                 <th>Stock</th>
+                <th>Return</th>
             </tr>
         </thead>
     </table>
@@ -58,14 +59,18 @@
             <div class="modal-body">
                 <form id="formAssign">
                     <div class="form-group">
-                        <label>Depot</label>
-                        <input type="hidden" id="regionId" />
-                        <input type="hidden" id="distributorId" />
-                        <select id="dlDepot" class="form-control" required></select>
+                        <div class="text-center mb-2">
+                            <strong id="showProductName"></strong>
+                            <span id="show-quantity" class="badge badge-pill badge-success"></span>
+                        </div>
+
+                        <input type="hidden" id="regionId"/>
+                        <input type="hidden" id="distributorId"/>
+                        <input id="inputReturnQuantity" placeholder="Return Quantity" type="number" class="form-control" min="0"/>
                     </div>
 
                     <div class="text-center mt-1-half">
-                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Assign <i class="fas fa-check ml-1"></i></button>
+                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Return <i class="fas fa-check ml-1"></i></button>
                     </div>
                 </form>
             </div>
@@ -122,6 +127,20 @@
             });
         });
 
+        //show Transfer modal
+        $('#DataTable').on("click", ".btn-return", function(evt) {
+            evt.preventDefault();
+
+            $('#inputReturnQuantity').attr("max", $(this).attr("data-value"));
+
+            $('#returnModal').modal('show');
+            $("#inputReturnQuantity").attr("max", $(this).attr("data-value"));
+            $("#depotId").val($(this).attr("data-id"));
+
+            $("#showProductName").text($(this).attr("data-name"));
+            $("#show-quantity").text($(this).attr("data-value"));
+        });
+
 
         var dataTable = {
             table: null,
@@ -131,7 +150,6 @@
                 dataTable.table = $("#DataTable").DataTable({
                     processing: true,
                     serverSide: true,
-                    responsive: true,
                     ajax: {
                         url: "/Depot/GetCategoryProduct",
                         type: "POST",
@@ -147,7 +165,11 @@
                             { data: "SKU" },
                             { data: "Size" },
                             { data: "MRP"},
-                            { data: "Quantity" }
+                            { data: "Quantity" },
+                            { data: "Quantity", "render": function(data, type, row, meta) {
+                                    return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="btn-return blue-text">Return</a>`;
+                                }
+                            },
                         ],
                     columnDefs: [
                         //{ 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },

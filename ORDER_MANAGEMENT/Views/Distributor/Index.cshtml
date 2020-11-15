@@ -33,9 +33,9 @@
                         <td>@item.DueRangeLimit</td>
                         <td>
                             @{
-                                if (item.IsApproved)
+                                if (item.DepotName != "")
                                 {
-                                    <span></span>
+                                    <span>@item.DepotName</span>
                                 }
                                 else
                                 {
@@ -141,7 +141,7 @@
                 data: body,
                 success: function (response) {
                     //$('#assignModal').modal('hide');
-                    location.read();
+                    location.reload();
                 },
                 error: function(err) {
                     console.log(err);

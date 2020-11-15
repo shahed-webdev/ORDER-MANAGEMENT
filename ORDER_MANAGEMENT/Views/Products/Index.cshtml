@@ -264,7 +264,7 @@
                 url: "/Products/TransferToDepot",
                 type: "POST",
                 data: body,
-                success: function (response) {
+                success: function(response) {
                     console.log(response);
                     $('#transferModal').modal('hide');
                     dataTable.getData();
@@ -299,8 +299,9 @@
                         { data: "MRP" },
                         { data: "Quantity", "render": function(data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
                         { data: "Quantity", "render": function(data, type, row, meta) {
-                            return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text">Transfer</a>`;
-                        } },
+                                return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text">Transfer</a>`;
+                            }
+                        },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Edit?id=${data}" class="edit"><i class="fas fa-edit"></i></a>`; } },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }
                     ],
