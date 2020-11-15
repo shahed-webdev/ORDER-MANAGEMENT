@@ -43,6 +43,7 @@ namespace ORDER_MANAGEMENT.Data
             };
             Context.DepotProductTransfers.Add(depotTransfer);
 
+            product.Quantity -= model.Quantity;
             Context.Entry(product).State = EntityState.Modified;
 
         }

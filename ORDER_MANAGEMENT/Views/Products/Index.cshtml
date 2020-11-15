@@ -100,6 +100,7 @@
                         </div>
                         <div class="form-group">
                             <label>Depot</label>
+                            <input type="hidden" id="depotId"/>
                             <select id="dlDepot" class="form-control" required></select>
                         </div>
                         <div class="form-group">
@@ -197,8 +198,8 @@
 
                 $('#transferModal').modal('show');
                 $("#showProductName2").text($(this).attr("data-name"));
-                $("#show-quantity2").text($(this).text());
-                $("#btnTransfer").attr("data-pid", $(this).attr("data-id"));
+                $("#show-quantity2").text($(this).attr("data-value"));
+                $("#depotId").val($(this).attr("data-id"));
             });
 
             //show quantity modal
@@ -253,8 +254,25 @@
         formTransfer.addEventListener("submit", function(evt) {
             evt.preventDefault();
 
-            const inputTransferQuantity = this.inputTransferQuantity.value
-            const depotId = this.dlDepot.value
+            const body = {
+                DepotId: this.dlDepot.value,
+                ProductID: this.depotId.value,
+                Quantity: this.inputTransferQuantity.value
+            }
+
+            $.ajax({
+                url: "/Products/TransferToDepot",
+                type: "POST",
+                data: body,
+                success: function (response) {
+                    console.log(response);
+                    $('#transferModal').modal('hide');
+                    dataTable.getData();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
         });
 
         var dataTable = {
@@ -281,7 +299,7 @@
                         { data: "MRP" },
                         { data: "Quantity", "render": function(data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
                         { data: "Quantity", "render": function(data, type, row, meta) {
-                            return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text"><strong>${data}</strong> <i class="fas fa-cart-plus"></i></a>`;
+                            return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text">Transfer</a>`;
                         } },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Edit?id=${data}" class="edit"><i class="fas fa-edit"></i></a>`; } },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }

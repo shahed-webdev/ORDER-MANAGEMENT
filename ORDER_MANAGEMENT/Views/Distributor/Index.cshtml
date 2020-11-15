@@ -4,8 +4,6 @@
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-
-
 <div class="card card-body m-md-3">
     <h3 class="mb-3">Distributor</h3>
 
@@ -13,51 +11,27 @@
         <table id="DataTable" class="table table-sm table-bordered nowrap">
             <thead>
                 <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Mobile
-                    </th>
-                    <th>
-                        Territory
-                    </th>
-                    <th>
-                        Report To
-                    </th>
-                    <th>
-                        Due Amount
-                    </th>
-                    <th>
-                        Due Range
-                    </th>
-                    <th style="width:100px">
-                        Action
-                    </th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Territory</th>
+                    <th>Report To</th>
+                    <th>Due Amount</th>
+                    <th>Due Range</th>
+                    <th>Assign To Depot</th>
+                    <th style="width:50px">Update</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
-                            @item.Name
-                        </td>
-                        <td>
-                            @item.Mobile
-                        </td>
-                        <td>
-                            @item.TerritoryName
-                        </td>
-                        <td>
-                            @item.ReportTo_User.Name
-                        </td>
-                        <td>
-                            @item.TotalDue
-                        </td>
-                        <td>
-                            @item.DueRangeLimit
-                        </td>
+                        <td>@item.Name</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.TerritoryName</td>
+                        <td>@item.ReportTo_User.Name</td>
+                        <td>@item.TotalDue</td>
+                        <td>@item.DueRangeLimit</td>
+                        <td><span class="text-blue">Assign</span></td>
                         <td>
                             @{ if (item.IsApproved)
                                 {
@@ -69,17 +43,56 @@
                                 }
                             }
                         </td>
-                      </tr>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
 
+
+<!-- Modal assign to depot -->
+<div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header blue-gradient white-text">
+                <h4 class="m-0"><i class="fas fa-plus-circle"></i> Assign To Depot</h4>
+                <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formTransfer">
+                    <div class="form-group">
+                        <label>Region</label>
+                        @Html.DropDownList("RegionID", null, "[ REGION ]", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label>Depot</label>
+                        <input type="hidden" id="depotId" />
+                        <select id="dlDepot" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <strong id="showProductName2"></strong>
+                            <span id="show-quantity2" class="badge badge-pill badge-success"></span>
+                        </label>
+                        <input placeholder="Transfer Quantity" id="inputTransferQuantity" type="number" class="form-control" min="0" />
+                    </div>
+
+                    <div class="text-center mt-1-half">
+                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Transfer <i class="fas fa-check ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-<script>
-    $(function () {
-        $('#DataTable').DataTable({ "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }] });
-    });
-</script>
+    <script>
+        $(function () {
+            $('#DataTable').DataTable({ "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }] });
+        });
+    </script>
 }
