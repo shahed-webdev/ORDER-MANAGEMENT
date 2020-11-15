@@ -50,5 +50,9 @@ namespace ORDER_MANAGEMENT.Data
         public string Size { get; set; }
         public double? MRP { get; set; }
         public int Quantity { get; set; } = 0;
+        public int TotalTransfer { get; set; }
+        public int TotalReturn { get; set; }
+        public int TotalDamage { get; set; }
+        public int TotalOrder { get; set; }
     }
 }

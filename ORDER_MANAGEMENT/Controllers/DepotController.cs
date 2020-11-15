@@ -37,6 +37,18 @@ namespace ORDER_MANAGEMENT.Controllers
             return View();
         }
 
+        //return
+        public ActionResult StockReturn()
+        {
+            return View();
+        }
+
+        //damage
+        public ActionResult StockDamage()
+        {
+            return View();
+        }
+
         //stock data-table
         public JsonResult GetCategoryProduct(DataRequest request, int[] filter)
         {
@@ -78,6 +90,51 @@ namespace ORDER_MANAGEMENT.Controllers
 
             ModelState.AddModelError("", "Unable to insert record!");
             return RedirectToAction("Depot");
+        }
+
+        // GET: transfer record
+        public ActionResult TransferRecord()
+        {
+            ViewBag.DepotId = new SelectList(_db.Depots.Ddls(), "value", "label");
+            return View();
+        }
+
+        //Transfer Record data-table
+        public JsonResult GetTransferRecord(DataRequest request)
+        {
+            var result = _db.DepotProductTransfers.ListDataTable(request);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        // GET: return record
+        public ActionResult ReturnRecord()
+        {
+            ViewBag.DepotId = new SelectList(_db.Depots.Ddls(), "value", "label");
+            return View();
+        }
+
+        //Return Record data-table
+        public JsonResult GetReturnRecord(DataRequest request)
+        {
+            var result = _db.DepotProductTransfers.ListDataTable(request);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+        // GET: damage record
+        public ActionResult DamageRecord()
+        {
+            ViewBag.DepotId = new SelectList(_db.Depots.Ddls(), "value", "label");
+            return View();
+        }
+
+        //Damage Record data-table
+        public JsonResult GetDamageRecord(DataRequest request)
+        {
+            var result = _db.DepotProductTransfers.ListDataTable(request);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }
