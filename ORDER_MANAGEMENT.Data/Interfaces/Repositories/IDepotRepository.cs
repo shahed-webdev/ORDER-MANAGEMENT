@@ -6,6 +6,9 @@ namespace ORDER_MANAGEMENT.Data
     {
         List<DepotViewModel> GetAllDepot();
         DataResult<DepotViewModel> ListDataTable(DataRequest request);
+
+        List<DDL> Ddls(int regionId = 0);
+
     }
 
 

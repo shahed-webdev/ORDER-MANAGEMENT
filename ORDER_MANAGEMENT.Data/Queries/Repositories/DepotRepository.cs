@@ -33,5 +33,19 @@ namespace ORDER_MANAGEMENT.Data
 
             return query.ToDataResult(request);
         }
+
+        public List<DDL> Ddls(int regionId = 0)
+        {
+            var query = Context.Depots
+                .Where(d => d.RegionID == regionId || regionId == 0)
+                .Select(d => new DDL
+                {
+                    value = d.DepotId,
+                    label = d.DepotName
+                }).ToList();
+
+            return query;
+
+        }
     }
 }

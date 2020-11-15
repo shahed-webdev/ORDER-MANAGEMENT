@@ -1,6 +1,5 @@
-﻿using System.Linq;
+﻿using ORDER_MANAGEMENT.Data;
 using System.Web.Mvc;
-using ORDER_MANAGEMENT.Data;
 
 namespace ORDER_MANAGEMENT.Controllers
 {
@@ -34,10 +33,9 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: Create
         public ActionResult Create()
         {
-            using (var db = new DataContext())
-            {
-                ViewBag.Hierarchy = db.Organization_hierarchy.Where(h => h.Rank > 1).Select(n => new SelectListItem { Value = n.Rank.ToString(), Text = n.HierarchyName }).ToList();
-            }
+
+            ViewBag.Hierarchy = new SelectList(_db.Hierarchys.GetDll_Hierarchy(), "Rank", "HierarchyName");
+
             return View();
         }
 
