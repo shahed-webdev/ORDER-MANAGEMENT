@@ -32,7 +32,7 @@ namespace ORDER_MANAGEMENT.Data
         public DateTime InsertDate { get; set; }
     }
 
-    public class DepotReturnAddModel
+    public class DepotChangeQuantityModel
     {
         public int DepotId { get; set; }
         public int ProductID { get; set; }
@@ -49,6 +49,20 @@ namespace ORDER_MANAGEMENT.Data
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public string ReturnBy { get; set; }
+        public int Quantity { get; set; }
+        public DateTime InsertDate { get; set; }
+    }
+
+
+    public class DepotProductDamageViewModel
+    {
+        public int DepotProductDamageId { get; set; }
+        public int DepotId { get; set; }
+        public string DepotName { get; set; }
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public string DamageBy { get; set; }
         public int Quantity { get; set; }
         public DateTime InsertDate { get; set; }
     }

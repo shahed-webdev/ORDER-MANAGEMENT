@@ -9,7 +9,7 @@ namespace ORDER_MANAGEMENT.Data
         {
         }
 
-        public void AddQuantity(DepotReturnAddModel model)
+        public void AddQuantity(DepotChangeQuantityModel model)
         {
             var product = Context.Products.Find(model.ProductID);
 
