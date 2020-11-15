@@ -11,6 +11,7 @@ namespace ORDER_MANAGEMENT.Data
             DepotProductDamages = new HashSet<DepotProductDamage>();
             DepotProductReturns = new HashSet<DepotProductReturn>();
             DepotProductTransfers = new HashSet<DepotProductTransfer>();
+            Distributors = new HashSet<Distributor>();
         }
         public int DepotId { get; set; }
         public string DepotName { get; set; }
@@ -23,5 +24,6 @@ namespace ORDER_MANAGEMENT.Data
         public virtual ICollection<DepotProductTransfer> DepotProductTransfers { get; set; }
         public virtual ICollection<DepotProductReturn> DepotProductReturns { get; set; }
         public virtual ICollection<DepotProductDamage> DepotProductDamages { get; set; }
+        public virtual ICollection<Distributor> Distributors { get; set; }
     }
 }

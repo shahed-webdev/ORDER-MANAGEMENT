@@ -23,6 +23,7 @@ namespace ORDER_MANAGEMENT.Data
         public int TerritoryID { get; set; }
         public int ReportTo_RegistrationID { get; set; }
         public int? RegistrationID { get; set; }
+        public int? DepotId { get; set; }
         public double DiscountPercentage { get; set; } = 0;
         public string Name { get; set; }
         public string Mobile { get; set; }
@@ -45,6 +46,7 @@ namespace ORDER_MANAGEMENT.Data
         public virtual Territory Territory { get; set; }
         public virtual User ReportTo_User { get; set; }
         public virtual Registration Registration { get; set; }
+        public virtual Depot Depot { get; set; }
         public virtual ICollection<DistributorStock> DistributorStocks { get; set; }
         public virtual ICollection<DistributorOrder> DistributorOrders { get; set; }
         public virtual ICollection<DistributorPaymentRecord> DistributorPaymentRecords { get; set; }

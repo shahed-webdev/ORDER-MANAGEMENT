@@ -23,6 +23,8 @@ namespace ORDER_MANAGEMENT.Data
 
         void AssignSR(int DistributorID, ICollection<int> SR_IDs);
 
+        void AssignDepot(int distributorId, int depotId);
+
 
     }
 }

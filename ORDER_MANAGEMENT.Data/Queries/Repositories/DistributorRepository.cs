@@ -217,5 +217,16 @@ namespace ORDER_MANAGEMENT.Data
 
 
         }
+
+        public void AssignDepot(int distributorId, int depotId)
+        {
+            var distributor = Context.Distributors.Find(distributorId);
+
+            if (distributor == null) return;
+
+            distributor.DepotId = depotId;
+            Context.Entry(distributor).State = EntityState.Modified;
+
+        }
     }
 }
