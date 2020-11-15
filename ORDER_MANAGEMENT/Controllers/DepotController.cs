@@ -33,13 +33,16 @@ namespace ORDER_MANAGEMENT.Controllers
             if (!id.HasValue) return RedirectToAction("Depot");
 
             ViewBag.DepotId = id;
+            ViewBag.DepotName = _db.Depots.Find(id.GetValueOrDefault()).DepotName;
+
             ViewBag.MainCategory = new SelectList(_db.ProductMainCategorys.GetDdlforSub(), "value", "label");
             return View();
         }
 
         //return
-        public ActionResult StockReturn(DepotReturnAddModel model)
+        public ActionResult StockReturn(DepotChangeQuantityModel model)
         {
+            model.RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             _db.DepotProductReturns.AddQuantity(model);
             _db.SaveChanges();
 
@@ -47,9 +50,13 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         //damage
-        public ActionResult StockDamage()
+        public ActionResult StockDamage(DepotChangeQuantityModel model)
         {
-            return View();
+            model.RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.DepotProductDamages.AddQuantity(model);
+            _db.SaveChanges();
+
+            return Content("ok");
         }
 
         //stock data-table
