@@ -32,10 +32,21 @@
                         <td>@item.TotalDue</td>
                         <td>@item.DueRangeLimit</td>
                         <td>
-                            <a class="btn-assign blue-text" data-regionId="" data-distId="@item.DistributorID">Assign</a>
+                            @{
+                                if (item.IsApproved)
+                                {
+                                    <span></span>
+                                }
+                                else
+                                {
+                                    <a class="btn-assign blue-text" data-regionId="@item.RegionID" data-distId="@item.DistributorID">Assign</a>
+                                }
+                            }
+                            
                         </td>
                         <td>
-                            @{ if (item.IsApproved)
+                            @{ 
+                                if (item.IsApproved)
                                 {
                                     <a class="text-primary" href="/Distributor/Update/@item.DistributorID"><i class="fas fa-edit mr-1"></i>Update</a>
                                 }
@@ -129,7 +140,8 @@
                 type: "POST",
                 data: body,
                 success: function (response) {
-                    $('#assignModal').modal('hide');
+                    //$('#assignModal').modal('hide');
+                    location.read();
                 },
                 error: function(err) {
                     console.log(err);
