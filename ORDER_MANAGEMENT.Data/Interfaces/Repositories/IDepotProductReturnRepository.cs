@@ -2,6 +2,9 @@
 {
     public interface IDepotProductReturnRepository : IRepository<DepotProductReturn>
     {
-
+        void AddQuantity(DepotReturnAddModel model);
+        DataResult<DepotProductReturnViewModel> ListDataTable(DataRequest request);
     }
+
+
 }
