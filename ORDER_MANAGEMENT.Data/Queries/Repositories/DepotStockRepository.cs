@@ -31,6 +31,7 @@ namespace ORDER_MANAGEMENT.Data
             else
             {
                 depotStock.Quantity += model.Quantity;
+                depotStock.TotalTransfer += model.Quantity;
                 Context.Entry(depotStock).State = EntityState.Modified;
             }
 
