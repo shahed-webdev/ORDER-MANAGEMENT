@@ -37,4 +37,18 @@ namespace ORDER_MANAGEMENT.Data
         public string ProductMainCategoryName { get; set; }
         public string ProductCategoryName { get; set; }
     }
+
+    public class DepotProductViewModel
+    {
+        public int DepotStockId { get; set; }
+        public int DepotId { get; set; }
+        public int ProductID { get; set; }
+        public int ProductCategoryID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public int SKU { get; set; }
+        public string Size { get; set; }
+        public double? MRP { get; set; }
+        public int Quantity { get; set; } = 0;
+    }
 }

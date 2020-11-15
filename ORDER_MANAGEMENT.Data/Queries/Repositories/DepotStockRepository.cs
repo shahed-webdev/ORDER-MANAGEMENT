@@ -46,5 +46,23 @@ namespace ORDER_MANAGEMENT.Data
             Context.Entry(product).State = EntityState.Modified;
 
         }
+
+        public DataResult<DepotProductViewModel> ProductsDataTable(DataRequest request, int[] filer)
+        {
+            var query = Context.DepotStocks.Where(t => filer.Contains(t.Product.ProductCategoryID)).Select(d => new DepotProductViewModel
+            {
+                DepotStockId = d.DepotStockId,
+                DepotId = d.DepotId,
+                ProductID = d.ProductID,
+                ProductCategoryID = d.Product.ProductCategoryID,
+                ProductName = d.Product.ProductName,
+                ProductCode = d.Product.ProductCode,
+                SKU = d.Product.SKU,
+                Size = d.Product.Size,
+                MRP = d.Product.MRP,
+                Quantity = d.Quantity
+            }).OrderBy(d => d.ProductName);
+            return query.ToDataResult(request);
+        }
     }
 }
