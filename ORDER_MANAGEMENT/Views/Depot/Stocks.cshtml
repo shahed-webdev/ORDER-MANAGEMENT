@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Stocks";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<div class="card card-body m-md-3">
+    <h3 class="mb-3">Stock</h3>
+
+    <div class="d-flex">
+        <div class="form-group">
+            @Html.DropDownList("DepotId", null, "[ SELECT DEPOT ]", new { @class = "form-control", })
+        </div>
+    </div>
+    
+</div>
+

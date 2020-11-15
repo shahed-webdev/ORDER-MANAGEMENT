@@ -14,6 +14,7 @@ namespace ORDER_MANAGEMENT.Data
             var query = Context.Depots.Select(d => new DepotViewModel
             {
                 DepotId = d.DepotId,
+                RegionID =d.RegionID,
                 DepotName = d.DepotName,
                 RegionName = d.Region.RegionName,
                 Incharge = d.User.Registration.Name
@@ -26,6 +27,7 @@ namespace ORDER_MANAGEMENT.Data
             var query = Context.Depots.Select(d => new DepotViewModel
             {
                 DepotId = d.DepotId,
+                RegionID = d.RegionID,
                 DepotName = d.DepotName,
                 RegionName = d.Region.RegionName,
                 Incharge = d.User.Registration.Name

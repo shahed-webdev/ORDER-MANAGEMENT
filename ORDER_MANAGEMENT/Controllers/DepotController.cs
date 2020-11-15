@@ -27,8 +27,20 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+       // Stocks
+        public ActionResult Stocks(int? id)
+        {
+            ViewBag.DepotId = id.HasValue ? new SelectList(_db.Depots.Ddls(), "value", "label",id) : new SelectList(_db.Depots.Ddls(), "value", "label");
 
+            return View();
+        }
 
+        // GET: Depot dropdown by region
+        public ActionResult DepotDropDownByRegion(int regionId)
+        {
+            var data = _db.Depots.Ddls(regionId);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
 
         // GET: Create
         public ActionResult Create()

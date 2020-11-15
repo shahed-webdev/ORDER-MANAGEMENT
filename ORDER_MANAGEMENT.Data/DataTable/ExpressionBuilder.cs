@@ -11,8 +11,6 @@ namespace ORDER_MANAGEMENT.Data
         private static MethodInfo startsWithMethod = typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) });
         private static MethodInfo endsWithMethod = typeof(string).GetMethod("EndsWith", new Type[] { typeof(string) });
 
-
-
         public static Expression<Func<T, bool>> GetExpression<T>(FilterDefinition filter)
         {
             if (filter == null) return null;

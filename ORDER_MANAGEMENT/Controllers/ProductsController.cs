@@ -19,6 +19,8 @@ namespace ORDER_MANAGEMENT.Controllers
         public ActionResult Index()
         {
             ViewBag.MainCategory = new SelectList(_db.ProductMainCategorys.GetDdlforSub(), "value", "label");
+            ViewBag.RegionID = new SelectList(_db.Regions.GetDllRegion(), "RegionID", "RegionName");
+
             return View();
         }
 
@@ -35,7 +37,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-
+        //add quantity
         public int AddQuantity(int productId, int quantity)
         {
             var registrationId = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
@@ -43,6 +45,16 @@ namespace ORDER_MANAGEMENT.Controllers
             _db.Products.AddQuantity(productId, registrationId, quantity);
             return _db.SaveChanges();
         }
+
+        //transfer to depot
+        public int TransferToDepot(int productId, int quantity)
+        {
+            var registrationId = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+
+
+            return _db.SaveChanges();
+        }
+
 
         public ICollection<Product> LowStock(int limit)
         {

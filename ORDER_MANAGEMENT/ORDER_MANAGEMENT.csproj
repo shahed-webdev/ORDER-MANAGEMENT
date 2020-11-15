@@ -394,6 +394,7 @@
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Depot\Depot.cshtml" />
     <Content Include="Views\Depot\Create.cshtml" />
+    <Content Include="Views\Depot\Stocks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">

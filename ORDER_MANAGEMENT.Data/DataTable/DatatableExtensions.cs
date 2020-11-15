@@ -70,7 +70,7 @@ namespace ORDER_MANAGEMENT.Data
                 result.data = query.ToList();
                 return result;
             }
-            catch
+            catch(Exception e)
             {
                 result.data = new List<T>();
                 return result;

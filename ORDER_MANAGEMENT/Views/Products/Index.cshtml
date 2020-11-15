@@ -13,74 +13,112 @@
     </style>
 }
 
-    <div class="card card-body m-md-3">
-        <div class="row">
-            <div class="col justify-content-center align-self-center">
-                <h3>Products</h3>
-            </div>
-            <div class="col text-right">
-                <a href="/Products/Create" class="btn-floating blue-gradient" title="Add New">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
-                </a>
+<div class="card card-body m-md-3">
+    <div class="row">
+        <div class="col justify-content-center align-self-center">
+            <h3>Products</h3>
+        </div>
+        <div class="col text-right">
+            <a href="/Products/Create" class="btn-floating blue-gradient" title="Add New">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group">
+                <label>Select Category</label>
+                @Html.DropDownList("MainCategory", null, "[ SELECT ]", new { @class = "form-control" })
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Select Category</label>
-                    @Html.DropDownList("MainCategory", null,"[ SELECT ]", new { @class = "form-control" })
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>Select Sub Category</label>
-                    <select id="selectSubCategory" class="form-control select-picker" multiple></select>
-                </div>
+        <div class="col">
+            <div class="form-group">
+                <label>Select Sub Category</label>
+                <select id="selectSubCategory" class="form-control select-picker" multiple></select>
             </div>
         </div>
+    </div>
 
-        <table id="DataTable" class="table table-sm table-bordered">
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Product Code</th>
-                    <th>SKU</th>
-                    <th>Size</th>
-                    <th>MRP</th>
-                    <th>Quantity</th>
-                    <th style="width:50px">Edit</th>
-                    <th style="width:50px">Delete</th>
-                </tr>
-            </thead>
-        </table>
+    <table id="DataTable" class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Code</th>
+                <th>SKU</th>
+                <th>Size</th>
+                <th>MRP</th>
+                <th>Quantity</th>
+                <th>Transfer</th>
+                <th style="width:50px">Edit</th>
+                <th style="width:50px">Delete</th>
+            </tr>
+        </thead>
+    </table>
 
-        <!-- Modal -->
-        <div class="modal fade" id="quantityModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog cascading-modal" role="document">
-                <div class="modal-content">
-                    <div class="modal-header blue-gradient white-text">
-                        <h4 class="m-0"><i class="fas fa-plus-circle"></i> Add Quantity</h4>
-                        <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
+    <!-- Modal add quantity -->
+    <div class="modal fade" id="quantityModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog cascading-modal" role="document">
+            <div class="modal-content">
+                <div class="modal-header blue-gradient white-text">
+                    <h4 class="m-0"><i class="fas fa-plus-circle"></i> Add Quantity</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>
+                            <strong id="showProductName"></strong>
+                            <span id="show-quantity" class="badge badge-pill badge-success"></span>
+                        </label>
+                        <input id="inputAddQuantity" type="number" class="form-control" />
                     </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>
-                                <strong id="showProductName"></strong>
-                                <span id="show-quantity" class="badge badge-pill badge-success"></span>
-                            </label>
-                            <input id="inputAddQuantity" type="number" class="form-control" />
-                        </div>
-                        <div class="text-center mt-1-half">
-                            <button id="btnAddQuantity" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Add <i class="fas fa-check ml-1"></i></button>
-                        </div>
+                    <div class="text-center mt-1-half">
+                        <button id="btnAddQuantity" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Add <i class="fas fa-check ml-1"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal transfer to depot -->
+    <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog cascading-modal" role="document">
+            <div class="modal-content">
+                <div class="modal-header blue-gradient white-text">
+                    <h4 class="m-0"><i class="fas fa-plus-circle"></i> Transfer Product To Depot</h4>
+                    <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTransfer">
+                        <div class="form-group">
+                            <label>Region</label>
+                            @Html.DropDownList("RegionID", null, "[ REGION ]", new { @class = "form-control" })
+                        </div>
+                        <div class="form-group">
+                            <label>Depot</label>
+                            <select id="dlDepot" class="form-control" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <strong id="showProductName2"></strong>
+                                <span id="show-quantity2" class="badge badge-pill badge-success"></span>
+                            </label>
+                            <input placeholder="Transfer Quantity" id="inputTransferQuantity" type="number" class="form-control" min="0" />
+                        </div>
+
+                        <div class="text-center mt-1-half">
+                            <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Transfer <i class="fas fa-check ml-1"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/JS/bootstrap-select.js"></script>
@@ -151,6 +189,18 @@
                 }
             });
 
+            //show Transfer modal
+            $('#DataTable').on("click", ".addToDepot", function(evt) {
+                evt.preventDefault();
+
+                $('#inputTransferQuantity').attr("max", $(this).attr("data-value"));
+
+                $('#transferModal').modal('show');
+                $("#showProductName2").text($(this).attr("data-name"));
+                $("#show-quantity2").text($(this).text());
+                $("#btnTransfer").attr("data-pid", $(this).attr("data-id"));
+            });
+
             //show quantity modal
             $('#DataTable').on("click", ".quantity", function(evt) {
                 evt.preventDefault();
@@ -182,6 +232,31 @@
             });
         });
 
+        $('#RegionID').change(function() {
+            const regionId = $(this).val();
+            const dlDepotSelect = $('#dlDepot');
+            dlDepotSelect.empty();
+
+
+            if (regionId) {
+                const url = "/Depot/DepotDropDownByRegion";
+                $.get(url, { regionId }, function(response) {
+                    dlDepotSelect.append($('<option/>', { value: "", text: "[ SELECT DEPOT ]" }));
+                    $.each(response, function(i, item) {
+                        dlDepotSelect.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                });
+            }
+        });
+
+        const formTransfer = document.getElementById("formTransfer");
+        formTransfer.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const inputTransferQuantity = this.inputTransferQuantity.value
+            const depotId = this.dlDepot.value
+        });
+
         var dataTable = {
             table: null,
             filter: [],
@@ -204,7 +279,10 @@
                         { data: "SKU" },
                         { data: "Size" },
                         { data: "MRP" },
-                        { data: "Quantity", "render": function (data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
+                        { data: "Quantity", "render": function(data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
+                        { data: "Quantity", "render": function(data, type, row, meta) {
+                            return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text"><strong>${data}</strong> <i class="fas fa-cart-plus"></i></a>`;
+                        } },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Edit?id=${data}" class="edit"><i class="fas fa-edit"></i></a>`; } },
                         { data: "ProductID", "render": function(data) { return `<a href="/Products/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }
                     ],

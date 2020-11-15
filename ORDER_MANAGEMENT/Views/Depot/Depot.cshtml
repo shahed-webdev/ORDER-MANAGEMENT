@@ -6,10 +6,10 @@
 
 <div class="card card-body m-md-3">
     <h3 class="mb-3">Depots</h3>
-    
+
     <div class="d-flex">
         <div class="form-group">
-            @Html.DropDownList("RegionID", null, "[ SELECT REGION ]", new { @class = "form-control", })
+            @Html.DropDownList("RegionID", null, "[ ALL REGION ]", new { @class = "form-control" })
         </div>
     </div>
 
@@ -19,6 +19,7 @@
                 <th><strong>Region Name</strong></th>
                 <th><strong>Depot Name</strong></th>
                 <th><strong>Incharge</strong></th>
+                <th><strong>Stock</strong></th>
             </tr>
         </thead>
     </table>
@@ -32,7 +33,7 @@
 
         var dataTable = {
             table: null,
-            filter: null,
+            filter: [],
             init: function() {
                 dataTable.table = $("#DataTable").DataTable({
                     processing: true,
@@ -42,7 +43,7 @@
                         url: "/Depot/GetDepots",
                         type: "POST",
                         data: function(d) {
-                            d.filter = dataTable.filter
+                            d.filters = dataTable.filter
                         }
                     },
                     columns:
@@ -50,7 +51,7 @@
                         { data: "RegionName" },
                         { data: "DepotName" },
                         { data: "Incharge" },
-                        //{ data: "DepotId", "render": function(data) { return `<a href="/Products/Delete?id=${data}" class="delete"><i class="fas fa-trash-alt"></i></a>`; } }
+                        { data: "DepotId", "render": function(data) { return `<a class="blue-text" href="/Depot/Stocks?id=${data}">Stock</a>`; } }
                     ],
                     columnDefs: [
                         //{ 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },
@@ -76,7 +77,11 @@
 
         const regionId = document.getElementById("RegionID");
         regionId.addEventListener("change", function() {
-            if (!this.value) return;
+            if (!this.value) {
+                dataTable.filter = [];
+                dataTable.getData();
+                return;
+            }
 
             dataTable.filter = [];
             dataTable.filter.push({ Field: "RegionID", Value: this.value, Operand: dataTable.operand.Equal });
