@@ -30,7 +30,9 @@ namespace ORDER_MANAGEMENT.Controllers
        // Stocks
         public ActionResult Stocks(int? id)
         {
-            if (id.HasValue) return RedirectToAction("Depot");
+            if (!id.HasValue) return RedirectToAction("Depot");
+
+            ViewBag.DepotId = id;
             ViewBag.MainCategory = new SelectList(_db.ProductMainCategorys.GetDdlforSub(), "value", "label");
             return View();
         }
@@ -38,7 +40,7 @@ namespace ORDER_MANAGEMENT.Controllers
         //stock data-table
         public JsonResult GetCategoryProduct(DataRequest request, int[] filter)
         {
-            var result = _db.Products.DT_GetCategoryProducts(request, filter);
+            var result = _db.DepotStocks.ProductsDataTable(request, filter);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 

@@ -13,29 +13,40 @@ namespace ORDER_MANAGEMENT.Controllers
     [Authorize]
     public class DistributorController : Controller
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public DistributorController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
 
-        [Authorize(Roles = ("Admin,Distributor_List"))]
         // GET: Distributor
+        [Authorize(Roles = ("Admin,Distributor_List"))]
         public ActionResult Index()
         {
-            var model = db.Distributors.DistributorListWithUser();
+            ViewBag.RegionID = new SelectList(_db.Regions.GetDllRegion(), "RegionID", "RegionName");
+            var model = _db.Distributors.DistributorListWithUser();
             return View(model);
         }
+
+        //assign to depot
+        public ActionResult AssignToDepot(int distributorId, int depotId)
+        {
+            _db.Distributors.AssignDepot(distributorId, depotId);
+            return Content("success");
+        }
+
+
         [Authorize(Roles = ("Admin,ChangeDiscount"))]
         // GET: ChangeDiscount
         public ActionResult ChangeDiscount()
         {
             return View();
         }
+
         public int DiscountPercentageChange(int TerritoryID, double Percentage)
         {
-            db.Territorys.DistributorPercentageChange(TerritoryID, Percentage);
-            return db.SaveChanges();
+            _db.Territorys.DistributorPercentageChange(TerritoryID, Percentage);
+            return _db.SaveChanges();
         }
 
         [Authorize(Roles = ("Admin,MapLocation"))]
@@ -44,9 +55,10 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             return View();
         }
+      
         public string GetDistributorList()
         {
-            var list = db.Distributors.DistributorList();
+            var list = _db.Distributors.DistributorList();
             return JsonConvert.SerializeObject(list);
         }
 
@@ -55,15 +67,13 @@ namespace ORDER_MANAGEMENT.Controllers
         public ActionResult Approved(int? id)
         {
             if (id == null) return RedirectToAction("Index");
-            int DistributorID = id.GetValueOrDefault();
-            var dis = db.Distributors.Where(d => d.DistributorID == DistributorID && !d.IsApproved).FirstOrDefault();
+
+            var distributorId = id.GetValueOrDefault();
+            var dis = _db.Distributors.Where(d => d.DistributorID == distributorId && !d.IsApproved).FirstOrDefault();
 
             if (dis == null) return RedirectToAction("Index");
 
-            var dr = new DistirubtorRegisterVM();
-            dr.DistributorID = dis.DistributorID;
-            dr.Name = dis.Name;
-            dr.Phone = dis.Mobile;
+            var dr = new DistirubtorRegisterVM {DistributorID = dis.DistributorID, Name = dis.Name, Phone = dis.Mobile};
 
             return View(dr);
         }
@@ -94,11 +104,11 @@ namespace ORDER_MANAGEMENT.Controllers
                         PS = model.Password
                     };
 
-                    db.Registrations.Add(Reg);
+                    _db.Registrations.Add(Reg);
 
-                    var ApproveBy_RegistrationID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-                    db.Distributors.Approved(ApproveBy_RegistrationID, model, Reg);
-                    db.SaveChanges();
+                    var ApproveBy_RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+                    _db.Distributors.Approved(ApproveBy_RegistrationID, model, Reg);
+                    _db.SaveChanges();
 
                     return RedirectToAction("Index");
                 }
@@ -119,7 +129,7 @@ namespace ORDER_MANAGEMENT.Controllers
         public ActionResult Update(int? id)
         {
 
-            var Dis = db.Distributors.GetDetails(id);
+            var Dis = _db.Distributors.GetDetails(id);
             return View(Dis);
         }
 
@@ -130,8 +140,8 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Distributors.UpdateDetails(model);
-                db.SaveChanges();
+                _db.Distributors.UpdateDetails(model);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -142,7 +152,7 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: OrderReturn
         public ActionResult OrderReturn()
         {
-            var model = db.DistributorProductReturns.ApprovedReturnPendingList();
+            var model = _db.DistributorProductReturns.ApprovedReturnPendingList();
             return View(model);
         }
 
@@ -150,27 +160,27 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: ReturnDetails
         public ActionResult ReturnDetails(int? id)
         {
-            var Ordermodel = db.DistributorProductReturns.ApprovedReturnPendingList();
-            if (id == null) return RedirectToAction("OrderReturn", Ordermodel);
+            var ordermodel = _db.DistributorProductReturns.ApprovedReturnPendingList();
+            if (id == null) return RedirectToAction("OrderReturn", ordermodel);
 
-            var model = db.DistributorProductReturns.ApprovedReturnOrderDetails(id.GetValueOrDefault());
+            var model = _db.DistributorProductReturns.ApprovedReturnOrderDetails(id.GetValueOrDefault());
             return View(model);
         }
 
         // POST: Return Approved
         public int ReturnApproved(int Id, double ReturnAmount)
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            db.DistributorProductReturns.ApprovedReturn(Id, RegID, ReturnAmount);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.DistributorProductReturns.ApprovedReturn(Id, RegID, ReturnAmount);
 
-            return db.SaveChanges();
+            return _db.SaveChanges();
         }
 
         // POST: Return Reject 
         public int RejectReturn(int Id)
         {
-            db.DistributorProductReturns.RejectReturn(Id);
-            return db.SaveChanges();
+            _db.DistributorProductReturns.RejectReturn(Id);
+            return _db.SaveChanges();
         }
 
         [Authorize(Roles = ("Admin,AssignSR"))]
@@ -186,14 +196,14 @@ namespace ORDER_MANAGEMENT.Controllers
             var serializer = new JavaScriptSerializer();
             var TerritoryIds = serializer.Deserialize<List<int>>(Ids);
 
-            var list = db.Distributors.DistributorByTerritorys(TerritoryIds);
+            var list = _db.Distributors.DistributorByTerritorys(TerritoryIds);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
         //Get: Territory
         public ActionResult GetTerritorybyDistributor(int Id)
         {
-            var list = db.Users.GetSR_ByDistributorTerritory(Id);
+            var list = _db.Users.GetSR_ByDistributorTerritory(Id);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -203,10 +213,10 @@ namespace ORDER_MANAGEMENT.Controllers
             var serializer = new JavaScriptSerializer();
             var srIds = serializer.Deserialize<List<int>>(Ids);
 
-            db.Distributors.AssignSR(Id, srIds);
-            db.SaveChanges();
+            _db.Distributors.AssignSR(Id, srIds);
+            _db.SaveChanges();
 
-            return db.SaveChanges();
+            return _db.SaveChanges();
         }
     }
 }

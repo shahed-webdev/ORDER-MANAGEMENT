@@ -12,7 +12,8 @@
 }
 
 <div class="card card-body m-md-3">
-    <h3 class="mb-3">Stock</h3>
+    <h3 class="mb-0">Stock</h3>
+    <a class="d-inline-block mb-3" href="/Depot/Depot">Back to Depots</a>
 
     <div class="row mb-3">
         <div class="col">
@@ -37,8 +38,7 @@
                 <th>SKU</th>
                 <th>Size</th>
                 <th>MRP</th>
-                <th>Quantity</th>
-                <th>Transfer</th>
+                <th>Stock</th>
             </tr>
         </thead>
     </table>
@@ -87,6 +87,7 @@
                     dataTable.filter[i] = parseInt($(selected).val());
                 });
 
+                dataTable.depotId.push({ Field: "DepotId", Value: "@ViewBag.DepotId", Operand: dataTable.operand.Equal });
                 dataTable.getData();
             });
         });
@@ -95,16 +96,18 @@
         var dataTable = {
             table: null,
             filter: [],
+            depotId:[],
             init: function () {
                 dataTable.table = $("#DataTable").DataTable({
                     processing: true,
                     serverSide: true,
                     responsive: true,
                     ajax: {
-                        url: "/Stocks/GetCategoryProduct",
+                        url: "/Depot/GetCategoryProduct",
                         type: "POST",
                         data: function (d) {
                             d.filter = dataTable.filter
+                            d.filters = dataTable.depotId
                         }
                     },
                     columns:
@@ -113,13 +116,8 @@
                             { data: "ProductCode" },
                             { data: "SKU" },
                             { data: "Size" },
-                            { data: "MRP" },
-                            { data: "Quantity", "render": function (data, type, row, meta) { return `<a data-id="${row.ProductID}" data-name="${row.ProductName}" class="quantity blue-text"><strong>${data}</strong> <i class="fas fa-plus-circle"></i></a>`; } },
-                            {
-                                data: "Quantity", "render": function (data, type, row, meta) {
-                                    return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="addToDepot blue-text">Transfer</a>`;
-                                }
-                            }
+                            { data: "MRP"},
+                            { data: "Quantity" }
                         ],
                     columnDefs: [
                         //{ 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },
@@ -129,6 +127,17 @@
             },
             getData: function () {
                 dataTable.table ? dataTable.table.ajax.reload() : dataTable.init();
+            },
+            operand: {
+                Equal: 0,
+                NotEqual: 1,
+                GreaterThan: 2,
+                LessThan: 3,
+                GreaterThanOrEqual: 4,
+                LessThanOrEqual: 5,
+                Contains: 6,
+                StartsWith: 7,
+                EndsWith: 8
             }
         }
     </script>
