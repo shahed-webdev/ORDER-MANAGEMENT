@@ -197,18 +197,48 @@ namespace ORDER_MANAGEMENT.Data
                 }
             }
 
-
-            foreach (var item in OrderProductStocks)
-            {
-                var product = Context.Products.Find(item.ProductID);
-                product.Quantity -= item.ChangedQuantity;
-                Context.Entry(product).State = EntityState.Modified;
-            }
-
             //Distributor update
             var Distributor = Context.Distributors.Find(model.OrderInfo.DistributorID);
             Distributor.Total_BuyingAmount += model.OrderInfo.OrderTotalPrice;
             Context.Entry(Distributor).State = EntityState.Modified;
+
+            if (Distributor.DepotId == null)
+            {
+                foreach (var item in OrderProductStocks)
+                {
+                    var product = Context.Products.Find(item.ProductID);
+                    product.Quantity -= item.ChangedQuantity;
+                    Context.Entry(product).State = EntityState.Modified;
+                }
+            }
+            else
+            {
+                foreach (var item in OrderProductStocks)
+                {
+                    var depotStocks = Context.DepotStocks.FirstOrDefault(s => s.DepotId == Distributor.DepotId && s.ProductID == item.ProductID);
+
+                    if (depotStocks == null)
+                    {
+                        depotStocks = new DepotStock
+                        {
+                            DepotId = Distributor.DepotId.GetValueOrDefault(),
+                            ProductID = item.ProductID,
+                            Quantity = -item.ChangedQuantity,
+                            TotalOrder = item.ChangedQuantity,
+                        };
+                        Context.DepotStocks.Add(depotStocks);
+                    }
+                    else
+                    {
+                        depotStocks.Quantity -= item.ChangedQuantity;
+                        depotStocks.TotalOrder += item.ChangedQuantity;
+                        Context.Entry(depotStocks).State = EntityState.Modified;
+                    }
+
+                }
+            }
+
+
 
         }
 
