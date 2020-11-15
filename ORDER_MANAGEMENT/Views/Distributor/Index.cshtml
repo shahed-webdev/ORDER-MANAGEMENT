@@ -31,7 +31,9 @@
                         <td>@item.ReportTo_User.Name</td>
                         <td>@item.TotalDue</td>
                         <td>@item.DueRangeLimit</td>
-                        <td><span class="text-blue">Assign</span></td>
+                        <td>
+                            <a class="btn-assign blue-text" data-regionId="" data-distId="@item.DistributorID">Assign</a>
+                        </td>
                         <td>
                             @{ if (item.IsApproved)
                                 {
@@ -52,7 +54,7 @@
 
 
 <!-- Modal assign to depot -->
-<div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog cascading-modal" role="document">
         <div class="modal-content">
             <div class="modal-header blue-gradient white-text">
@@ -62,26 +64,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="formTransfer">
-                    <div class="form-group">
-                        <label>Region</label>
-                        @Html.DropDownList("RegionID", null, "[ REGION ]", new { @class = "form-control" })
-                    </div>
+                <form id="formAssign">
                     <div class="form-group">
                         <label>Depot</label>
-                        <input type="hidden" id="depotId" />
+                        <input type="hidden" id="regionId" />
+                        <input type="hidden" id="distributorId" />
                         <select id="dlDepot" class="form-control" required></select>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <strong id="showProductName2"></strong>
-                            <span id="show-quantity2" class="badge badge-pill badge-success"></span>
-                        </label>
-                        <input placeholder="Transfer Quantity" id="inputTransferQuantity" type="number" class="form-control" min="0" />
                     </div>
 
                     <div class="text-center mt-1-half">
-                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Transfer <i class="fas fa-check ml-1"></i></button>
+                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Assign <i class="fas fa-check ml-1"></i></button>
                     </div>
                 </form>
             </div>
@@ -89,10 +81,60 @@
     </div>
 </div>
 
+
+
 @section Scripts {
     <script>
         $(function () {
             $('#DataTable').DataTable({ "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }] });
+        });
+
+
+        //assign modal
+        $('#DataTable').on("click", ".btn-assign", function(evt) {
+            evt.preventDefault();
+
+            $('#assignModal').modal('show');
+            const regionId = $(this).attr("data-regionId");
+
+            $('#regionId').val(regionId)
+            $('#distributorId').val($(this).attr("data-distId"))
+
+            const dlDepotSelect = $('#dlDepot');
+            dlDepotSelect.empty();
+
+
+            if (regionId) {
+                const url = "/Depot/DepotDropDownByRegion";
+                $.get(url, { regionId }, function(response) {
+                    dlDepotSelect.append($('<option/>', { value: "", text: "[ SELECT DEPOT ]" }));
+                    $.each(response, function(i, item) {
+                        dlDepotSelect.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                });
+            }
+        });
+
+        const formAssign = document.getElementById("formAssign");
+        formAssign.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const body = {
+                depotId: this.dlDepot.value,
+                distributorId: this.distributorId.value
+            }
+
+            $.ajax({
+                url: "/Distributor/AssignToDepot",
+                type: "POST",
+                data: body,
+                success: function (response) {
+                    $('#assignModal').modal('hide');
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
         });
     </script>
 }
