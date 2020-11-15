@@ -52,7 +52,7 @@ namespace ORDER_MANAGEMENT.Controllers
         //Transfer Record data-table
         public JsonResult GetOutletOrders(DataRequest request)
         {
-            var result = _db.DepotProductTransfers.ListDataTable(request);
+            var result = _db.OutletOrders.OrderedDataTable(request);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
