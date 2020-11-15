@@ -44,6 +44,7 @@ namespace ORDER_MANAGEMENT.Data
     {
         public Registration ReportTo_User { get; set; }
         public string TerritoryName { get; set; }
+        public int RegionID { get; set; }
     }
 
     public class DistributorOrderPlace
