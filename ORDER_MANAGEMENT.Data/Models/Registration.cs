@@ -17,6 +17,9 @@ namespace ORDER_MANAGEMENT.Data
             this.ApproveBy_DistributorProductReturns = new HashSet<DistributorProductReturn>();
             this.ReturnBy_DistributorProductReturns = new HashSet<DistributorProductReturn>();
             this.PageLinkAssigns = new HashSet<PageLinkAssign>();
+            DepotProductDamages = new HashSet<DepotProductDamage>();
+            DepotProductReturns = new HashSet<DepotProductReturn>();
+            DepotProductTransfers = new HashSet<DepotProductTransfer>();
         }
         public int RegistrationID { get; set; }
         public string UserName { get; set; }
@@ -53,5 +56,9 @@ namespace ORDER_MANAGEMENT.Data
         public ICollection<PageLinkAssign> PageLinkAssigns { get; set; }
         public ICollection<OutletOrder> OrderBy_OutletOrders { get; set; }
         public ICollection<OutletOrder> ApproveBy_OutletOrders { get; set; }
+
+        public virtual ICollection<DepotProductDamage> DepotProductDamages { get; set; }
+        public virtual ICollection<DepotProductReturn> DepotProductReturns { get; set; }
+        public virtual ICollection<DepotProductTransfer> DepotProductTransfers { get; set; }
     }
 }

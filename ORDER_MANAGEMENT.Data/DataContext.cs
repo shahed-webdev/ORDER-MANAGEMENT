@@ -69,6 +69,11 @@ namespace ORDER_MANAGEMENT.Data
             modelBuilder.Configurations.Add(new AspNetRolesConfiguration());
             modelBuilder.Configurations.Add(new ChangeLogConfiguration());
             modelBuilder.Configurations.Add(new DepotConfiguration());
+            modelBuilder.Configurations.Add(new DepotProductDamageConfiguration());
+            modelBuilder.Configurations.Add(new DepotProductReturnConfiguration());
+            modelBuilder.Configurations.Add(new DepotProductTransferConfiguration());
+            modelBuilder.Configurations.Add(new DepotStockConfiguration());
+
             modelBuilder.Configurations.Add(new EquipmentConfiguration());
             modelBuilder.Configurations.Add(new EquipmentTypeConfiguration());
             modelBuilder.Configurations.Add(new EquipmentDistributionConfiguration());
