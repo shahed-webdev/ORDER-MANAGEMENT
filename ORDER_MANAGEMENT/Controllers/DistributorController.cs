@@ -32,6 +32,8 @@ namespace ORDER_MANAGEMENT.Controllers
         public ActionResult AssignToDepot(int distributorId, int depotId)
         {
             _db.Distributors.AssignDepot(distributorId, depotId);
+            _db.SaveChanges();
+
             return Content("success");
         }
 
