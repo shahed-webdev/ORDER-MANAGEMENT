@@ -1,8 +1,86 @@
-﻿
+﻿@model IEnumerable<ORDER_MANAGEMENT.Data.OutletOrdered>
 @{
-    ViewBag.Title = "OrderList";
+    ViewBag.Title = "Outlet Order List";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-<h2>Order List</h2>
+<div class="m-md-3 card card-body">
+    <h3 class="mb-3">Ordered Product</h3>
 
+    <table id="DataTable" class="table">
+        <thead>
+            <tr>
+                <th>Receipt</th>
+                <th>Outlet Name</th>
+                <th>Order By</th>
+                <th>Order Date</th>
+                <th>Territory</th>
+                <th>Order Amount</th>
+                <th>Discount</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(function() {
+            dataTable.getData();
+        });
+
+        var dataTable = {
+            table: null,
+            filter: [],
+            init: function() {
+                dataTable.table = $("#DataTable").DataTable({
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    ajax: {
+                        url: "/Outlet/GetOutletOrders",
+                        type: "POST",
+                        data: function(d) {
+                            d.filters = dataTable.filter
+                        }
+                    },
+                    columns:
+                    [
+                        { data: "OutletOrder_SN" },
+                        { data: "OutletName" },
+                        { data: "OrderBy_Name" },
+                        { data: "InsertDate" },
+                        { data: "TerritoryName" },
+                        { data: "OrderTotalPrice" },
+                        { data: "OrderDiscount" },
+                        { data: "OrderNetPrice" }
+                    ],
+                    columnDefs: [
+                        //{ 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },
+                        //{ 'sortable': false, 'targets': [6, 7] }
+                    ]
+                });
+            },
+            getData: function() {
+                dataTable.table ? dataTable.table.ajax.reload() : dataTable.init();
+            },
+            operand: {
+                Equal: 0,
+                NotEqual: 1,
+                GreaterThan: 2,
+                LessThan: 3,
+                GreaterThanOrEqual: 4,
+                LessThanOrEqual: 5,
+                Contains: 6,
+                StartsWith: 7,
+                EndsWith: 8
+            }
+        }
+
+
+        //dataTable.filter = [];
+        //dataTable.filter.push({ Field: "DepotId", Value: this.value, Operand: dataTable.operand.Equal });
+        //dataTable.getData();
+
+    </script>
+}

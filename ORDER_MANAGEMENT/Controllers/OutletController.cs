@@ -6,27 +6,27 @@ namespace ORDER_MANAGEMENT.Controllers
 {
     public class OutletController : Controller
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public OutletController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
 
         [Authorize(Roles = "Admin,Outlets")]
         // GET: Outlet
         public ActionResult Index()
         {
-            var model = db.Outlets.OutletList();
+            var model = _db.Outlets.OutletList();
             return View(model);
         }
 
         // GET: Distributor/Approved
         public int Approved(int OutletID, int DueRange = 0)
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            db.Outlets.Approved(OutletID, RegID, DueRange);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.Outlets.Approved(OutletID, RegID, DueRange);
 
-            return db.SaveChanges();
+            return _db.SaveChanges();
         }
 
         [Authorize(Roles = "Admin,Outlet_Location Map")]
@@ -38,15 +38,22 @@ namespace ORDER_MANAGEMENT.Controllers
 
         public string GetOutletList()
         {
-            var list = db.Outlets.OutletList();
+            var list = _db.Outlets.OutletList();
             return JsonConvert.SerializeObject(list);
         }
 
-        [Authorize(Roles = "Admin,Outlet_OrderList")]
         //GET: OrderList
+        [Authorize(Roles = "Admin,Outlet_OrderList")]
         public ActionResult OrderList()
         {
             return View();
+        }
+
+        //Transfer Record data-table
+        public JsonResult GetOutletOrders(DataRequest request)
+        {
+            var result = _db.DepotProductTransfers.ListDataTable(request);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -33,7 +33,7 @@
                         <td>@item.DueRangeLimit</td>
                         <td>
                             @{
-                                if (item.DepotName != "")
+                                if (!string.IsNullOrEmpty(item.DepotName))
                                 {
                                     <span>@item.DepotName</span>
                                 }
