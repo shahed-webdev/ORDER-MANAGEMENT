@@ -2,6 +2,6 @@
 {
     public interface IDepotStockRepository : IRepository<DepotStock>
     {
-
+        void AddQuantity(DepotStockAdd model);
     }
 }
