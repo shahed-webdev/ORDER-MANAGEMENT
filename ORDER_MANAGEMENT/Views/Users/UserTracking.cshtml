@@ -160,15 +160,15 @@
                 }]
             };
 
-            let bounds = new google.maps.LatLngBounds(),
-                map = new google.maps.Map(document.getElementById("map"), args),
-                infoWindow = new google.maps.InfoWindow(),
-                marker;
+            const bounds = new google.maps.LatLngBounds();
+            const map = new google.maps.Map(document.getElementById("map"), args);
+            const infoWindow = new google.maps.InfoWindow();
+            let marker;
 
             map.setTilt(45);
 
-            let date = $("#selectedDate").val() || new Date().toDateString(),
-                RegID = parseInt($("#dlUser").find("option:selected").val());
+            const date = $("#selectedDate").val() || new Date().toDateString();
+            const RegID = parseInt($("#dlUser").find("option:selected").val());
 
             $.get("@Url.Action("TrackingByUser", "Basic")", { RegID, date }, res => {
                 if (!res || res.length < 1) return;
@@ -179,7 +179,7 @@
                     lat_lng = [];
 
                 $.each(data, (i, info) => {
-                    let imgSrc = info.Photo ? 'data:image/png;base64,' + info.Photo : '/CSS/image/DefaultImage.jpg';
+                    const imgSrc = info.Photo ? `data:image/png;base64,${info.Photo}` : '/CSS/image/DefaultImage.jpg';
 
                     infoWindowContent.push(
                         [`<div class="marker-info">
@@ -223,25 +223,25 @@
                 map.fitBounds(bounds);
 
                 //Initialize the Direction Service
-                let service = new google.maps.DirectionsService();
+                const service = new google.maps.DirectionsService();
 
                 //Loop and Draw Path Route between the Points on MAP
                 for (let i = 0; i < lat_lng.length; i++) {
                     if ((i + 1) < lat_lng.length) {
-                        let src = lat_lng[i],
-                            des = lat_lng[i + 1];
+                        const src = lat_lng[i];
+                        const des = lat_lng[i + 1];
 
                         service.route({
                             origin: src,
                             destination: des,
                             travelMode: google.maps.DirectionsTravelMode.WALKING
                         }, (result, status) => {
-                            if (status == google.maps.DirectionsStatus.OK) {
+                            if (status === google.maps.DirectionsStatus.OK) {
                                 //Initialize the Path Array
-                                let path = new google.maps.MVCArray();
+                                const path = new google.maps.MVCArray();
 
                                 //Set the Path Stroke Color
-                                let poly = new google.maps.Polyline({
+                                const poly = new google.maps.Polyline({
                                     map,
                                     geodesic: true,
                                     strokeColor: '#FF0000',
@@ -259,7 +259,7 @@
                     }
                 }
 
-                let listener = google.maps.event.addListener(map, "idle", function() {
+                const listener = google.maps.event.addListener(map, "idle", function() {
                     if (map.getZoom() > 16) map.setZoom(16);
                     google.maps.event.removeListener(listener);
                 });

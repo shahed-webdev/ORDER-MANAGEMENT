@@ -13,12 +13,22 @@ namespace ORDER_MANAGEMENT.Controllers
             _db = db;
         }
 
-        // GET: Depot
+        // GET: Depot 
         public ActionResult Depot()
         {
-            var model = _db.Depots.GetAll();
-            return View(model);
+            ViewBag.RegionID = new SelectList(_db.Regions.GetDllRegion(), "RegionID", "RegionName");
+            return View();
         }
+
+        // GET: Depot data-table
+        public ActionResult GetDepots(DataRequest request)
+        {
+            var result = _db.Depots.ListDataTable(request);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
+
 
         // GET: Create
         public ActionResult Create()
