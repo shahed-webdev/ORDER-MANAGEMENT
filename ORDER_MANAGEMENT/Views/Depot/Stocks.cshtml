@@ -57,20 +57,20 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="formAssign">
+                <form id="formReturn">
                     <div class="form-group">
                         <div class="text-center mb-2">
                             <strong id="showProductName"></strong>
                             <span id="show-quantity" class="badge badge-pill badge-success"></span>
                         </div>
 
-                        <input type="hidden" id="regionId"/>
-                        <input type="hidden" id="distributorId"/>
+                        <input type="hidden" id="productId"/>
+                        <input type="hidden" id="depotId"/>
                         <input id="inputReturnQuantity" placeholder="Return Quantity" type="number" class="form-control" min="0"/>
                     </div>
 
                     <div class="text-center mt-1-half">
-                        <button id="btnTransfer" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Return <i class="fas fa-check ml-1"></i></button>
+                        <button id="btnReturn" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Return <i class="fas fa-check ml-1"></i></button>
                     </div>
                 </form>
             </div>

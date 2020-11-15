@@ -396,6 +396,9 @@
     <Content Include="Views\Depot\Create.cshtml" />
     <Content Include="Views\Depot\Stocks.cshtml" />
     <None Include="Properties\PublishProfiles\Order Web.pubxml" />
+    <Content Include="Views\Depot\TransferRecord.cshtml" />
+    <Content Include="Views\Depot\ReturnRecord.cshtml" />
+    <Content Include="Views\Depot\DamageRecord.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">
