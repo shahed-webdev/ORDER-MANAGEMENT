@@ -128,6 +128,27 @@ namespace ORDER_MANAGEMENT.Data
         }
 
 
+        public DataResult<OutletOrdered> OrderedDataTable(DataRequest request)
+        {
+            var o_List = from o in Context.OutletOrders
+                         select new OutletOrdered
+                         {
+                             OutletOrderID = o.OutletOrderID,
+                             OutletOrder_SN = o.OutletOrder_SN,
+                             Is_Approved = o.Is_Approved,
+                             OutletID = o.OutletID,
+                             InsertDate = o.InsertDate,
+                             OrderDiscount = o.OrderDiscount,
+                             OrderNetPrice = o.OrderNetPrice,
+                             OrderTotalPrice = o.OrderTotalPrice,
+                             OutletAddress = o.Outlet.Address,
+                             OutletName = o.Outlet.OutletName,
+                             OrderBy_Name = o.OrderBy_Registration.Name,
+                             TerritoryName = o.Outlet.Territory.TerritoryName
+                         };
+            return o_List.ToDataResult(request);
+        }
+
         public OutletOrderDelivered OrderDeliveredDetails(int id)
         {
             var order = new OutletOrderDelivered();

@@ -9,6 +9,7 @@ namespace ORDER_MANAGEMENT.Data
         OutletOrderDetails OrderDetails(int OrderID);
         ICollection<OutletOrdered> UndeliveredOrderList_ByUser(int RegID);
         ICollection<OutletOrdered> OrderedHistory(int RegID);
+        DataResult<OutletOrdered> OrderedDataTable(DataRequest request);
         OutletOrderDelivered OrderDeliveredDetails(int id);
         int OrderDelivered(OutletOrderDelivered model, int RegID);
     }
