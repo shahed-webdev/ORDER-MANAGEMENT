@@ -47,12 +47,15 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         //transfer to depot
-        public int TransferToDepot(int productId, int quantity)
+        [HttpPost]
+        public ActionResult TransferToDepot(DepotStockAdd model)
         {
-            var registrationId = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            model.RegistrationID= _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
 
+            _db.DepotStocks.AddQuantity(model);
+             _db.SaveChanges();
 
-            return _db.SaveChanges();
+             return Content("success");
         }
 
 

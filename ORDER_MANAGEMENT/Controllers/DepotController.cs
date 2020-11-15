@@ -30,9 +30,16 @@ namespace ORDER_MANAGEMENT.Controllers
        // Stocks
         public ActionResult Stocks(int? id)
         {
-            ViewBag.DepotId = id.HasValue ? new SelectList(_db.Depots.Ddls(), "value", "label",id) : new SelectList(_db.Depots.Ddls(), "value", "label");
-
+            if (id.HasValue) return RedirectToAction("Depot");
+            ViewBag.MainCategory = new SelectList(_db.ProductMainCategorys.GetDdlforSub(), "value", "label");
             return View();
+        }
+
+        //stock data-table
+        public JsonResult GetCategoryProduct(DataRequest request, int[] filter)
+        {
+            var result = _db.Products.DT_GetCategoryProducts(request, filter);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Depot dropdown by region
