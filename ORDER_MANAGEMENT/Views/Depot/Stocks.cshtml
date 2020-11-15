@@ -40,6 +40,7 @@
                 <th>MRP</th>
                 <th>Stock</th>
                 <th>Return</th>
+                <th>Damage</th>
             </tr>
         </thead>
     </table>
@@ -64,9 +65,9 @@
                             <span id="show-quantity" class="badge badge-pill badge-success"></span>
                         </div>
 
-                        <input type="hidden" id="productId"/>
-                        <input type="hidden" id="depotId"/>
-                        <input id="inputReturnQuantity" placeholder="Return Quantity" type="number" class="form-control" min="0"/>
+                        <input type="hidden" id="productId" />
+                        <input type="hidden" id="depotId" />
+                        <input id="inputReturnQuantity" placeholder="Return Quantity" type="number" class="form-control" min="0" />
                     </div>
 
                     <div class="text-center mt-1-half">
@@ -78,11 +79,44 @@
     </div>
 </div>
 
+<!-- Modal damage -->
+<div class="modal fade" id="damageModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header blue-gradient white-text">
+                <h4 class="m-0"><i class="fas fa-plus-circle"></i> Damage Product</h4>
+                <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formDamage">
+                    <div class="form-group">
+                        <div class="text-center mb-2">
+                            <strong id="showProductName2"></strong>
+                            <span id="show-quantity2" class="badge badge-pill badge-success"></span>
+                        </div>
+
+                        <input type="hidden" id="productId2" />
+                        <input type="hidden" id="depotId2" />
+                        <input id="inputDamageQuantity" placeholder="Damage Quantity" type="number" class="form-control" min="0" />
+                    </div>
+
+                    <div class="text-center mt-1-half">
+                        <button id="btnDamage" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Add Damage <i class="fas fa-check ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 @section Scripts {
     <script src="~/JS/bootstrap-select.js"></script>
     <script>
-        $(function () {
+        $(function() {
             $(".select-picker").selectpicker({
                 actionsBox: true,
                 liveSearch: false,
@@ -92,42 +126,43 @@
                 tickIcon: 'fas fa-check-circle',
                 size: 5
             });
+        });
 
-            //Get sub-category
-            $("#MainCategory").change(function () {
-                const url = "/Products/GetSubCategory";
-                const id = $(this).val();
-                var select = $('#selectSubCategory');
+        //Get sub-category
+        $("#MainCategory").change(function() {
+            const url = "/Products/GetSubCategory";
+            const id = $(this).val();
+            var select = $('#selectSubCategory');
 
-                select.empty();
-                select.selectpicker("refresh");
-                $("#table_row").empty()
+            select.empty();
+            select.selectpicker("refresh");
+            $("#table_row").empty()
 
-                if (!id) return;
+            if (!id) return;
 
-                $.get(url, { id }, function (response) {
-                    if (response.length) {
-                        $.each(response, function (i, item) {
-                            select.append($('<option/>', { value: item.value, text: item.label }));
-                        });
-                        select.selectpicker("refresh");
-                    };
-                });
-            });
-
-            //category Change
-            $('#selectSubCategory').change(function () {
-                dataTable.filter = [];
-                $('#selectSubCategory :selected').each(function (i, selected) {
-                    dataTable.filter[i] = parseInt($(selected).val());
-                });
-
-                dataTable.depotId.push({ Field: "DepotId", Value: "@ViewBag.DepotId", Operand: dataTable.operand.Equal });
-                dataTable.getData();
+            $.get(url, { id }, function(response) {
+                if (response.length) {
+                    $.each(response, function(i, item) {
+                        select.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                    select.selectpicker("refresh");
+                };
             });
         });
 
-        //show Transfer modal
+        //category Change
+        $('#selectSubCategory').change(function() {
+            dataTable.filter = [];
+            $('#selectSubCategory :selected').each(function(i, selected) {
+                dataTable.filter[i] = parseInt($(selected).val());
+            });
+
+            dataTable.depotId.push({ Field: "DepotId", Value: "@ViewBag.DepotId", Operand: dataTable.operand.Equal });
+            dataTable.getData();
+        });
+
+
+        //show return modal
         $('#DataTable').on("click", ".btn-return", function(evt) {
             evt.preventDefault();
 
@@ -135,49 +170,69 @@
 
             $('#returnModal').modal('show');
             $("#inputReturnQuantity").attr("max", $(this).attr("data-value"));
-            $("#depotId").val($(this).attr("data-id"));
+            $("#productId").val($(this).attr("data-id"));
+            $("#depotId").val($(this).attr("data-depotId"));
 
             $("#showProductName").text($(this).attr("data-name"));
             $("#show-quantity").text($(this).attr("data-value"));
         });
 
+        //show damage modal
+        $('#DataTable').on("click", ".btn-damage", function(evt) {
+            evt.preventDefault();
+
+            $('#inputDamageQuantity').attr("max", $(this).attr("data-value"));
+
+            $('#damageModal').modal('show');
+            $("#inputDamageQuantity").attr("max", $(this).attr("data-value"));
+
+            $("#productId2").val($(this).attr("data-id"));
+            $("#depotId2").val($(this).attr("data-depotId"));
+
+            $("#showProductName2").text($(this).attr("data-name"));
+            $("#show-quantity2").text($(this).attr("data-value"));
+        });
 
         var dataTable = {
             table: null,
             filter: [],
-            depotId:[],
-            init: function () {
+            depotId: [],
+            init: function() {
                 dataTable.table = $("#DataTable").DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
                         url: "/Depot/GetCategoryProduct",
                         type: "POST",
-                        data: function (d) {
+                        data: function(d) {
                             d.filter = dataTable.filter
                             d.filters = dataTable.depotId
                         }
                     },
                     columns:
-                        [
-                            { data: "ProductName" },
-                            { data: "ProductCode" },
-                            { data: "SKU" },
-                            { data: "Size" },
-                            { data: "MRP"},
-                            { data: "Quantity" },
-                            { data: "Quantity", "render": function(data, type, row, meta) {
-                                    return `<a data-value="${data}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="btn-return blue-text">Return</a>`;
-                                }
-                            },
-                        ],
+                    [
+                        { data: "ProductName" },
+                        { data: "ProductCode" },
+                        { data: "SKU" },
+                        { data: "Size" },
+                        { data: "MRP" },
+                        { data: "Quantity" },
+                        { data: "Quantity", "render": function(data, type, row, meta) {
+                                return `<a data-value="${data}" data-depotId="${row.DepotId}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="btn-return blue-text">${row.TotalReturn}</a>`;
+                            }
+                        },
+                        { data: "Quantity", "render": function(data, type, row, meta) {
+                                return `<a data-value="${data}" data-depotId="${row.DepotId}" data-id="${row.ProductID}" data-name="${row.ProductName}" class="btn-damage blue-text">${row.TotalDamage}</a>`;
+                            }
+                        }
+                    ],
                     columnDefs: [
                         //{ 'searchable': false, 'targets': [2, 3, 4, 5, 6, 7] },
                         //{ 'sortable': false, 'targets': [6, 7] }
                     ]
                 });
             },
-            getData: function () {
+            getData: function() {
                 dataTable.table ? dataTable.table.ajax.reload() : dataTable.init();
             },
             operand: {
@@ -192,5 +247,53 @@
                 EndsWith: 8
             }
         }
+
+        //return product
+        const formReturn = document.getElementById("formReturn");
+        formReturn.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const body = {
+                DepotId: this.depotId.value,
+                ProductId: this.productId.value
+            }
+
+            $.ajax({
+                url: "/Depot/StockReturn",
+                type: "POST",
+                data: body,
+                success: function(response) {
+                    $('#returnModal').modal('hide');
+                    dataTable.getData();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
+
+        //damage product
+        const formDamage = document.getElementById("formDamage");
+        formDamage.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const body = {
+                DepotId: this.depotId.value,
+                ProductId: this.productId.value
+            }
+
+            $.ajax({
+                url: "/Depot/StockDamage",
+                type: "POST",
+                data: body,
+                success: function(response) {
+                    $('#damageModal').modal('hide');
+                    dataTable.getData();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
     </script>
 }

@@ -62,7 +62,11 @@ namespace ORDER_MANAGEMENT.Data
                 SKU = d.Product.SKU,
                 Size = d.Product.Size,
                 MRP = d.Product.MRP,
-                Quantity = d.Quantity
+                Quantity = d.Quantity,
+                TotalDamage = d.TotalDamage,
+                TotalOrder = d.TotalOrder, 
+                TotalReturn = d.TotalReturn,
+                TotalTransfer = d.TotalTransfer
             }).OrderBy(d => d.ProductName);
             return query.ToDataResult(request);
         }

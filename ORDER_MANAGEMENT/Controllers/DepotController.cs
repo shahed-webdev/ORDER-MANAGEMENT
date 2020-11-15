@@ -37,6 +37,18 @@ namespace ORDER_MANAGEMENT.Controllers
             return View();
         }
 
+        //return
+        public ActionResult StockReturn()
+        {
+            return View();
+        }
+
+        //damage
+        public ActionResult StockDamage()
+        {
+            return View();
+        }
+
         //stock data-table
         public JsonResult GetCategoryProduct(DataRequest request, int[] filter)
         {
