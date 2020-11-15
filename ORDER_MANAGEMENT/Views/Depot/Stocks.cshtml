@@ -12,7 +12,7 @@
 }
 
 <div class="card card-body m-md-3">
-    <h3 class="mb-0">Stock</h3>
+    <h3 class="mb-0">Stock: <small>@ViewBag.DepotName</small></h3>
     <a class="d-inline-block mb-3" href="/Depot/Depot">Back to Depots</a>
 
     <div class="row mb-3">
@@ -255,7 +255,8 @@
 
             const body = {
                 DepotId: this.depotId.value,
-                ProductId: this.productId.value
+                ProductId: this.productId.value,
+                Quantity: this.inputReturnQuantity.value
             }
 
             $.ajax({
@@ -278,8 +279,9 @@
             evt.preventDefault();
 
             const body = {
-                DepotId: this.depotId.value,
-                ProductId: this.productId.value
+                DepotId: this.depotId2.value,
+                ProductId: this.productId2.value,
+                Quantity: this.inputDamageQuantity.value
             }
 
             $.ajax({
