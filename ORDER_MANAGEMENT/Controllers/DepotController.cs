@@ -38,9 +38,12 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         //return
-        public ActionResult StockReturn()
+        public ActionResult StockReturn(DepotReturnAddModel model)
         {
-            return View();
+            _db.DepotProductReturns.AddQuantity(model);
+            _db.SaveChanges();
+
+            return Content("ok");
         }
 
         //damage
@@ -118,7 +121,7 @@ namespace ORDER_MANAGEMENT.Controllers
         //Return Record data-table
         public JsonResult GetReturnRecord(DataRequest request)
         {
-            var result = _db.DepotProductTransfers.ListDataTable(request);
+            var result = _db.DepotProductReturns.ListDataTable(request);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -133,7 +136,7 @@ namespace ORDER_MANAGEMENT.Controllers
         //Damage Record data-table
         public JsonResult GetDamageRecord(DataRequest request)
         {
-            var result = _db.DepotProductTransfers.ListDataTable(request);
+            var result = _db.DepotProductDamages.ListDataTable(request);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
