@@ -45,7 +45,9 @@ namespace ORDER_MANAGEMENT.Data
                                     IsApproved = d.IsApproved,
                                     ReportTo_User = d.ReportTo_User.Registration,
                                     TerritoryName = d.Territory.TerritoryName,
-                                    RegionID = d.Territory.Area.RegionID
+                                    RegionID = d.Territory.Area.RegionID,
+                                    DepotId = d.DepotId,
+                                    DepotName = d.Depot.DepotName
                                 }).ToList();
             return Distributors;
         }
