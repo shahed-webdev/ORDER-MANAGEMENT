@@ -12,6 +12,13 @@ namespace ORDER_MANAGEMENT.Data
 
         }
 
+        public void DueRangeChange(int OutletID, int DueRange)
+        {
+            var Outlet = Find(OutletID);
+            Outlet.DueRangeLimit = DueRange;
+            Update(Outlet);
+        }
+
         public void Approved(int OutletID, int RegistrationID, int DueRange)
         {
             var Outlet = Find(OutletID);

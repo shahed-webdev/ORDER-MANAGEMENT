@@ -18,7 +18,7 @@ namespace ORDER_MANAGEMENT.Data
         public string ProductCode { get; set; }
 
         [Required(ErrorMessage = "SKU Required !!")]
-        [Unique(ErrorMessage = "SKU already exist !!", TargetModelType = typeof(Product), TargetPropertyName = "SKU")]
+        //[Unique(ErrorMessage = "SKU already exist !!", TargetModelType = typeof(Product), TargetPropertyName = "SKU")]
         public int SKU { get; set; }
 
         [Required(ErrorMessage = "Size Required !!")]

@@ -7,6 +7,7 @@ namespace ORDER_MANAGEMENT.Data
         void CreateOutlet(OutletCreateVM model);
         List<OutletListVM> OutletList();
         double GetDueRange(int OutletID);
+        void DueRangeChange(int OutletID, int DueRange);
         void Approved(int OutletID, int RegistrationID, int DueRange);
         List<DDL> OutletByUserTerritory(int RegistrationID);
         ICollection<OutletSearch> Search(string key);
