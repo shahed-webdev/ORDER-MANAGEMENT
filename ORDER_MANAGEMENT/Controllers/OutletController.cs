@@ -20,12 +20,19 @@ namespace ORDER_MANAGEMENT.Controllers
             return View(model);
         }
 
-        // GET: Distributor/Approved
-        public int Approved(int OutletID, int DueRange = 0)
+        // GET: Approved
+        public int Approved(int outletId, int dueRange = 0)
         {
-            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            _db.Outlets.Approved(OutletID, RegID, DueRange);
+            var regId = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.Outlets.Approved(outletId, regId, dueRange);
 
+            return _db.SaveChanges();
+        }
+
+        // GET: Approved
+        public int DueRangeUpdate(int outletId, int dueRange = 0)
+        {
+            _db.Outlets.DueRangeChange(outletId, dueRange);
             return _db.SaveChanges();
         }
 

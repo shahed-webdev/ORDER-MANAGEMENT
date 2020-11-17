@@ -4,98 +4,174 @@
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
-
-
 <div class="m-md-3 card card-body">
-    <h3 class="mb-3">Outlet</h3>
+    <h3 class="mb-3">Outlets</h3>
 
     <div class="table-responsive">
         <table id="DataTable" class="table table-sm table-bordered">
             <thead>
                 <tr>
-                    <th>
-                        Outlet Name
-                    </th>
-                    <th>
-                        Proprietor
-                    </th>
-                    <th>
-                        Phone
-                    </th>
-                    <th>
-                        Email
-                    </th>
-                    <th>
-                        Address
-                    </th>
-                    <th>
-                        Due Range
-                    </th>
-                    <th style="width:80px">
-                        Is Approved
-                    </th>
+                    <th>Outlet Name</th>
+                    <th>Proprietor</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Due Range</th>
+                    <th style="width:80px">Approved</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td>
-                        @item.OutletName
-                    </td>
-                    <td>
-                        @item.ProprietorName
-                    </td>
-                    <td>
-                        @item.Phone
-                    </td>
-                    <td>
-                        @item.Email
-                    </td>
-                    <td>
-                        @item.Address
-                    </td>
-                    <td>
-                        <input type="number" value="@item.DueRangeLimit" class="dueRange form-control" />
-                    </td>
-                    <td>
-                        <button class="Approve btn btn-sm btn-light m-0" data-id="@item.OutletID" data-approved="@item.IsApproved" disabled="disabled">Approve</button>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>@item.OutletName</td>
+                        <td>@item.ProprietorName</td>
+                        <td>@item.Phone</td>
+                        <td>@item.Email</td>
+                        <td>@item.Address</td>
+                        <td>@item.DueRangeLimit</td>
+                        <td>
+                            @{
+                                if (item.IsApproved)
+                                {
+                                    <a class="updateDueRange text-primary" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Update</a>
+                                }
+                                else
+                                {
+                                    <a class="approve text-success" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Approve</a>
+                                }
+                            }
+
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
 
+<!-- Modal approve -->
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header blue-gradient white-text">
+                <h4 class="m-0"><i class="fas fa-plus-circle"></i> Approve Outlet</h4>
+                <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="approveForm">
+                    <input type="hidden" id="hiddenOutletId">
+                    <div class="form-group">
+                        <label>Due Range</label>
+                        <input id="inputDueRange" min="0" type="number" class="form-control" required />
+                    </div>
+                    <div class="text-center mt-1-half">
+                        <button id="btnApprove" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Approve <i class="fas fa-check ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal due range -->
+<div class="modal fade" id="dueRangeModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog cascading-modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header blue-gradient white-text">
+                <h4 class="m-0"><i class="fas fa-plus-circle"></i> Update Due Range</h4>
+                <button type="button" class="close waves-effect waves-light" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="dueRangeForm">
+                    <input type="hidden" id="hiddenOutletId2">
+                    <div class="form-group">
+                        <label>Due Range</label>
+                        <input id="inputDueRange2" min="0" type="number" class="form-control" required />
+                    </div>
+                    <div class="text-center mt-1-half">
+                        <button id="btndueRange" type="submit" class="btn blue-gradient mb-1 waves-effect waves-light">Update <i class="fas fa-check ml-1"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 @section Scripts {
     <script>
-        $(function () {
-            $('#DataTable').DataTable({
-                "aoColumnDefs": [{ 'bSortable': false, 'aTargets': [6] }]
+        //***approve*****//
+        const approveForm = document.getElementById("approveForm");
+        const dueRangeForm = document.getElementById("dueRangeForm");
+
+        //show modal
+        $('#DataTable').on("click", ".approve", function () {
+            approveForm.hiddenOutletId.value = $(this).data("id");
+            approveForm.inputDueRange.value = $(this).data("due");
+
+            $('#approveModal').modal('show');
+        });
+
+        //post
+        approveForm.addEventListener("submit", function (evt) {
+            evt.preventDefault();
+
+            const body = {
+                outletId: this.hiddenOutletId.value,
+                dueRange: this.inputDueRange.value
+            }
+
+            $.ajax({
+                url: "/Outlet/Approved",
+                type: "POST",
+                data: body,
+                success: function (response) {
+                    // $('#approveModal').modal('hide');
+                    location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
             });
         });
 
-        $(".Approve").each(function () {
-            const isApproved = $(this).data("approved");
-            if (isApproved === 'False')
-                $(this).addClass("btn-primary").removeClass("btn-light").removeAttr("disabled", "disabled").text("Approve");
-            else
-                $(this).text("Approved");
+
+
+        //***due range update*****//
+        //show modal
+        $('#DataTable').on("click", ".updateDueRange", function () {
+            dueRangeForm.hiddenOutletId2.value = $(this).data("id");
+            dueRangeForm.inputDueRange2.value = $(this).data("due");
+
+            $('#dueRangeModal').modal('show');
         });
 
-        $('#DataTable').on("click", ".Approve", function () {
-            const url = "@Url.Action("Approved")";
-            const outletId = $(this).data("id");
-            const dueRange = $(this).closest("tr").find(".dueRange").val();
-            var btn = $(this);
+        //post
+        dueRangeForm.addEventListener("submit", function (evt) {
+            evt.preventDefault();
 
-            if (isNaN(parseInt(dueRange))) return;
-            
+            const body = {
+                outletId: this.hiddenOutletId2.value,
+                dueRange: this.inputDueRange2.value
+            }
 
-            $.get(url, { OutletID: outletId, DueRange:dueRange}, response => {
-                if (response !== 0) {
-                    btn.addClass("btn-light").removeClass("btn-primary").attr("disabled", "disabled").text("Approved");
+            $.ajax({
+                url: "/Outlet/DueRangeUpdate",
+                type: "POST",
+                data: body,
+                success: function (response) {
+                    // $('#dueRangeModal').modal('hide');
+                    location.reload();
+                },
+                error: function (err) {
+                    console.log(err);
                 }
             });
         });
