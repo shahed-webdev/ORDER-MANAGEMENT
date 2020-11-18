@@ -6,6 +6,7 @@ namespace ORDER_MANAGEMENT.Data
     {
         void CreateOutlet(OutletCreateVM model);
         List<OutletListVM> OutletList();
+        List<OutletListVM> OutletListByUser(int registrationId);
         double GetDueRange(int OutletID);
         void DueRangeChange(int OutletID, int DueRange);
         void Approved(int OutletID, int RegistrationID, int DueRange);
