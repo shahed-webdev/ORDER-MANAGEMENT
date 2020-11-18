@@ -22,14 +22,16 @@
 <div class="card card-body">
     <div class="form-row align-items-center">
         <div class="col-auto">
-            <div class="md-form">
-                <input type="text" class="form-control datepicker" id="dateTextBox" placeholder="Enter Date" />
-                <input type="hidden" id="selectedDate" />
+            <div class="form-group">
+                <label for="dateTextBox">Date</label>
+                <input type="text" class="form-control datepicker" id="dateTextBox" placeholder="Enter Date"/>
+                <input type="hidden" id="selectedDate"/>
             </div>
         </div>
         <div class="col-auto">
-            <div class="md-form">
-                <select id="dlUser" class="mdb-select md-form" style="display:none;"></select>
+            <div class="form-group">
+                <label for="dlUser">User</label>
+                <select id="dlUser" class="form-control"></select>
             </div>
         </div>
         <div class="col-auto">
@@ -54,7 +56,7 @@
         }
 
         $(function() {
-            $('.mdb-select').materialSelect();
+            //$('.mdb-select').materialSelect();
 
             $('.datepicker').pickadate({
                 format: 'dd mmm yyyy',

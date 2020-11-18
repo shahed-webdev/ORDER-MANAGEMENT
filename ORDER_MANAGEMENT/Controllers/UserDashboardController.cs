@@ -7,26 +7,26 @@ namespace ORDER_MANAGEMENT.Controllers
     [Authorize(Roles = ("User"))]
     public class UserDashboardController : Controller
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public UserDashboardController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
         // GET: UserDashboard
         public ActionResult Index()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var user = db.Users.GetDashUser(id);
-            user.ReportTo = db.Users.GetReportTo(id);
-            user.ReportFrom = db.Users.GetReportFrom(id);
-            user.TargetReport = db.Users.GetTargetReport(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var user = _db.Users.GetDashUser(id);
+            user.ReportTo = _db.Users.GetReportTo(id);
+            user.ReportFrom = _db.Users.GetReportFrom(id);
+            user.TargetReport = _db.Users.GetTargetReport(id);
             return View(user);
         }
 
         //Profile update
         public ActionResult UserProfile()
         {
-            var user = db.Users.GetUserDetails(User.Identity.Name);
+            var user = _db.Users.GetUserDetails(User.Identity.Name);
             return View(user);
         }
 
@@ -36,9 +36,9 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             if (ModelState.IsValid)
             {
-                var registration = db.Registrations.Reg_Update(User.Identity.Name, user);
-                db.Registrations.Update(registration);
-                db.SaveChanges();
+                var registration = _db.Registrations.Reg_Update(User.Identity.Name, user);
+                _db.Registrations.Update(registration);
+                _db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -55,10 +55,8 @@ namespace ORDER_MANAGEMENT.Controllers
         //Login Info
         public string GetAdminBasic()
         {
-            var admin = db.Registrations.GetAdminBasic(User.Identity.Name);
+            var admin = _db.Registrations.GetAdminBasic(User.Identity.Name);
             return JsonConvert.SerializeObject(admin);
         }
-
-
     }
 }

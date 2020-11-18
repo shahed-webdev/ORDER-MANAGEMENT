@@ -47,11 +47,11 @@
         };
 
     function GetURLParameter() {
-            var sPageURL = window.location.href;
-            var indexOfLastSlash = sPageURL.lastIndexOf("/");
+            const sPageUrl = window.location.href;
+            const indexOfLastSlash = sPageUrl.lastIndexOf("/");
 
-            if (indexOfLastSlash > 0 && sPageURL.length - 1 != indexOfLastSlash)
-                return sPageURL.substring(indexOfLastSlash + 1);
+            if (indexOfLastSlash > 0 && sPageUrl.length - 1 !== indexOfLastSlash)
+                return sPageUrl.substring(indexOfLastSlash + 1);
             else
                 return 0;
         }
@@ -71,7 +71,7 @@
     });
 
         function initMap() {
-            let args = {
+            const args = {
                 zoom: 15,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 mapTypeControl: false,
@@ -153,17 +153,17 @@
                 }]
             };
 
-            let bounds = new google.maps.LatLngBounds(),
-                map = new google.maps.Map(document.getElementById("map"), args),
-                infoWindow = new google.maps.InfoWindow(),
-                marker;
+            const bounds = new google.maps.LatLngBounds();
+            const map = new google.maps.Map(document.getElementById("map"), args);
+            const infoWindow = new google.maps.InfoWindow();
+            let marker;
 
             map.setTilt(45);
 
-            let date = $("#selectedDate").val() || new Date().toDateString(),
-                RegID = GetURLParameter();
+            const date = $("#selectedDate").val() || new Date().toDateString();
+            const regId = GetURLParameter();
 
-            $.get("@Url.Action("TrackingByUser","Basic")", { RegID, date }, res => {
+            $.get("@Url.Action("TrackingByUser","Basic")", { RegID:regId, date }, res => {
                 if (!res || res.length < 1) return;
 
                 const data = JSON.parse(res),
@@ -172,7 +172,7 @@
                     lat_lng = [];
 
                 $.each(data, (i, info) => {
-                    let imgSrc = info.Photo ? 'data:image/png;base64,' + info.Photo : '/CSS/image/DefaultImage.jpg';
+                    const imgSrc = info.Photo ? `data:image/png;base64,${info.Photo}` : '/CSS/image/DefaultImage.jpg';
 
                     infoWindowContent.push(
                         [`<div class="marker-info">
@@ -216,25 +216,25 @@
                 map.fitBounds(bounds);
 
                 //Initialize the Direction Service
-                let service = new google.maps.DirectionsService();
+                const service = new google.maps.DirectionsService();
 
                 //Loop and Draw Path Route between the Points on MAP
                 for (let i = 0; i < lat_lng.length; i++) {
                     if ((i + 1) < lat_lng.length) {
-                        let src = lat_lng[i],
-                            des = lat_lng[i + 1];
+                        const src = lat_lng[i];
+                        const des = lat_lng[i + 1];
 
                         service.route({
                             origin: src,
                             destination: des,
                             travelMode: google.maps.DirectionsTravelMode.WALKING
                         }, (result, status) => {
-                            if (status == google.maps.DirectionsStatus.OK) {
+                            if (status === google.maps.DirectionsStatus.OK) {
                                 //Initialize the Path Array
-                                let path = new google.maps.MVCArray();
+                                const path = new google.maps.MVCArray();
 
                                 //Set the Path Stroke Color
-                                let poly = new google.maps.Polyline({
+                                const poly = new google.maps.Polyline({
                                     map,
                                     geodesic: true,
                                     strokeColor: '#FF0000',
@@ -252,13 +252,13 @@
                     }
                 }
 
-                let listener = google.maps.event.addListener(map, "idle", function () {
+                const listener = google.maps.event.addListener(map, "idle", function () {
                     if (map.getZoom() > 16) map.setZoom(16);
                     google.maps.event.removeListener(listener);
                 });
             });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPcn0V7X_HZkmfmEKcIwx9qSXpMRUyqAc"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4vVA6oR4emTgxL8DC3fAg5EmJWCPeNds"></script>
 }
 
