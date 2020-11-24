@@ -92,10 +92,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/OutletDueLimit/{id}")]
         public IHttpActionResult OutletDueLimit(int id)
         {
-
             double? limit = db.Outlets.GetDueRange(id);
-            if (limit == null) return NotFound();
-
             return Ok(limit);
         }
 
