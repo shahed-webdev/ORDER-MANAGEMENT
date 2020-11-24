@@ -70,6 +70,28 @@ namespace ORDER_MANAGEMENT.Data
             return Outlets.ToList();
         }
 
+        public List<OutletListVM> OutletListByUser(int registrationId)
+        {
+            var Outlets = from o in Context.Outlets
+                          where o.CreateBy_RegistrationID == registrationId
+                          select new OutletListVM()
+                          {
+                              Address = o.Address,
+                              ProprietorName = o.ProprietorName,
+                              DueRangeLimit = o.DueRangeLimit,
+                              InsertDate = o.InsertDate,
+                              Lat = o.Lat,
+                              Lon = o.Lon,
+                              Phone = o.Phone,
+                              OutletName = o.OutletName,
+                              TotalDue = o.Total_DueAmount,
+                              Logo = o.Logo,
+                              OutletID = o.OutletID,
+                              IsApproved = o.IsApproved
+                          };
+            return Outlets.ToList();
+        }
+
         public double GetDueRange(int OutletID)
         {
 

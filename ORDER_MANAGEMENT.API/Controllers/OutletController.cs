@@ -16,7 +16,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         // POST: api/Outlet
         [HttpPost]
         [Route("api/Outlet")]
-        public IHttpActionResult Post([FromBody]OutletCreateVM value)
+        public IHttpActionResult Post([FromBody] OutletCreateVM value)
         {
             if (value == null) NotFound();
 
@@ -43,8 +43,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getOutletList")]
         public List<OutletListVM> getOutletList()
         {
-            // var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Outlets = db.Outlets.OutletList();
+            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var Outlets = db.Outlets.OutletListByUser(id);
             return Outlets;
         }
 
@@ -60,7 +60,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/OutletCheckIn")]
-        public IHttpActionResult OutletCheckIn([FromBody]UserTrackingByOutlet value)
+        public IHttpActionResult OutletCheckIn([FromBody] UserTrackingByOutlet value)
         {
             if (value == null) NotFound();
 
@@ -77,7 +77,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/OutletOrder")]
-        public IHttpActionResult OutletOrder([FromBody]OutletOrderPlace value)
+        public IHttpActionResult OutletOrder([FromBody] OutletOrderPlace value)
         {
             if (value == null) NotFound();
 
@@ -133,7 +133,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/OutletOrderReturn")]
-        public IHttpActionResult OutletOrderReturn([FromBody]List<OutletProductReturn> values)
+        public IHttpActionResult OutletOrderReturn([FromBody] List<OutletProductReturn> values)
         {
             if (values == null) NotFound();
 
@@ -174,7 +174,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/OutletDuePay")]
-        public IHttpActionResult OutletDuePay([FromBody]OutletPaymentRecord value)
+        public IHttpActionResult OutletDuePay([FromBody] OutletPaymentRecord value)
         {
             if (value == null) NotFound();
 
