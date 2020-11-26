@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http;
-using System.Web.Http.ModelBinding;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -16,6 +7,14 @@ using Microsoft.Owin.Security.OAuth;
 using ORDER_MANAGEMENT.API.Models;
 using ORDER_MANAGEMENT.API.Providers;
 using ORDER_MANAGEMENT.API.Results;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
 
 namespace ORDER_MANAGEMENT.API.Controllers
 {
@@ -117,9 +116,19 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public async Task<IHttpActionResult> ChangePassword([FromBody] ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            
+
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            return !result.Succeeded ? GetErrorResult(result) : Ok();
+            if (result.Succeeded)
+            {
+                string token = await UserManager.GeneratePasswordResetTokenAsync(User.Identity.GetUserId());
+                return Ok(token);
+            }
+            else
+            {
+                return GetErrorResult(result);
+            }
+
+
         }
 
         // POST api/Account/SetPassword
@@ -199,9 +208,9 @@ namespace ORDER_MANAGEMENT.API.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -309,7 +318,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }
