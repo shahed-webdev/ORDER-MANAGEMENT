@@ -24,6 +24,19 @@ namespace ORDER_MANAGEMENT.Data
 
             return Territorys;
         }
+
+        public List<DDL> GetDistributorTerritory(int distributorId)
+        {
+            var ddl = Context.DistributorTerritoryLists.Where(d => d.DistributorID == distributorId)
+                .Select(t => new DDL()
+                {
+                    value = t.Territory.TerritoryID,
+                    label = t.Territory.TerritoryName
+                }).ToList();
+            return ddl;
+
+        }
+
         public List<TerritoryDll_VM> GetUserTerritory(int UpperRegistrationID, List<int> AreaIDs)
         {
             var user = Context.Users.Find(UpperRegistrationID);

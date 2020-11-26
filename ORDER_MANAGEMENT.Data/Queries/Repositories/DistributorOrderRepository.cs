@@ -244,7 +244,10 @@ namespace ORDER_MANAGEMENT.Data
 
         public void OrderTargetUpdate(int DistributorID, int DistributorOrderID)
         {
-            var dis = Context.Distributors.Find(DistributorID);
+            var dis = Context.Distributors
+                .Include(d => d.DistributorTerritoryLists)
+                .FirstOrDefault(d => d.DistributorID == DistributorID);
+
             dis.Total_BuyingAmount = Context.DistributorOrders.Where(d => d.DistributorID == DistributorID).Sum(d => d.OrderNetPrice);
 
             Context.Entry(dis).State = EntityState.Modified;
@@ -252,7 +255,7 @@ namespace ORDER_MANAGEMENT.Data
             var OrderNetAmount = Context.DistributorOrders.Find(DistributorOrderID).OrderNetPrice;
 
             var ta = (from t in Context.User_Territories
-                      where t.TerritoryID == dis.TerritoryID
+                      where dis.DistributorTerritoryLists.Select(d => d.TerritoryID).Contains(t.TerritoryID)
                       select t.User.TargetAssigns).ToList();
 
             List<int> targetIDs = new List<int>();

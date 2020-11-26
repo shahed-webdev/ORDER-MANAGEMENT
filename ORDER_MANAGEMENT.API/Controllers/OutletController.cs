@@ -29,13 +29,28 @@ namespace ORDER_MANAGEMENT.API.Controllers
                 return Content(HttpStatusCode.NotFound, "Distributor Not Assigned");
             }
 
-
-            value.TerritoryID = db.Distributors.Find(value.DistributorID).TerritoryID;
+            //Update because of Distributor multiple Territory option add
+            //value.TerritoryID = db.Distributors.Find(value.DistributorID).TerritoryID;
 
             db.Outlets.CreateOutlet(value);
             db.SaveChanges();
 
             return Ok();
+        }
+
+
+        [HttpGet]
+        // GET: api/OutletList
+        [Route("api/getTerritoryDDL")]
+        public List<DDL> getTerritoryDdl()
+        {
+            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+
+            var distributorId = db.Users.Find(id).DistributorID;
+            if (distributorId == null) return new List<DDL>();
+
+            var territoryDdl = db.Territorys.GetDistributorTerritory(distributorId.GetValueOrDefault());
+            return territoryDdl;
         }
 
         [HttpGet]

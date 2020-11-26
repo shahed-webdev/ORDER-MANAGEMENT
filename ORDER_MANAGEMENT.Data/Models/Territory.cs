@@ -23,5 +23,6 @@ namespace ORDER_MANAGEMENT.Data
         public virtual ICollection<User_Territory> user_Territories { get; set; }
         public virtual ICollection<Distributor> Distributors { get; set; }
         public virtual ICollection<Outlet> Outlets { get; set; }
+        public virtual ICollection<DistributorTerritoryList> DistributorTerritoryLists { get; set; }
     }
 }

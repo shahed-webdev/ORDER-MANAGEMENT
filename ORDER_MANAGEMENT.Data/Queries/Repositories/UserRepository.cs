@@ -427,11 +427,14 @@ namespace ORDER_MANAGEMENT.Data
 
         public List<UserSR> GetSR_ByDistributorTerritory(int DistributorID)
         {
-            var TerritoryID = Context.Distributors.Find(DistributorID).TerritoryID;
+            var TerritoryIDs = Context.DistributorTerritoryLists
+                .Where(d => d.DistributorID == DistributorID)
+                .Select(d => d.TerritoryID).ToList();
+
             var user = (from t in Context.User_Territories
                         join u in Context.Users
                                on t.RegistrationID equals u.RegistrationID
-                        where t.TerritoryID == TerritoryID && u.Organization_hierarchy.HierarchyName == "SR"
+                        where TerritoryIDs.Contains(t.TerritoryID) && u.Organization_hierarchy.HierarchyName == "SR"
                         select new UserSR
                         {
                             RegistrationID = u.RegistrationID,

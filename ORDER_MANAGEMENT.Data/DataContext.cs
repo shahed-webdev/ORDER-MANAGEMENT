@@ -30,6 +30,7 @@ namespace ORDER_MANAGEMENT.Data
         public virtual DbSet<DistributorProductDamage> DistributorProductDamages { get; set; }
         public virtual DbSet<DistributorProductReturn> DistributorProductReturns { get; set; }
         public virtual DbSet<DistributorStock> DistributorStocks { get; set; }
+        public virtual DbSet<DistributorTerritoryList> DistributorTerritoryLists { get; set; }
         public virtual DbSet<Organization_hierarchy> Organization_hierarchy { get; set; }
 
         public virtual DbSet<Outlet> Outlets { get; set; }
@@ -87,6 +88,7 @@ namespace ORDER_MANAGEMENT.Data
             modelBuilder.Configurations.Add(new DistributorProductDamageConfiguration());
             modelBuilder.Configurations.Add(new DistributorProductReturnConfiguration());
             modelBuilder.Configurations.Add(new DistributorStockConfiguration());
+            modelBuilder.Configurations.Add(new DistributorTerritoryListConfiguration());
 
             modelBuilder.Configurations.Add(new HierarchyConfiguration());
 

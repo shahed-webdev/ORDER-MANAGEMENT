@@ -6,7 +6,7 @@ namespace ORDER_MANAGEMENT.Data
 {
     public class DistributorCreateVM
     {
-        public int TerritoryID { get; set; }
+        public int[] TerritoryIds { get; set; }
         public int ReportTo_RegistrationID { get; set; }
         public string Name { get; set; }
         public string Mobile { get; set; }

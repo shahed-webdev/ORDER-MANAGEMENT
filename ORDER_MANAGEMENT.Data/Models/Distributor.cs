@@ -20,7 +20,6 @@ namespace ORDER_MANAGEMENT.Data
             this.Outlets = new HashSet<Outlet>();
         }
         public int DistributorID { get; set; }
-        public int TerritoryID { get; set; }
         public int ReportTo_RegistrationID { get; set; }
         public int? RegistrationID { get; set; }
         public int? DepotId { get; set; }
@@ -59,6 +58,7 @@ namespace ORDER_MANAGEMENT.Data
 
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<Outlet> Outlets { get; set; }
+        public virtual ICollection<DistributorTerritoryList> DistributorTerritoryLists { get; set; }
 
     }
 }

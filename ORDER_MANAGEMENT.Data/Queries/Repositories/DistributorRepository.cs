@@ -15,7 +15,6 @@ namespace ORDER_MANAGEMENT.Data
         {
             var dis = new Distributor();
 
-            dis.TerritoryID = model.TerritoryID;
             dis.ReportTo_RegistrationID = model.ReportTo_RegistrationID;
             dis.Name = model.Name;
             dis.Mobile = model.Mobile;
@@ -23,6 +22,10 @@ namespace ORDER_MANAGEMENT.Data
             dis.Lat = model.Lat;
             dis.Lon = model.Lon;
             dis.Photo = model.Photo;
+            dis.DistributorTerritoryLists = model.TerritoryIds.Select(id => new DistributorTerritoryList
+            {
+                TerritoryID = id
+            }).ToList();
 
             Add(dis);
         }
@@ -126,8 +129,10 @@ namespace ORDER_MANAGEMENT.Data
         public List<DDL> DistributorByUserTerritory(int RegistrationID)
         {
             var Distributors = (from d in Context.Distributors
+                                join dt in Context.DistributorTerritoryLists
+                                    on d.DistributorID equals dt.DistributorID
                                 join u in Context.User_Territories
-                                on d.TerritoryID equals u.TerritoryID
+                                on dt.TerritoryID equals u.TerritoryID
                                 where u.RegistrationID == RegistrationID
                                 select new DDL
                                 {
@@ -197,7 +202,9 @@ namespace ORDER_MANAGEMENT.Data
         public List<DDL> DistributorByTerritorys(ICollection<int> TerritoryIDs)
         {
             var Distributors = (from d in Context.Distributors
-                                where TerritoryIDs.Any(id => id.Equals(d.TerritoryID))
+                                join dt in Context.DistributorTerritoryLists
+                                    on d.DistributorID equals dt.DistributorID
+                                where TerritoryIDs.Any(id => id.Equals(dt.TerritoryID))
                                 select new DDL
                                 {
                                     label = d.Name,
