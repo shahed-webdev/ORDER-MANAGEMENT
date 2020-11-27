@@ -120,8 +120,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                string token = await UserManager.GeneratePasswordResetTokenAsync(User.Identity.GetUserId());
-                return Ok(token);
+                //string token = await UserManager.GeneratePasswordResetTokenAsync(User.Identity.GetUserId());
+                return Ok();
             }
             else
             {
