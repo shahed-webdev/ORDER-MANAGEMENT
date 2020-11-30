@@ -150,7 +150,7 @@ namespace ORDER_MANAGEMENT.Data
     {
         public int RegionID { get; set; }
         public int AreaID { get; set; }
-        public int TerritoryID { get; set; }
+        public int[] TerritoryIDs { get; set; }
         public int OutletID { get; set; }
         public int DistributorID { get; set; }
         public int DepotId { get; set; }
