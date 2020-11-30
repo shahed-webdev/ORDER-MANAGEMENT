@@ -45,7 +45,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [HttpPost]
         // POST: api/Distributor
         [Route("api/Distributor")]
-        public IHttpActionResult Post([FromBody]DistributorCreateVM value)
+        public IHttpActionResult Post([FromBody] DistributorCreateVM value)
         {
             if (value == null) NotFound();
 
@@ -58,7 +58,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/DistributorOrder")]
-        public IHttpActionResult DistributorOrder([FromBody]DistributorOrderPlace value)
+        public IHttpActionResult DistributorOrder([FromBody] DistributorOrderPlace value)
         {
             if (value == null) NotFound();
 
@@ -71,7 +71,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/DistributorCheckIn")]
-        public IHttpActionResult DistributorCheckIn([FromBody]UserTrackingByDistributor value)
+        public IHttpActionResult DistributorCheckIn([FromBody] UserTrackingByDistributor value)
         {
             if (value == null) NotFound();
 
@@ -134,7 +134,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/DistributorOrderReturn")]
-        public IHttpActionResult DistributorOrderReturn([FromBody]List<DistributorProductReturn> values)
+        public IHttpActionResult DistributorOrderReturn([FromBody] List<DistributorProductReturn> values)
         {
             if (values == null) NotFound();
 
@@ -162,7 +162,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/DistributorDuePay")]
-        public IHttpActionResult DistributorDuePay([FromBody]DistributorPaymentRecord value)
+        public IHttpActionResult DistributorDuePay([FromBody] DistributorPaymentRecord value)
         {
             if (value == null) NotFound();
 

@@ -276,6 +276,53 @@ namespace ORDER_MANAGEMENT.Data
 
             return 0;
         }
+
+        public ICollection<OutletOrderReport> OrderReport(OutletOrderFilter filter)
+        {
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        select new OutletOrderReportWithFilter
+                        {
+                            RegionID = area.RegionID,
+                            AreaID = area.AreaID,
+                            TerritoryID = outlet.TerritoryID,
+                            OutletID = outlet.OutletID,
+                            DistributorID = outletOrder.DistributorID,
+                            DepotId = outletOrder.Distributor.DepotId,
+                            ApproveDate = outletOrder.ApproveDate,
+                            OrderDate = outletOrder.InsertDate.Date,
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.OrderQuantity
+                        }).Where(o => o.OrderDate >= filter.SDateTime && o.OrderDate <= filter.EDateTime);
+
+            if (filter.RegionID != 0)
+                list = list.Where(o => o.RegionID == filter.RegionID);
+            if (filter.AreaID != 0)
+                list = list.Where(o => o.AreaID == filter.AreaID);
+            if (filter.TerritoryID != 0)
+                list = list.Where(o => o.TerritoryID == filter.TerritoryID);
+            if (filter.DistributorID != 0)
+                list = list.Where(o => o.DistributorID == filter.DistributorID);
+            if (filter.DepotId != 0)
+                list = list.Where(o => o.DepotId == filter.DepotId);
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletOrderReport
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.OrderQuantity)
+            }).ToList();
+
+            return group;
+
+        }
+
         public ICollection<OutletOrdered> OrderedHistory(int RegID)
         {
             var o_List = from o in Context.OutletOrders

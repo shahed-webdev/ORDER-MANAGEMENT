@@ -42,7 +42,6 @@ namespace ORDER_MANAGEMENT.Data
         public double Total_ReturnAmount { get; set; } = 0;
         public byte[] Photo { get; set; }
         public DateTime InsertDate { get; set; } = DateTime.Now;
-        public virtual Territory Territory { get; set; }
         public virtual User ReportTo_User { get; set; }
         public virtual Registration Registration { get; set; }
         public virtual Depot Depot { get; set; }

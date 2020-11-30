@@ -119,4 +119,42 @@ namespace ORDER_MANAGEMENT.Data
         public string AreaName { get; set; }
         public string TerritoryName { get; set; }
     }
+
+    public class OutletOrderReport
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public int OrderQuantity { get; set; }
+    }
+
+    public class OutletOrderReportWithFilter
+    {
+        public int RegionID { get; set; }
+        public int AreaID { get; set; }
+        public int TerritoryID { get; set; }
+        public int OutletID { get; set; }
+        public int DistributorID { get; set; }
+        public int? DepotId { get; set; }
+        public DateTime? ApproveDate { get; set; }
+        public DateTime? OrderDate { get; set; }
+
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public int OrderQuantity { get; set; }
+
+    }
+
+    public class OutletOrderFilter
+    {
+        public int RegionID { get; set; }
+        public int AreaID { get; set; }
+        public int TerritoryID { get; set; }
+        public int OutletID { get; set; }
+        public int DistributorID { get; set; }
+        public int DepotId { get; set; }
+        public DateTime? SDateTime { get; set; }
+        public DateTime? EDateTime { get; set; }
+    }
 }
