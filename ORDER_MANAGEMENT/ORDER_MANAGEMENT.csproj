@@ -218,6 +218,7 @@
     <Compile Include="Controllers\ProductMainCategoryController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\RegionsController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RoutePlanController.cs" />
     <Compile Include="Controllers\SubAdminController.cs" />
     <Compile Include="Controllers\TargetAssignsController.cs" />
@@ -399,6 +400,7 @@
     <Content Include="Views\Depot\TransferRecord.cshtml" />
     <Content Include="Views\Depot\ReturnRecord.cshtml" />
     <Content Include="Views\Depot\DamageRecord.cshtml" />
+    <Content Include="Views\Report\OrderReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">

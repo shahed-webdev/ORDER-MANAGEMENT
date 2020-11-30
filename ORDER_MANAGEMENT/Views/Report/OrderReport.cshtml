@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "Order Report";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<h3 class="mb-3">Order Report</h3>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Region</label>
+            @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ SELECT REGION ]", new { @class = "form-control", id = "dlRegion" })
+            <select id="dlRegion" class="form-control"></select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Area</label>
+            <select id="dlArea" class="form-control"></select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Depot</label>
+            <select id="dlDepot" class="form-control"></select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Territory</label>
+            <select id="dlTerritory" class="form-control"></select>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        //Region
+        $('#dlRegion').change(function () {
+            var areaSelect = $('#dlArea');
+            const territorySelect = $('#dlTerritory');
+
+            areaSelect.empty();
+            territorySelect.empty();
+
+            const regionId = this.value;
+
+            $.ajax({
+                url: "/Report/SelectAreaByRegion",
+                data: { regionId },
+                success: function(response){
+                    console.log(response)
+
+                    //ddlStudents.options.length = 0;    
+                    //AddOption("Please select", "0");    
+                    //for (let i in response) {    
+                    //    AddOption(response[i].Name, response[i].Id);    
+                    //} 
+                }
+            });
+        });
+
+        //Area
+        $('#dlArea').change(function () {
+            var Ids = [];
+            const UpperRegistrationID = $('#dlUser :selected').val();
+            var territorySelect = $('#dlTerritory');
+
+            territorySelect.empty();
+            territorySelect.selectpicker("refresh");
+
+            $('#dlArea :selected').each(function (i, selected) {
+                Ids[i] = parseInt($(selected).val());
+            });
+
+            if (Ids.length) {
+                const url = "@Url.Action("Dll_territory")";
+                $.get(url, { UpperRegistrationID, Ids: JSON.stringify(Ids) }, function (response) {
+                    if (response != null && !jQuery.isEmptyObject(response)) {
+                        $.each(response, function (i, territory) {
+                            territorySelect.append($('<option/>', { value: territory.TerritoryID, text: territory.TerritoryName }));
+                        });
+
+                        territorySelect.selectpicker("refresh");
+                    };
+                });
+            }
+        });
+
+
+        function AddOption(value,text) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.innerHTML = text;
+
+           return option;
+        }
+    </script>
+}
