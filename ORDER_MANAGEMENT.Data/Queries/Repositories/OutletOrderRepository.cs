@@ -277,13 +277,13 @@ namespace ORDER_MANAGEMENT.Data
             return 0;
         }
 
-        public ICollection<OutletOrderReport> OrderReport(OutletOrderFilter filter)
+        public ICollection<OutletOrderReportModel> OrderReport(OutletReportFilterModel filterModel)
         {
             var list = (from outletOrderList in Context.OutletOrderLists
                         join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
                         join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
                         join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
-                        select new OutletOrderReportWithFilter
+                        select new OutletReportWithFilterModel
                         {
                             RegionID = area.RegionID,
                             AreaID = area.AreaID,
@@ -297,21 +297,21 @@ namespace ORDER_MANAGEMENT.Data
                             ProductName = outletOrderList.Product.ProductName,
                             ProductCode = outletOrderList.Product.ProductCode,
                             OrderQuantity = outletOrderList.OrderQuantity
-                        }).Where(o => o.OrderDate >= filter.SDateTime && o.OrderDate <= filter.EDateTime);
+                        }).Where(o => o.OrderDate >= filterModel.SDateTime && o.OrderDate <= filterModel.EDateTime);
 
-            if (filter.RegionID != 0)
-                list = list.Where(o => o.RegionID == filter.RegionID);
-            if (filter.AreaID != 0)
-                list = list.Where(o => o.AreaID == filter.AreaID);
-            if (filter.TerritoryIDs.Length > 0)
-                list = list.Where(o => filter.TerritoryIDs.Contains(o.TerritoryID));
-            if (filter.DistributorID != 0)
-                list = list.Where(o => o.DistributorID == filter.DistributorID);
-            if (filter.DepotId != 0)
-                list = list.Where(o => o.DepotId == filter.DepotId);
+            if (filterModel.RegionID != 0)
+                list = list.Where(o => o.RegionID == filterModel.RegionID);
+            if (filterModel.AreaID != 0)
+                list = list.Where(o => o.AreaID == filterModel.AreaID);
+            if (filterModel.TerritoryIDs.Length > 0)
+                list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
+            if (filterModel.DistributorID != 0)
+                list = list.Where(o => o.DistributorID == filterModel.DistributorID);
+            if (filterModel.DepotId != 0)
+                list = list.Where(o => o.DepotId == filterModel.DepotId);
 
             var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
-            .Select(g => new OutletOrderReport
+            .Select(g => new OutletOrderReportModel
             {
                 ProductID = g.Key.ProductID,
                 ProductName = g.Key.ProductName,
@@ -321,6 +321,100 @@ namespace ORDER_MANAGEMENT.Data
 
             return group;
 
+        }
+
+        public ICollection<OutletOrderReportModel> SalesReport(OutletReportFilterModel filterModel)
+        {
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        select new OutletReportWithFilterModel
+                        {
+                            RegionID = area.RegionID,
+                            AreaID = area.AreaID,
+                            TerritoryID = outlet.TerritoryID,
+                            OutletID = outlet.OutletID,
+                            DistributorID = outletOrder.DistributorID,
+                            DepotId = outletOrder.Distributor.DepotId,
+                            Is_Approved = outletOrder.Is_Approved,
+                            ApproveDate = outletOrder.ApproveDate,
+                            OrderDate = outletOrder.InsertDate,
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.NetQuantity
+                        }).Where(o => o.Is_Approved && o.ApproveDate >= filterModel.SDateTime && o.ApproveDate <= filterModel.EDateTime);
+
+            if (filterModel.RegionID != 0)
+                list = list.Where(o => o.RegionID == filterModel.RegionID);
+            if (filterModel.AreaID != 0)
+                list = list.Where(o => o.AreaID == filterModel.AreaID);
+            if (filterModel.TerritoryIDs.Length > 0)
+                list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
+            if (filterModel.DistributorID != 0)
+                list = list.Where(o => o.DistributorID == filterModel.DistributorID);
+            if (filterModel.DepotId != 0)
+                list = list.Where(o => o.DepotId == filterModel.DepotId);
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletOrderReportModel
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.OrderQuantity)
+            }).ToList();
+
+            return group;
+        }
+
+        public ICollection<OutletRevenueReportModelModel> RevenueReport(OutletReportFilterModel filterModel)
+        {
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        select new OutletReportWithFilterModel
+                        {
+                            RegionID = area.RegionID,
+                            AreaID = area.AreaID,
+                            TerritoryID = outlet.TerritoryID,
+                            OutletID = outlet.OutletID,
+                            DistributorID = outletOrder.DistributorID,
+                            DepotId = outletOrder.Distributor.DepotId,
+                            Is_Approved = outletOrder.Is_Approved,
+                            ApproveDate = outletOrder.ApproveDate,
+                            OrderDate = outletOrder.InsertDate,
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.NetQuantity,
+                            Revenue = outletOrderList.LineTotal
+                        }).Where(o => o.OrderDate >= filterModel.SDateTime && o.OrderDate <= filterModel.EDateTime);
+
+            if (filterModel.RegionID != 0)
+                list = list.Where(o => o.RegionID == filterModel.RegionID);
+            if (filterModel.AreaID != 0)
+                list = list.Where(o => o.AreaID == filterModel.AreaID);
+            if (filterModel.TerritoryIDs.Length > 0)
+                list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
+            if (filterModel.DistributorID != 0)
+                list = list.Where(o => o.DistributorID == filterModel.DistributorID);
+            if (filterModel.DepotId != 0)
+                list = list.Where(o => o.DepotId == filterModel.DepotId);
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletRevenueReportModelModel
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.OrderQuantity),
+                Revenue = g.Sum(o => o.Revenue)
+            }).ToList();
+
+            return group;
         }
 
         public ICollection<OutletOrdered> OrderedHistory(int RegID)

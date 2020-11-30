@@ -120,7 +120,7 @@ namespace ORDER_MANAGEMENT.Data
         public string TerritoryName { get; set; }
     }
 
-    public class OutletOrderReport
+    public class OutletOrderReportModel
     {
         public int ProductID { get; set; }
         public string ProductName { get; set; }
@@ -128,7 +128,7 @@ namespace ORDER_MANAGEMENT.Data
         public int OrderQuantity { get; set; }
     }
 
-    public class OutletOrderReportWithFilter
+    public class OutletReportWithFilterModel
     {
         public int RegionID { get; set; }
         public int AreaID { get; set; }
@@ -136,17 +136,18 @@ namespace ORDER_MANAGEMENT.Data
         public int OutletID { get; set; }
         public int DistributorID { get; set; }
         public int? DepotId { get; set; }
+        public bool Is_Approved { get; set; }
         public DateTime? ApproveDate { get; set; }
         public DateTime OrderDate { get; set; }
-
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public int OrderQuantity { get; set; }
+        public double Revenue { get; set; }
 
     }
 
-    public class OutletOrderFilter
+    public class OutletReportFilterModel
     {
         public int RegionID { get; set; }
         public int AreaID { get; set; }
@@ -156,5 +157,10 @@ namespace ORDER_MANAGEMENT.Data
         public int DepotId { get; set; }
         public DateTime? SDateTime { get; set; }
         public DateTime? EDateTime { get; set; }
+    }
+
+    public class OutletRevenueReportModelModel : OutletOrderReportModel
+    {
+        public double Revenue { get; set; }
     }
 }

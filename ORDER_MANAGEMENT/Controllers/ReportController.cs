@@ -24,9 +24,9 @@ namespace ORDER_MANAGEMENT.Controllers
             return View();
         }
 
-        public ActionResult GetOrderReport(OutletOrderFilter filter)
+        public ActionResult GetOrderReport(OutletReportFilterModel filterModel)
         {
-            var response = _db.OutletOrders.OrderReport(filter);
+            var response = _db.OutletOrders.OrderReport(filterModel);
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
