@@ -47,6 +47,10 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-
+        public ActionResult SelectDepotByRegion(int regionId)
+        {
+            var list = _db.Depots.Ddls(regionId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
     }
 }
