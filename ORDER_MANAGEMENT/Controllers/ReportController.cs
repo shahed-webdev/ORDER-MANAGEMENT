@@ -8,6 +8,7 @@ using ORDER_MANAGEMENT.Data;
 
 namespace ORDER_MANAGEMENT.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         private readonly IUnitOfWork _db;
@@ -18,6 +19,7 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         // GET: Order Report
+        [Authorize(Roles = "Admin, OrderReport")]
         public ActionResult OrderReport()
         {
             ViewBag.Region = new SelectList(_db.Regions.GetAll(), "RegionID", "RegionName");
@@ -31,7 +33,7 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         //get dropdown value
-        public ActionResult SelectAreaByRegion(int regionId)
+        public ActionResult AreaByRegion(int regionId)
         {
             var ids = new List<int> {regionId};
             var list = _db.Areas.GetAreaByRegion(ids);
@@ -39,7 +41,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SelectTerritoryByArea(int areaId)
+        public ActionResult TerritoryByArea(int areaId)
         {
             var ids = new List<int> { areaId };
             var list = _db.Territorys.GetTerritory(ids);
@@ -47,7 +49,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SelectDepotByRegion(int regionId)
+        public ActionResult DepotByRegion(int regionId)
         {
             var list = _db.Depots.Ddls(regionId);
             return Json(list, JsonRequestBehavior.AllowGet);

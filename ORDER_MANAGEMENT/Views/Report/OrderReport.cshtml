@@ -71,12 +71,13 @@
 
     <table class="table table-sm mt-3">
         <thead>
-            <tr>
-                <th><strong>Product Code</strong></th>
-                <th><strong>Product Name</strong></th>
-                <th><strong>Order Quantity</strong></th>
-            </tr>
+        <tr>
+            <th><strong>Product Code</strong></th>
+            <th><strong>Product Name</strong></th>
+            <th><strong>Order Quantity</strong></th>
+        </tr>
         </thead>
+        <tbody id="tBody"></tbody>
     </table>
 </div>
 
@@ -84,7 +85,7 @@
     <script src="~/JS/bootstrap-select.js"></script>
 
     <script>
-        $(function () {
+        $(function() {
             $(".selectpicker").selectpicker({
                 actionsBox: true,
                 liveSearch: false,
@@ -102,7 +103,7 @@
         const selectDepot = document.getElementById("dlDepot");
 
         //select region
-        selectRegion.addEventListener("change", function (evt) {
+        selectRegion.addEventListener("change", function(evt) {
             const regionId = this.value;
 
             selectArea.options.length = 0;
@@ -113,9 +114,9 @@
 
             //get area
             $.ajax({
-                url: "/Report/SelectAreaByRegion",
+                url: "/Report/AreaByRegion",
                 data: { regionId },
-                success: function (response) {
+                success: function(response) {
                     if (!response.length) return;
 
                     selectArea.appendChild(AddOption("0", "[ AREA ]"));
@@ -128,9 +129,9 @@
 
             //get depot
             $.ajax({
-                url: "/Report/SelectDepotByRegion",
+                url: "/Report/DepotByRegion",
                 data: { regionId },
-                success: function (response) {
+                success: function(response) {
                     if (!response.length) return;
 
                     selectDepot.appendChild(AddOption("0", "[ DEPOT ]"));
@@ -143,7 +144,7 @@
         });
 
         //select area
-        selectArea.addEventListener("change", function (evt) {
+        selectArea.addEventListener("change", function(evt) {
             const areaId = this.value;
 
             selectTerritory.options.length = 0;
@@ -152,12 +153,11 @@
             if (!areaId) return;
 
             $.ajax({
-                url: "/Report/SelectTerritoryByArea",
+                url: "/Report/TerritoryByArea",
                 data: { areaId },
-                success: function (response) {
+                success: function(response) {
                     if (!response.length) return;
 
-                    selectTerritory.appendChild(AddOption("0", "[ TERRITORY ]"));
                     response.forEach(item => {
                         selectTerritory.appendChild(AddOption(item.TerritoryID, item.TerritoryName));
                     });
@@ -167,7 +167,6 @@
                 error: err => console.log(err)
             });
         });
-
 
 
         //add options in select
@@ -182,7 +181,7 @@
 
         //find submit
         const formFind = document.getElementById("formFind");
-        formFind.addEventListener("submit", function (evt) {
+        formFind.addEventListener("submit", function(evt) {
             evt.preventDefault();
 
             const filter = {
@@ -197,18 +196,30 @@
             }
 
             const ids = [];
-            $('#dlTerritory :selected').each(function (i, selected) {
+            $('#dlTerritory :selected').each(function(i, selected) {
                 ids[i] = parseInt($(selected).val());
             });
 
             $.ajax({
                 url: "/Report/GetOrderReport",
                 data: filter,
-                success: function (response) {
-                    console.log(response)
+                success: function(response) {
+                    appendToTable(response);
                 },
                 error: err => console.log(err)
             });
         });
+
+        const tBody = document.getElementById("tBody");
+        function appendToTable(response) {
+            const fragment = document.createDocumentFragment();
+            response.forEach(data => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${data.ProductCode}</td> <td>${data.ProductName}</td><td>${data.OrderQuantity}</td>`;
+                fragment.appendChild(tr);
+            });
+
+            tBody.append(fragment);
+        }
     </script>
 }
