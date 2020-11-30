@@ -24,7 +24,7 @@
     <!-- custom -->
     <link href="/CSS/Custom.css?v=1" rel="stylesheet" />
     <!-- printing -->
-    <link href="/CSS/printingCore.css" rel="stylesheet" />
+    <link href="/CSS/printingCore.css?v=3" rel="stylesheet" />
     @RenderSection("Styles", false)
 </head>
 <body>
@@ -105,7 +105,7 @@
 
 
             //Back to top
-            $('body').append('<div id="toTop" class="btn btn-primary">TOP</div>');
+            $('body').append('<div id="toTop" class="btn btn-primary d-print-none">TOP</div>');
             $(window).scroll(function () {
                 if ($(this).scrollTop() != 0) {
                     $('#toTop').fadeIn();

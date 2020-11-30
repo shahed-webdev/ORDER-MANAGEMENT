@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -26,6 +27,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return View();
         }
 
+        [HttpPost]
         public ActionResult GetOrderReport(OutletReportFilterModel filterModel)
         {
             var response = _db.OutletOrders.OrderReport(filterModel);
@@ -52,6 +54,24 @@ namespace ORDER_MANAGEMENT.Controllers
         public ActionResult DepotByRegion(int regionId)
         {
             var list = _db.Depots.Ddls(regionId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        } 
+        
+        public ActionResult DistributorByTerritory(string ids)
+        {
+            var serializer = new JavaScriptSerializer();
+            var territoryIds = serializer.Deserialize<List<int>>(ids);
+
+            var list = _db.Distributors.DistributorByTerritorys(territoryIds);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        } 
+        
+        public ActionResult OutletByTerritory(string ids)
+        {
+            var serializer = new JavaScriptSerializer();
+            var territoryIds = serializer.Deserialize<List<int>>(ids);
+
+            var list = _db.Outlets.OutletByTerritorys(territoryIds);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
     }
