@@ -79,7 +79,8 @@ namespace ORDER_MANAGEMENT.Data
         {
             key = key.ToLower();
 
-            var DistributorDiscountPercentage = Context.Distributors.Include(d => d.Territory).FirstOrDefault(d => d.DistributorID == DistributorID).Territory.DistributorDiscountPercentage;
+            //Update Distributor from one Territory to Multiple Territory. So First Territory for discount percentage 
+            var DistributorDiscountPercentage = Context.DistributorTerritoryLists.Include(d => d.Territory).FirstOrDefault(d => d.DistributorID == DistributorID).Territory.DistributorDiscountPercentage;
 
 
             if (!string.IsNullOrEmpty(key))

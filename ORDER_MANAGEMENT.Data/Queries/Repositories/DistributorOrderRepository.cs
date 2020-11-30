@@ -29,7 +29,7 @@ namespace ORDER_MANAGEMENT.Data
                              DistributorAddress = o.Distributor.Address,
                              DistributorName = o.Distributor.Name,
                              OrderBy_Name = o.OrderBy_Registration.Name,
-                             TerritoryName = o.Distributor.Territory.TerritoryName
+                             TerritoryName = o.Distributor.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault()
                          };
             return o_List.ToList();
         }
@@ -51,7 +51,7 @@ namespace ORDER_MANAGEMENT.Data
                              DistributorAddress = o.Distributor.Address,
                              DistributorName = o.Distributor.Name,
                              OrderBy_Name = o.OrderBy_Registration.Name,
-                             TerritoryName = o.Distributor.Territory.TerritoryName
+                             TerritoryName = o.Distributor.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault()
                          };
             return o_List.ToList();
         }
@@ -108,7 +108,7 @@ namespace ORDER_MANAGEMENT.Data
                                    DistributorAddress = o.Distributor.Address,
                                    DistributorName = o.Distributor.Name,
                                    OrderBy_Name = o.OrderBy_Registration.Name,
-                                   TerritoryName = o.Distributor.Territory.TerritoryName
+                                   TerritoryName = o.Distributor.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault()
                                }).FirstOrDefault();
 
             order.OrderProducts = (from o in Context.DistributorOrderLists
@@ -298,7 +298,7 @@ namespace ORDER_MANAGEMENT.Data
                                    DistributorAddress = o.Distributor.Address,
                                    DistributorName = o.Distributor.Name,
                                    OrderBy_Name = o.OrderBy_Registration.Name,
-                                   TerritoryName = o.Distributor.Territory.TerritoryName
+                                   TerritoryName = o.Distributor.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault()
                                }).FirstOrDefault();
 
             order.OrderProducts = (from o in Context.DistributorOrderLists
@@ -333,7 +333,7 @@ namespace ORDER_MANAGEMENT.Data
                              DistributorAddress = o.Distributor.Address,
                              DistributorName = o.Distributor.Name,
                              OrderBy_Name = o.OrderBy_Registration.Name,
-                             TerritoryName = o.Distributor.Territory.TerritoryName
+                             TerritoryName = o.Distributor.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault()
                          };
             return o_List.ToList();
         }

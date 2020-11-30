@@ -47,8 +47,8 @@ namespace ORDER_MANAGEMENT.Data
                                     DistributorID = d.DistributorID,
                                     IsApproved = d.IsApproved,
                                     ReportTo_User = d.ReportTo_User.Registration,
-                                    TerritoryName = d.Territory.TerritoryName,
-                                    RegionID = d.Territory.Area.RegionID,
+                                    TerritoryName = d.DistributorTerritoryLists.Select(t => t.Territory.TerritoryName).FirstOrDefault(),
+                                    RegionID = d.DistributorTerritoryLists.FirstOrDefault().Territory.Area.RegionID,
                                     DepotId = d.DepotId,
                                     DepotName = d.Depot.DepotName
                                 }).ToList();
