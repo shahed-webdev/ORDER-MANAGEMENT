@@ -303,7 +303,7 @@ namespace ORDER_MANAGEMENT.Data
                 list = list.Where(o => o.RegionID == filterModel.RegionID);
             if (filterModel.AreaID != 0)
                 list = list.Where(o => o.AreaID == filterModel.AreaID);
-            if (filterModel.TerritoryIDs.Length > 0)
+            if (filterModel.TerritoryIDs != null)
                 list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
             if (filterModel.DistributorID != 0)
                 list = list.Where(o => o.DistributorID == filterModel.DistributorID);
@@ -350,7 +350,7 @@ namespace ORDER_MANAGEMENT.Data
                 list = list.Where(o => o.RegionID == filterModel.RegionID);
             if (filterModel.AreaID != 0)
                 list = list.Where(o => o.AreaID == filterModel.AreaID);
-            if (filterModel.TerritoryIDs.Length > 0)
+            if (filterModel.TerritoryIDs != null)
                 list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
             if (filterModel.DistributorID != 0)
                 list = list.Where(o => o.DistributorID == filterModel.DistributorID);
@@ -397,7 +397,7 @@ namespace ORDER_MANAGEMENT.Data
                 list = list.Where(o => o.RegionID == filterModel.RegionID);
             if (filterModel.AreaID != 0)
                 list = list.Where(o => o.AreaID == filterModel.AreaID);
-            if (filterModel.TerritoryIDs.Length > 0)
+            if (filterModel.TerritoryIDs != null)
                 list = list.Where(o => filterModel.TerritoryIDs.Contains(o.TerritoryID));
             if (filterModel.DistributorID != 0)
                 list = list.Where(o => o.DistributorID == filterModel.DistributorID);
