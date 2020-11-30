@@ -24,6 +24,11 @@ namespace ORDER_MANAGEMENT.Controllers
             return View();
         }
 
+        public ActionResult GetOrderReport(OutletOrderFilter filter)
+        {
+            var response = _db.OutletOrders.OrderReport(filter);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
 
         //get dropdown value
         public ActionResult SelectAreaByRegion(int regionId)
@@ -41,5 +46,7 @@ namespace ORDER_MANAGEMENT.Controllers
 
             return Json(list, JsonRequestBehavior.AllowGet);
         }
+
+
     }
 }

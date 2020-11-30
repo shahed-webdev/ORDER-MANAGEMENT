@@ -6,96 +6,160 @@
 
 <h3 class="mb-3">Order Report</h3>
 
-<div class="row">
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Region</label>
-            @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ SELECT REGION ]", new { @class = "form-control", id = "dlRegion" })
-            <select id="dlRegion" class="form-control"></select>
+<div class="card card-body">
+    <form id="formFind">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input id="inputFromDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input id="inputToDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Region</label>
+                    @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ REGION ]", new { @class = "form-control", id = "dlRegion" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Area</label>
+                    <select id="dlArea" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Territory</label>
+                    <select id="dlTerritory" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Depot</label>
+                    <select id="dlDepot" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Distributor</label>
+                    <select id="dlDistributor" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Outlet</label>
+                    <select id="dlOutlet" class="form-control"></select>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Area</label>
-            <select id="dlArea" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Depot</label>
-            <select id="dlDepot" class="form-control"></select>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Territory</label>
-            <select id="dlTerritory" class="form-control"></select>
-        </div>
-    </div>
-</div>
 
+        <input type="submit" value="Find" class="btn btn-primary" />
+    </form>
+
+    <table class="table table-sm mt-3">
+        <thead>
+            <tr>
+                <th><strong>Product Code</strong></th>
+                <th><strong>Product Name</strong></th>
+                <th><strong>Order Quantity</strong></th>
+            </tr>
+        </thead>
+    </table>
+</div>
 
 @section Scripts {
     <script>
-        //Region
-        $('#dlRegion').change(function () {
-            var areaSelect = $('#dlArea');
-            const territorySelect = $('#dlTerritory');
+        const selectRegion = document.getElementById("dlRegion");
+        const selectArea = document.getElementById("dlArea");
+        const selectTerritory = document.getElementById("dlTerritory");
+        const selectDepot = document.getElementById("dlDepot");
 
-            areaSelect.empty();
-            territorySelect.empty();
-
+        //select region
+        selectRegion.addEventListener("change", function (evt) {
             const regionId = this.value;
+
+            selectArea.options.length = 0;
+            selectTerritory.options.length = 0;
+
+            if (!regionId) return;
 
             $.ajax({
                 url: "/Report/SelectAreaByRegion",
                 data: { regionId },
-                success: function(response){
-                    console.log(response)
+                success: function (response) {
+                    selectArea.appendChild(AddOption("0","[ AREA ]"));
 
-                    //ddlStudents.options.length = 0;    
-                    //AddOption("Please select", "0");    
-                    //for (let i in response) {    
-                    //    AddOption(response[i].Name, response[i].Id);    
-                    //} 
-                }
+                    response.forEach(item => {
+                        selectArea.appendChild(AddOption(item.AreaID, item.AreaName));
+                    });
+                },
+                error: err => console.log(err)
             });
         });
 
-        //Area
-        $('#dlArea').change(function () {
-            var Ids = [];
-            const UpperRegistrationID = $('#dlUser :selected').val();
-            var territorySelect = $('#dlTerritory');
+        //select area
+        selectArea.addEventListener("change", function (evt) {
+            const areaId = this.value;
+            selectTerritory.options.length = 0;
 
-            territorySelect.empty();
-            territorySelect.selectpicker("refresh");
+            if (!areaId) return;
 
-            $('#dlArea :selected').each(function (i, selected) {
-                Ids[i] = parseInt($(selected).val());
+            $.ajax({
+                url: "/Report/SelectTerritoryByArea",
+                data: { areaId },
+                success: function (response) {
+                    selectTerritory.appendChild(AddOption("0","[ TERRITORY ]"));
+
+                    response.forEach(item => {
+                        selectTerritory.appendChild(AddOption(item.TerritoryID, item.TerritoryName));
+                    });
+                },
+                error: err => console.log(err)
             });
-
-            if (Ids.length) {
-                const url = "@Url.Action("Dll_territory")";
-                $.get(url, { UpperRegistrationID, Ids: JSON.stringify(Ids) }, function (response) {
-                    if (response != null && !jQuery.isEmptyObject(response)) {
-                        $.each(response, function (i, territory) {
-                            territorySelect.append($('<option/>', { value: territory.TerritoryID, text: territory.TerritoryName }));
-                        });
-
-                        territorySelect.selectpicker("refresh");
-                    };
-                });
-            }
         });
 
 
-        function AddOption(value,text) {
+
+        //add options in select
+        function AddOption(value, text) {
             const option = document.createElement('option');
             option.value = value;
             option.innerHTML = text;
 
-           return option;
+            return option;
         }
+
+
+        //find submit
+        const formFind = document.getElementById("formFind");
+        formFind.addEventListener("submit", function (evt) {
+            evt.preventDefault();
+
+            const filter = {
+                RegionID: +this.dlRegion.value,
+                AreaID: +this.dlArea.value,
+                TerritoryID: +this.dlTerritory.value,
+                OutletID: +this.dlOutlet.value,
+                DistributorID: +this.dlDistributor.value,
+                DepotId: +this.dlDepot.value,
+                SDateTime: this.inputFromDate.value,
+                EDateTime: this.inputToDate.value
+            }
+
+            $.ajax({
+                url: "/Report/GetOrderReport",
+                data: filter,
+                success: function (response) {
+                    console.log(response)
+                },
+                error: err => console.log(err)
+            });
+        });
     </script>
 }

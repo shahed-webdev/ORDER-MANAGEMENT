@@ -292,7 +292,7 @@ namespace ORDER_MANAGEMENT.Data
                             DistributorID = outletOrder.DistributorID,
                             DepotId = outletOrder.Distributor.DepotId,
                             ApproveDate = outletOrder.ApproveDate,
-                            OrderDate = outletOrder.InsertDate.Date,
+                            OrderDate = outletOrder.InsertDate,
                             ProductID = outletOrderList.ProductID,
                             ProductName = outletOrderList.Product.ProductName,
                             ProductCode = outletOrderList.Product.ProductCode,

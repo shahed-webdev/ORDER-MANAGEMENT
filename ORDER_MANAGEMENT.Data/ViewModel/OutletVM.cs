@@ -137,7 +137,7 @@ namespace ORDER_MANAGEMENT.Data
         public int DistributorID { get; set; }
         public int? DepotId { get; set; }
         public DateTime? ApproveDate { get; set; }
-        public DateTime? OrderDate { get; set; }
+        public DateTime OrderDate { get; set; }
 
         public int ProductID { get; set; }
         public string ProductName { get; set; }
