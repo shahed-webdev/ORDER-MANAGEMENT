@@ -12,7 +12,8 @@ namespace ORDER_MANAGEMENT.Data
         DataResult<OutletOrdered> OrderedDataTable(DataRequest request);
         OutletOrderDelivered OrderDeliveredDetails(int id);
         int OrderDelivered(OutletOrderDelivered model, int RegID);
-
-        ICollection<OutletOrderReport> OrderReport(OutletOrderFilter filter);
+        ICollection<OutletOrderReportModel> OrderReport(OutletReportFilterModel filterModel);
+        ICollection<OutletOrderReportModel> SalesReport(OutletReportFilterModel filterModel);
+        ICollection<OutletRevenueReportModelModel> RevenueReport(OutletReportFilterModel filterModel);
     }
 }
