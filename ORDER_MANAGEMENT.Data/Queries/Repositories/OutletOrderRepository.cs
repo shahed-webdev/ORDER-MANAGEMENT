@@ -391,7 +391,7 @@ namespace ORDER_MANAGEMENT.Data
                             ProductCode = outletOrderList.Product.ProductCode,
                             OrderQuantity = outletOrderList.NetQuantity,
                             Revenue = outletOrderList.LineTotal
-                        }).Where(o => o.OrderDate >= filterModel.SDateTime && o.OrderDate <= filterModel.EDateTime);
+                        }).Where(o => o.Is_Approved && o.ApproveDate >= filterModel.SDateTime && o.ApproveDate <= filterModel.EDateTime);
 
             if (filterModel.RegionID != 0)
                 list = list.Where(o => o.RegionID == filterModel.RegionID);
