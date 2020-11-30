@@ -11,39 +11,46 @@
         <table id="DataTable" class="table table-sm table-bordered">
             <thead>
                 <tr>
+                    <th>SN</th>
                     <th>Outlet Name</th>
                     <th>Proprietor</th>
                     <th>Phone</th>
                     <th>Email</th>
                     <th>Address</th>
                     <th>Due Range</th>
-                    <th style="width:80px">Approved</th>
+                    <th style="width: 80px">Approved</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.OutletName</td>
-                        <td>@item.ProprietorName</td>
-                        <td>@item.Phone</td>
-                        <td>@item.Email</td>
-                        <td>@item.Address</td>
-                        <td>@item.DueRangeLimit</td>
-                        <td>
-                            @{
-                                if (item.IsApproved)
-                                {
-                                    <a class="updateDueRange text-primary" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Update</a>
+                @{
+                    var index = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>@item.OutletName</td>
+                            <td>@item.ProprietorName</td>
+                            <td>@item.Phone</td>
+                            <td>@item.Email</td>
+                            <td>@item.Address</td>
+                            <td>@item.DueRangeLimit</td>
+                            <td>
+                                @{
+                                    if (item.IsApproved)
+                                    {
+                                        <a class="updateDueRange text-primary" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Update</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="approve text-success" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Approve</a>
+                                    }
                                 }
-                                else
-                                {
-                                    <a class="approve text-success" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Approve</a>
-                                }
-                            }
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+
+                        index++;
+                    }
                 }
             </tbody>
         </table>

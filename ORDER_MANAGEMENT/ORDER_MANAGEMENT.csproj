@@ -401,6 +401,8 @@
     <Content Include="Views\Depot\ReturnRecord.cshtml" />
     <Content Include="Views\Depot\DamageRecord.cshtml" />
     <Content Include="Views\Report\OrderReport.cshtml" />
+    <Content Include="Views\Report\SalesReport.cshtml" />
+    <Content Include="Views\Report\RevenueReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">

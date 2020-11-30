@@ -1,0 +1,278 @@
+﻿
+@{
+    ViewBag.Title = "Sales Report";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+@section Styles {
+    <link href="~/CSS/bootstrap-select.css" rel="stylesheet" />
+    <style>
+        .selected .dropdown-item { color: #2b9000 }
+    </style>
+}
+
+<h3 class="mb-3">Sales Report</h3>
+
+<div class="card card-body">
+    <form id="formFind">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input id="inputFromDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input id="inputToDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Region</label>
+                    @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ REGION ]", new { @class = "form-control", id = "dlRegion" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Area</label>
+                    <select id="dlArea" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Territory</label>
+                    <select id="dlTerritory" class="form-control selectpicker" multiple></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Depot</label>
+                    <select id="dlDepot" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Distributor</label>
+                    <select id="dlDistributor" class="form-control"></select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Outlet</label>
+                    <select id="dlOutlet" class="form-control"></select>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" value="Find" class="btn btn-primary d-print-none" />
+    </form>
+
+    <table class="table table-bordered table-sm mt-3">
+        <thead>
+            <tr>
+                <th class="text-center"><strong>SN</strong></th>
+                <th class="text-center"><strong>Product Code</strong></th>
+                <th><strong>Product Name</strong></th>
+                <th class="text-center"><strong>Sale Quantity</strong></th>
+            </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/JS/bootstrap-select.js"></script>
+
+    <script>
+        $(function() {
+            $(".selectpicker").selectpicker({
+                actionsBox: true,
+                liveSearch: false,
+                selectedTextFormat: 'count > 4',
+                style: '',
+                styleBase: 'form-control',
+                tickIcon: 'fas fa-check-circle',
+                size: 5
+            });
+        })
+
+        const selectRegion = document.getElementById("dlRegion");
+        const selectArea = document.getElementById("dlArea");
+        const selectTerritory = document.getElementById("dlTerritory");
+        const selectDepot = document.getElementById("dlDepot");
+
+        const selectDistributor = document.getElementById("dlDistributor");
+        const selectOutlet = document.getElementById("dlOutlet");
+
+        //select region
+        selectRegion.addEventListener("change", function(evt) {
+            const regionId = this.value;
+
+            selectArea.options.length = 0;
+            selectTerritory.options.length = 0;
+            selectDepot.options.length = 0;
+
+            if (!regionId) return;
+
+            //get area
+            $.ajax({
+                url: "/Report/AreaByRegion",
+                data: { regionId },
+                success: function(response) {
+                    if (!response.length) return;
+
+                    selectArea.appendChild(AddOption("0", "[ AREA ]"));
+                    response.forEach(item => {
+                        selectArea.appendChild(AddOption(item.AreaID, item.AreaName));
+                    });
+                },
+                error: err => console.log(err)
+            });
+
+            //get depot
+            $.ajax({
+                url: "/Report/DepotByRegion",
+                data: { regionId },
+                success: function(response) {
+                    if (!response.length) return;
+
+                    selectDepot.appendChild(AddOption("0", "[ DEPOT ]"));
+                    response.forEach(item => {
+                        selectDepot.appendChild(AddOption(item.value, item.label));
+                    });
+                },
+                error: err => console.log(err)
+            });
+        });
+
+        //select area
+        selectArea.addEventListener("change", function(evt) {
+            const areaId = this.value;
+
+            selectTerritory.options.length = 0;
+            $("#dlTerritory").selectpicker("refresh");
+
+            if (!areaId) return;
+
+            $.ajax({
+                url: "/Report/TerritoryByArea",
+                data: { areaId },
+                success: function(response) {
+                    if (!response.length) return;
+
+                    response.forEach(item => {
+                        selectTerritory.appendChild(AddOption(item.TerritoryID, item.TerritoryName));
+                    });
+
+                    $("#dlTerritory").selectpicker("refresh");
+                },
+                error: err => console.log(err)
+            });
+        });
+
+        //select Territory
+        selectTerritory.addEventListener("change", function (evt) {
+            const ids = [];
+            $('#dlTerritory :selected').each(function(i, selected) {
+                ids[i] = parseInt($(selected).val());
+            });
+
+            selectDistributor.options.length = 0;
+            selectOutlet.options.length = 0;
+
+            if (!ids.length) return;
+
+            //get distributor
+            $.ajax({
+                url: "/Report/DistributorByTerritory",
+                data: { ids: JSON.stringify(ids) },
+                success: function (response) {
+                    if (!response.length) return;
+
+                    response.forEach(item => {
+                        selectDistributor.appendChild(AddOption(item.value, item.label));
+                    });
+                },
+                error: err => console.log(err)
+            });
+
+            //get outlet
+            $.ajax({
+                url: "/Report/OutletByTerritory",
+                data: { ids: JSON.stringify(ids) },
+                success: function (response) {
+                    if (!response.length) return;
+
+                    response.forEach(item => {
+                        selectOutlet.appendChild(AddOption(item.value, item.label));
+                    });
+                },
+                error: err => console.log(err)
+            });
+        });
+
+        //add options in select
+        function AddOption(value, text) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.innerHTML = text;
+
+            return option;
+        }
+
+
+        //find submit
+        const formFind = document.getElementById("formFind");
+        formFind.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const filter = {
+                RegionID: +this.dlRegion.value,
+                AreaID: +this.dlArea.value,
+                TerritoryIDs: [],
+                OutletID: +this.dlOutlet.value,
+                DistributorID: +this.dlDistributor.value,
+                DepotId: +this.dlDepot.value,
+                SDateTime: this.inputFromDate.value,
+                EDateTime: this.inputToDate.value
+            }
+
+            $('#dlTerritory :selected').each(function(i, selected) {
+                filter.TerritoryIDs[i] = parseInt($(selected).val());
+            });
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Report/GetSalesReport",
+                data: filter,
+                success: function (response) {
+                    appendToTable(response);
+                },
+                error: err => console.log(err)
+            });
+        });
+
+        //add data to table
+        const tBody = document.getElementById("tBody");
+
+        function appendToTable(response) {
+            tBody.innerHTML = "";
+            const fragment = document.createDocumentFragment();
+
+            response.forEach((data, i) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td class="text-center">${i + 1}</td>
+                                <td class="text-center">${data.ProductCode}</td>
+                                <td>${data.ProductName}</td>
+                                <td class="text-center">${data.OrderQuantity}</td>`;
+                fragment.appendChild(tr);
+            });
+
+            tBody.append(fragment);
+        }
+    </script>
+}
+

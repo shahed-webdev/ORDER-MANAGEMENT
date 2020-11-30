@@ -11,6 +11,7 @@
         <table id="DataTable" class="table table-sm table-bordered nowrap">
             <thead>
                 <tr>
+                    <th>SN</th>
                     <th>Name</th>
                     <th>Mobile</th>
                     <th>Territory</th>
@@ -22,9 +23,12 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+            @{
+                var index = 1;
+                foreach (var item in Model)
                 {
                     <tr>
+                        <td>@index</td>
                         <td>@item.Name</td>
                         <td>@item.Mobile</td>
                         <td>@item.TerritoryName</td>
@@ -42,10 +46,10 @@
                                     <a class="btn-assign blue-text" data-regionId="@item.RegionID" data-distId="@item.DistributorID">Assign</a>
                                 }
                             }
-                            
+
                         </td>
                         <td>
-                            @{ 
+                            @{
                                 if (item.IsApproved)
                                 {
                                     <a class="text-primary" href="/Distributor/Update/@item.DistributorID"><i class="fas fa-edit mr-1"></i>Update</a>
@@ -57,7 +61,10 @@
                             }
                         </td>
                     </tr>
+
+                    index++;
                 }
+            }
             </tbody>
         </table>
     </div>

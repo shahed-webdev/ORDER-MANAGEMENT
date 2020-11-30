@@ -34,6 +34,39 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(response, JsonRequestBehavior.AllowGet);
         }
 
+
+        // GET: Sales Report
+        [Authorize(Roles = "Admin, SalesReport")]
+        public ActionResult SalesReport()
+        {
+            ViewBag.Region = new SelectList(_db.Regions.GetAll(), "RegionID", "RegionName");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GetSalesReport(OutletReportFilterModel filter)
+        {
+            var response = _db.OutletOrders.SalesReport(filter);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+
+        // GET: revenue Report
+        [Authorize(Roles = "Admin, RevenueReport")]
+        public ActionResult RevenueReport()
+        {
+            ViewBag.Region = new SelectList(_db.Regions.GetAll(), "RegionID", "RegionName");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GetRevenueReport(OutletReportFilterModel filter)
+        {
+            var response = _db.OutletOrders.RevenueReport(filter);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+
         //get dropdown value
         public ActionResult AreaByRegion(int regionId)
         {
