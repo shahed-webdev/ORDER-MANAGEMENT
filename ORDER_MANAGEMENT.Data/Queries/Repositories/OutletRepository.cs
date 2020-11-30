@@ -117,6 +117,19 @@ namespace ORDER_MANAGEMENT.Data
             return Distributors;
         }
 
+        public List<DDL> OutletByTerritorys(List<int> TerritoryIDs)
+        {
+            var Distributors = (from o in Context.Outlets
+                                where TerritoryIDs.Contains(o.TerritoryID)
+                                select new DDL
+                                {
+                                    label = o.OutletName,
+                                    value = o.OutletID
+                                }).ToList();
+
+            return Distributors;
+        }
+
         public ICollection<OutletSearch> Search(string key)
         {
             return (from o in Context.Outlets

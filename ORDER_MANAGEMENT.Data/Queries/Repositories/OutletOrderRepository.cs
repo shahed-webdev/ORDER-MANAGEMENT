@@ -303,8 +303,8 @@ namespace ORDER_MANAGEMENT.Data
                 list = list.Where(o => o.RegionID == filter.RegionID);
             if (filter.AreaID != 0)
                 list = list.Where(o => o.AreaID == filter.AreaID);
-            if (filter.TerritoryID != 0)
-                list = list.Where(o => o.TerritoryID == filter.TerritoryID);
+            if (filter.TerritoryIDs.Length > 0)
+                list = list.Where(o => filter.TerritoryIDs.Contains(o.TerritoryID));
             if (filter.DistributorID != 0)
                 list = list.Where(o => o.DistributorID == filter.DistributorID);
             if (filter.DepotId != 0)
