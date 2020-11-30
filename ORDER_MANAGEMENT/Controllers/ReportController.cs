@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,7 @@ using ORDER_MANAGEMENT.Data;
 
 namespace ORDER_MANAGEMENT.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         private readonly IUnitOfWork _db;
@@ -18,12 +20,14 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         // GET: Order Report
+        [Authorize(Roles = "Admin, OrderReport")]
         public ActionResult OrderReport()
         {
             ViewBag.Region = new SelectList(_db.Regions.GetAll(), "RegionID", "RegionName");
             return View();
         }
 
+        [HttpPost]
         public ActionResult GetOrderReport(OutletReportFilterModel filterModel)
         {
             var response = _db.OutletOrders.OrderReport(filterModel);
@@ -31,7 +35,7 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
         //get dropdown value
-        public ActionResult SelectAreaByRegion(int regionId)
+        public ActionResult AreaByRegion(int regionId)
         {
             var ids = new List<int> {regionId};
             var list = _db.Areas.GetAreaByRegion(ids);
@@ -39,7 +43,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SelectTerritoryByArea(int areaId)
+        public ActionResult TerritoryByArea(int areaId)
         {
             var ids = new List<int> { areaId };
             var list = _db.Territorys.GetTerritory(ids);
@@ -47,9 +51,27 @@ namespace ORDER_MANAGEMENT.Controllers
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult SelectDepotByRegion(int regionId)
+        public ActionResult DepotByRegion(int regionId)
         {
             var list = _db.Depots.Ddls(regionId);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        } 
+        
+        public ActionResult DistributorByTerritory(string ids)
+        {
+            var serializer = new JavaScriptSerializer();
+            var territoryIds = serializer.Deserialize<List<int>>(ids);
+
+            var list = _db.Distributors.DistributorByTerritorys(territoryIds);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        } 
+        
+        public ActionResult OutletByTerritory(string ids)
+        {
+            var serializer = new JavaScriptSerializer();
+            var territoryIds = serializer.Deserialize<List<int>>(ids);
+
+            var list = _db.Outlets.OutletByTerritorys(territoryIds);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
     }
