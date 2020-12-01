@@ -136,13 +136,11 @@ namespace ORDER_MANAGEMENT.Data
         public int OutletID { get; set; }
         public int DistributorID { get; set; }
         public int? DepotId { get; set; }
-        public bool Is_Approved { get; set; }
-        public DateTime? ApproveDate { get; set; }
-        public DateTime OrderDate { get; set; }
         public int ProductID { get; set; }
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public int OrderQuantity { get; set; }
+        public int SaleQuantity { get; set; }
         public double Revenue { get; set; }
 
     }
@@ -162,5 +160,10 @@ namespace ORDER_MANAGEMENT.Data
     public class OutletRevenueReportModelModel : OutletOrderReportModel
     {
         public double Revenue { get; set; }
+    }
+
+    public class OutletOrderVsSalesReportModel : OutletOrderReportModel
+    {
+        public int SaleQuantity { get; set; }
     }
 }

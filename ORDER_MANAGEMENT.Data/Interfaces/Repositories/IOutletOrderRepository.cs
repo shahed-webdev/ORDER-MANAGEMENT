@@ -15,5 +15,6 @@ namespace ORDER_MANAGEMENT.Data
         ICollection<OutletOrderReportModel> OrderReport(OutletReportFilterModel filterModel);
         ICollection<OutletOrderReportModel> SalesReport(OutletReportFilterModel filterModel);
         ICollection<OutletRevenueReportModelModel> RevenueReport(OutletReportFilterModel filterModel);
+        ICollection<OutletOrderVsSalesReportModel> OrderVsSalesReport(OutletReportFilterModel filterModel);
     }
 }
