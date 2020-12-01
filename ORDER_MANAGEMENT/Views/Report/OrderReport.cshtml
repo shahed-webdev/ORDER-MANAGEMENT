@@ -191,6 +191,7 @@
                 success: function (response) {
                     if (!response.length) return;
 
+                    selectDistributor.appendChild(AddOption("0", "[ ALL DISTRIBUTOR ]"));
                     response.forEach(item => {
                         selectDistributor.appendChild(AddOption(item.value, item.label));
                     });
@@ -205,6 +206,7 @@
                 success: function (response) {
                     if (!response.length) return;
 
+                    selectOutlet.appendChild(AddOption("0", "[ ALL OUTLET ]"));
                     response.forEach(item => {
                         selectOutlet.appendChild(AddOption(item.value, item.label));
                     });

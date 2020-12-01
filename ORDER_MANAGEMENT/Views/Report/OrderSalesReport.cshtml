@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Sales Report";
+    ViewBag.Title = "Order vs Sales Report";
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
@@ -11,7 +11,7 @@
     </style>
 }
 
-<h3 class="mb-3">Sales Report</h3>
+<h3 class="mb-3">Order vs Sales Report</h3>
 
 <div class="card card-body">
     <form id="formFind">
@@ -31,7 +31,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label>Region</label>
-                    @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ REGION ]", new { @class = "form-control", id = "dlRegion" })
+                    @Html.DropDownList("Region", (IEnumerable<SelectListItem>)ViewBag.Region, "[ ALL REGION ]", new { @class = "form-control", id = "dlRegion" })
                 </div>
             </div>
             <div class="col-md-3">
@@ -75,6 +75,7 @@
                 <th class="text-center"><strong>SN</strong></th>
                 <th class="text-center"><strong>Product Code</strong></th>
                 <th><strong>Product Name</strong></th>
+                <th class="text-center"><strong>Order Quantity</strong></th>
                 <th class="text-center"><strong>Sale Quantity</strong></th>
             </tr>
         </thead>
@@ -123,7 +124,7 @@
                 success: function(response) {
                     if (!response.length) return;
 
-                    selectArea.appendChild(AddOption("0", "[ AREA ]"));
+                    selectArea.appendChild(AddOption("0", "[ ALL AREA ]"));
                     response.forEach(item => {
                         selectArea.appendChild(AddOption(item.AreaID, item.AreaName));
                     });
@@ -138,7 +139,7 @@
                 success: function(response) {
                     if (!response.length) return;
 
-                    selectDepot.appendChild(AddOption("0", "[ DEPOT ]"));
+                    selectDepot.appendChild(AddOption("0", "[ ALL DEPOT ]"));
                     response.forEach(item => {
                         selectDepot.appendChild(AddOption(item.value, item.label));
                     });
@@ -248,9 +249,9 @@
 
             $.ajax({
                 type: "POST",
-                url: "/Report/GetSalesReport",
+                url: "/Report/GetOrderSalesReport",
                 data: filter,
-                success: function (response) {
+                success: function(response) {
                     appendToTable(response);
                 },
                 error: err => console.log(err)
@@ -269,6 +270,7 @@
                 tr.innerHTML = `<td class="text-center">${i + 1}</td>
                                 <td class="text-center">${data.ProductCode}</td>
                                 <td>${data.ProductName}</td>
+                                <td class="text-center">${data.OrderQuantity}</td>
                                 <td class="text-center">${data.OrderQuantity}</td>`;
                 fragment.appendChild(tr);
             });
