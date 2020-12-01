@@ -67,6 +67,23 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
 
+        // GET: order vs sales Report
+        [Authorize(Roles = "Admin, OrderSalesReport")]
+        public ActionResult OrderSalesReport()
+        {
+            ViewBag.Region = new SelectList(_db.Regions.GetAll(), "RegionID", "RegionName");
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult GetOrderSalesReport(OutletReportFilterModel filter)
+        {
+            var response = _db.OutletOrders.OrderVsSalesReport(filter);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         //get dropdown value
         public ActionResult AreaByRegion(int regionId)
         {

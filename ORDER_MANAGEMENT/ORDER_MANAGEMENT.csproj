@@ -225,6 +225,7 @@
     <Compile Include="Controllers\TargetsController.cs" />
     <Compile Include="Controllers\TerritoriesController.cs" />
     <Compile Include="Controllers\UserDashboardController.cs" />
+    <Compile Include="Controllers\UserReportController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DependencyResolution\ControllerConvention.cs" />
     <Compile Include="DependencyResolution\DefaultRegistry.cs" />
@@ -403,6 +404,7 @@
     <Content Include="Views\Report\OrderReport.cshtml" />
     <Content Include="Views\Report\SalesReport.cshtml" />
     <Content Include="Views\Report\RevenueReport.cshtml" />
+    <Content Include="Views\Report\OrderSalesReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">
@@ -410,7 +412,9 @@
       <Name>ORDER_MANAGEMENT.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\UserReport\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
