@@ -35,6 +35,7 @@ namespace ORDER_MANAGEMENT.Data
         ICollection<OutletOrderReportModel> OrderReport(UserReportFilterModel filterModel);
         ICollection<OutletOrderReportModel> SalesReport(UserReportFilterModel filterModel);
         ICollection<OutletRevenueReportModelModel> RevenueReport(UserReportFilterModel filterModel);
+        ICollection<UserReportFrom> TargetVsAchievedReport(int registrationId);
 
     }
 

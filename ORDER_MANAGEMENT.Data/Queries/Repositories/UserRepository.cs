@@ -556,6 +556,30 @@ namespace ORDER_MANAGEMENT.Data
             return group;
         }
 
+        public ICollection<UserReportFrom> TargetVsAchievedReport(int registrationId)
+        {
+            var registrationIds = SubUserIdsByUser(registrationId);
+            var ReportUserFrom = from u in Context.Users
+                                 where registrationIds.Contains(u.Upper_RegistrationID.Value)
+                                 select
+                                     new UserReportFrom
+                                     {
+                                         RegistrationID = u.RegistrationID,
+                                         HierarchyName = u.Organization_hierarchy.HierarchyName,
+                                         Rank = u.Organization_hierarchy.Rank,
+                                         Name = u.Registration.Name,
+                                         OfficeEmail = u.Registration.OfficeEmail,
+                                         PersonalContact = u.Registration.PersonalContact,
+                                         UserName = u.Registration.UserName,
+                                         AchievedAmount = u.TargetAssigns.Sum(t => (double?)t.AchievedAmount) ?? 0,
+                                         TargetAmount = u.TargetAssigns.Sum(t => (double?)t.TargetAmount) ?? 0,
+                                         Equipment = u.user_Territories.Count(t => t.Territory.Outlets.Any(o => o.EquipmentDistributions.Any(ed => ed.IsCurrent)))
+
+                                     };
+
+            return ReportUserFrom.ToList();
+        }
+
         public List<UserSR> GetSR_ByDistributorTerritory(int DistributorID)
         {
             var TerritoryIDs = Context.DistributorTerritoryLists
