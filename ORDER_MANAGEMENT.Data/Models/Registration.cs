@@ -8,7 +8,6 @@ namespace ORDER_MANAGEMENT.Data
         public Registration()
         {
             this.Target_Creates = new HashSet<Target>();
-            this.Users_Under = new HashSet<User>();
             this.OrderBy_DistributorOrders = new HashSet<DistributorOrder>();
             this.ApproveBy_DistributorOrders = new HashSet<DistributorOrder>();
             this.DistributorOrderChanges = new HashSet<DistributorOrderChange>();
@@ -47,7 +46,7 @@ namespace ORDER_MANAGEMENT.Data
 
         public ICollection<Target> Target_Creates { get; set; }
 
-        public ICollection<User> Users_Under { get; set; }
+
         public ICollection<DistributorOrder> OrderBy_DistributorOrders { get; set; }
         public ICollection<DistributorOrder> ApproveBy_DistributorOrders { get; set; }
         public ICollection<DistributorOrderChange> DistributorOrderChanges { get; set; }

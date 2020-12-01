@@ -268,4 +268,23 @@ namespace ORDER_MANAGEMENT.Data
 
         public int DistributorID { get; set; }
     }
+
+    public class UserReportFilterModel
+    {
+        public int RegistrationId { get; set; }
+        public DateTime? SDateTime { get; set; }
+        public DateTime? EDateTime { get; set; }
+    }
+
+    public class UserReportWithFilterModel
+    {
+        public int OrderBy_RegistrationID { get; set; }
+        public int? ApproveBy_RegistrationID { get; set; }
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public string ProductCode { get; set; }
+        public int OrderQuantity { get; set; }
+        public int SaleQuantity { get; set; }
+        public double Revenue { get; set; }
+    }
 }

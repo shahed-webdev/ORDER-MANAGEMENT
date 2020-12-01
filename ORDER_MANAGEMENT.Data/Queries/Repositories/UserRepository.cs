@@ -93,7 +93,7 @@ namespace ORDER_MANAGEMENT.Data
                 OfficeEmail = u.Registration.OfficeEmail,
                 PersonalContact = u.Registration.PersonalContact,
                 UserName = u.Registration.UserName,
-                ReportingTo = u.Upper_Registration.Name
+                ReportingTo = u.UpperUser.Registration.Name
 
             }).ToList();
 
@@ -111,6 +111,20 @@ namespace ORDER_MANAGEMENT.Data
 
             return user;
         }
+
+        public List<DDL> GetUserByRankDdl(int rank)
+        {
+            var user = (from u in Context.Users
+                        where u.Organization_hierarchy.Rank == rank
+                        select new DDL
+                        {
+                            value = u.RegistrationID,
+                            label = u.Registration.Name
+                        }).ToList();
+
+            return user;
+        }
+
         public UserVM GetUserInfo(int id)
         {
             var user = (from u in Context.Users
@@ -128,7 +142,7 @@ namespace ORDER_MANAGEMENT.Data
                             OfficeEmail = u.Registration.OfficeEmail,
                             PersonalContact = u.Registration.PersonalContact,
                             UserName = u.Registration.UserName,
-                            ReportingTo = u.Upper_Registration.Name
+                            ReportingTo = u.UpperUser.Registration.Name
 
                         }).FirstOrDefault();
 
@@ -137,7 +151,7 @@ namespace ORDER_MANAGEMENT.Data
 
         public UpdateUserVM UpdateDetails(int id)
         {
-            var user = Context.Users.Include(u => u.Registration).Include(u => u.Upper_Registration).Include(u => u.Organization_hierarchy).FirstOrDefault(u => u.RegistrationID == id);
+            var user = Context.Users.Include(u => u.Registration).Include(u => u.UpperUser).Include(u => u.Organization_hierarchy).FirstOrDefault(u => u.RegistrationID == id);
 
 
             var model = new UpdateUserVM(user);
@@ -425,6 +439,123 @@ namespace ORDER_MANAGEMENT.Data
             }).FirstOrDefault();
         }
 
+        public ICollection<OutletOrderReportModel> OrderReport(UserReportFilterModel filterModel)
+        {
+            var registrationIds = SubUserIdsByUser(filterModel.RegistrationId);
+
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        where outletOrderList.NetQuantity > 0 &&
+                              outletOrder.InsertDate >= filterModel.SDateTime &&
+                              outletOrder.InsertDate <= filterModel.EDateTime
+                        select new UserReportWithFilterModel
+                        {
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.OrderQuantity,
+                            OrderBy_RegistrationID = outletOrder.OrderBy_RegistrationID,
+                            Revenue = outletOrderList.LineTotal,
+                            SaleQuantity = outletOrderList.NetQuantity,
+                            ApproveBy_RegistrationID = outletOrder.ApproveBy_RegistrationID
+                        });
+
+            if (registrationIds != null)
+                list = list.Where(o => registrationIds.Contains(o.OrderBy_RegistrationID));
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletOrderReportModel
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.OrderQuantity)
+            }).OrderByDescending(r => r.OrderQuantity).ToList();
+
+            return group;
+        }
+
+        public ICollection<OutletOrderReportModel> SalesReport(UserReportFilterModel filterModel)
+        {
+            var registrationIds = SubUserIdsByUser(filterModel.RegistrationId);
+
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        where outletOrderList.NetQuantity > 0 &&
+                              outletOrder.Is_Approved &&
+                              outletOrder.InsertDate >= filterModel.SDateTime &&
+                              outletOrder.InsertDate <= filterModel.EDateTime
+                        select new UserReportWithFilterModel
+                        {
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.OrderQuantity,
+                            OrderBy_RegistrationID = outletOrder.OrderBy_RegistrationID,
+                            Revenue = outletOrderList.LineTotal,
+                            SaleQuantity = outletOrderList.NetQuantity,
+                            ApproveBy_RegistrationID = outletOrder.ApproveBy_RegistrationID
+                        });
+
+            if (registrationIds != null)
+                list = list.Where(o => registrationIds.Contains(o.ApproveBy_RegistrationID.Value));
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletOrderReportModel
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.SaleQuantity)
+            }).OrderByDescending(r => r.OrderQuantity).ToList();
+
+            return group;
+        }
+
+        public ICollection<OutletRevenueReportModelModel> RevenueReport(UserReportFilterModel filterModel)
+        {
+            var registrationIds = SubUserIdsByUser(filterModel.RegistrationId);
+
+            var list = (from outletOrderList in Context.OutletOrderLists
+                        join outletOrder in Context.OutletOrders on outletOrderList.OutletOrderID equals outletOrder.OutletOrderID
+                        join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
+                        join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
+                        where outletOrderList.NetQuantity > 0 &&
+                              outletOrder.Is_Approved &&
+                              outletOrder.InsertDate >= filterModel.SDateTime &&
+                              outletOrder.InsertDate <= filterModel.EDateTime
+                        select new UserReportWithFilterModel
+                        {
+                            ProductID = outletOrderList.ProductID,
+                            ProductName = outletOrderList.Product.ProductName,
+                            ProductCode = outletOrderList.Product.ProductCode,
+                            OrderQuantity = outletOrderList.OrderQuantity,
+                            OrderBy_RegistrationID = outletOrder.OrderBy_RegistrationID,
+                            Revenue = outletOrderList.LineTotal,
+                            SaleQuantity = outletOrderList.NetQuantity,
+                            ApproveBy_RegistrationID = outletOrder.ApproveBy_RegistrationID
+                        });
+
+            if (registrationIds != null)
+                list = list.Where(o => registrationIds.Contains(o.ApproveBy_RegistrationID.Value));
+
+            var group = list.GroupBy(o => new { o.ProductID, o.ProductCode, o.ProductName })
+            .Select(g => new OutletRevenueReportModelModel
+            {
+                ProductID = g.Key.ProductID,
+                ProductName = g.Key.ProductName,
+                ProductCode = g.Key.ProductCode,
+                OrderQuantity = g.Sum(o => o.SaleQuantity),
+                Revenue = g.Sum(o => o.Revenue)
+            }).OrderByDescending(r => r.OrderQuantity).ToList();
+
+            return group;
+        }
+
         public List<UserSR> GetSR_ByDistributorTerritory(int DistributorID)
         {
             var TerritoryIDs = Context.DistributorTerritoryLists
@@ -444,12 +575,26 @@ namespace ORDER_MANAGEMENT.Data
                             OfficeEmail = u.Registration.OfficeEmail,
                             PersonalContact = u.Registration.PersonalContact,
                             UserName = u.Registration.UserName,
-                            ReportingTo = u.Upper_Registration.Name,
+                            ReportingTo = u.UpperUser.Registration.Name,
                             AssingedToDistributor = u.Distributor.Name
 
                         }).Distinct().ToList();
 
             return user;
+        }
+        public List<int> SubUserIdsByUser(int registrationId)
+        {
+            var Ids = new List<int>();
+            var cat = Context.Users
+                .Include(c => c.SubUsers)
+                .Where(c => c.RegistrationID == registrationId)
+                .AsEnumerable()?
+                .FirstOrDefault();
+
+            if (cat != null)
+                UserHierarchyStatic.CatalogIdsFunction(cat.RegistrationID, cat.SubUsers, Ids);
+
+            return Ids;
         }
     }
 }

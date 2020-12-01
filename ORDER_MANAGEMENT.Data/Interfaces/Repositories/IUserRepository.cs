@@ -19,7 +19,8 @@ namespace ORDER_MANAGEMENT.Data
         Registration ChangeHierarchyTerritory(UpdateUserVM model);
         List<UserVM> GetAllUser();
         List<DDL> GetUserDDL();
-
+        List<DDL> GetUserByRankDdl(int rank);
+        List<int> SubUserIdsByUser(int registrationId);
         List<UserSR> GetSR_ByDistributorTerritory(int DistributorID);
         UserVM GetUserInfo(int id);
         bool Is_Default_User(int id);
@@ -29,7 +30,13 @@ namespace ORDER_MANAGEMENT.Data
 
         TargetInfo API_TargetInfo(int id);
         UserNameRank API_getUserInfo(int id);
-
         UserDetails GetUserDetails(string UserName);
+
+        ICollection<OutletOrderReportModel> OrderReport(UserReportFilterModel filterModel);
+        ICollection<OutletOrderReportModel> SalesReport(UserReportFilterModel filterModel);
+        ICollection<OutletRevenueReportModelModel> RevenueReport(UserReportFilterModel filterModel);
+
     }
+
+
 }

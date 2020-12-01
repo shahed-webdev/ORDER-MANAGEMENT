@@ -8,7 +8,6 @@ namespace ORDER_MANAGEMENT.Data
         public Territory()
         {
             this.user_Territories = new HashSet<User_Territory>();
-            this.Distributors = new HashSet<Distributor>();
             this.Outlets = new HashSet<Outlet>();
         }
         public int TerritoryID { get; set; }
@@ -21,7 +20,6 @@ namespace ORDER_MANAGEMENT.Data
         public double DistributorDiscountPercentage { get; set; } = 0;
         public virtual Area Area { get; set; }
         public virtual ICollection<User_Territory> user_Territories { get; set; }
-        public virtual ICollection<Distributor> Distributors { get; set; }
         public virtual ICollection<Outlet> Outlets { get; set; }
         public virtual ICollection<DistributorTerritoryList> DistributorTerritoryLists { get; set; }
     }

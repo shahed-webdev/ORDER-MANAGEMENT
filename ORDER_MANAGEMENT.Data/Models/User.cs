@@ -15,7 +15,7 @@ namespace ORDER_MANAGEMENT.Data
             this.UserTrackingByOutlets = new HashSet<UserTrackingByOutlet>();
             this.UserRoutes = new HashSet<UserRoute>();
             this.Depots = new HashSet<Depot>();
-
+            this.SubUsers = new HashSet<User>();
         }
         public int RegistrationID { get; set; }
         public int HierarchyID { get; set; }
@@ -27,7 +27,8 @@ namespace ORDER_MANAGEMENT.Data
         public virtual Distributor Distributor { get; set; }
         public virtual Route Route { get; set; }
         public virtual Registration Registration { get; set; }
-        public virtual Registration Upper_Registration { get; set; }
+        public virtual User UpperUser { get; set; }
+        public ICollection<User> SubUsers { get; set; }
         public virtual Organization_hierarchy Organization_hierarchy { get; set; }
         public virtual ICollection<TargetAssign> TargetAssigns { get; set; }
         public virtual ICollection<TargetAssign> TargetAssigns_To { get; set; }
