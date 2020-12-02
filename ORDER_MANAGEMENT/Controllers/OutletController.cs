@@ -51,19 +51,24 @@ namespace ORDER_MANAGEMENT.Controllers
             if (!id.HasValue) return RedirectToAction("Index");
 
             var response = _db.Outlets.GetDetails(id.GetValueOrDefault());
-            
-            if(!response.IsSuccess)
+
+            if (!response.IsSuccess)
                 return RedirectToAction("Index");
 
             return View(response.Data);
         }
 
         //POST: Update outlet
-        //public ActionResult Update(OutletDetailsUpdateModel model)
-        //{
-        //    var response = _db.Outlets
-        //    return View(model1);
-        //}
+        [HttpPost]
+        public ActionResult Update(OutletDetailsUpdateModel model)
+        {
+            var response = _db.Outlets.UpdateDetails(model);
+           
+            if (!response.IsSuccess)
+                return View(model);
+
+            return RedirectToAction("Index");
+        }
 
         //GET: Location Map
         [Authorize(Roles = "Admin,Outlet_Location Map")]
