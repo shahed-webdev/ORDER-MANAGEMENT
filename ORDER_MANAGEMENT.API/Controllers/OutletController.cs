@@ -8,10 +8,10 @@ namespace ORDER_MANAGEMENT.API.Controllers
 {
     public class OutletController : ApiController
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public OutletController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
         // POST: api/Outlet
         [HttpPost]
@@ -20,20 +20,23 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            value.CreateBy_RegistrationID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var user = db.Users.Find(value.CreateBy_RegistrationID);
+            var isExist = _db.Outlets.IsExist(value.Phone);
+            if (isExist)
+                return Content(HttpStatusCode.BadRequest, "Phone Number Already Exist!");
+
+
+            value.CreateBy_RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var user = _db.Users.Find(value.CreateBy_RegistrationID);
             value.DistributorID = user.DistributorID.GetValueOrDefault();
 
             if (user.DistributorID == null)
-            {
                 return Content(HttpStatusCode.NotFound, "Distributor Not Assigned");
-            }
 
             //Update because of Distributor multiple Territory option add
             //value.TerritoryID = db.Distributors.Find(value.DistributorID).TerritoryID;
 
-            db.Outlets.CreateOutlet(value);
-            db.SaveChanges();
+            _db.Outlets.CreateOutlet(value);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -44,12 +47,12 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getTerritoryDDL")]
         public List<DDL> getTerritoryDdl()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
 
-            var distributorId = db.Users.Find(id).DistributorID;
+            var distributorId = _db.Users.Find(id).DistributorID;
             if (distributorId == null) return new List<DDL>();
 
-            var territoryDdl = db.Territorys.GetDistributorTerritory(distributorId.GetValueOrDefault());
+            var territoryDdl = _db.Territorys.GetDistributorTerritory(distributorId.GetValueOrDefault());
             return territoryDdl;
         }
 
@@ -58,8 +61,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getOutletList")]
         public List<OutletListVM> getOutletList()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Outlets = db.Outlets.OutletListByUser(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var Outlets = _db.Outlets.OutletListByUser(id);
             return Outlets;
         }
 
@@ -68,8 +71,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getOutletRoutePlan")]
         public List<OutletListVM> getOutletRoutePlan()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Outlets = db.UserRoutes.getOutletByUserRoute(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var Outlets = _db.UserRoutes.getOutletByUserRoute(id);
             return Outlets;
         }
 
@@ -79,13 +82,13 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             value.RegistrationID = id;
             value.TrackingDate = DateTime.Today;
             value.TrackingDateTime = DateTime.Now;
 
-            db.UserTrackingByOutlets.checkIn(value);
-            db.SaveChanges();
+            _db.UserTrackingByOutlets.checkIn(value);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -96,9 +99,9 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Receipt = db.OutletOrders.OrderPlaced(value, id);
-            db.SaveChanges();
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var Receipt = _db.OutletOrders.OrderPlaced(value, id);
+            _db.SaveChanges();
 
             return Ok(Receipt);
         }
@@ -107,7 +110,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/OutletDueLimit/{id}")]
         public IHttpActionResult OutletDueLimit(int id)
         {
-            double? limit = db.Outlets.GetDueRange(id);
+            double? limit = _db.Outlets.GetDueRange(id);
             return Ok(limit);
         }
 
@@ -115,8 +118,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetOutletOrderHistory/{id}")]
         public IHttpActionResult GetOutletOrderHistory(int id)
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.OutletOrders.OrderHistory(RegID, id);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.OutletOrders.OrderHistory(RegID, id);
             return Ok(model);
         }
 
@@ -124,7 +127,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/OutletOrderDetails/{id}")]
         public IHttpActionResult OutletOrderDetails(int id)
         {
-            var model = db.OutletOrders.OrderDetails(id);
+            var model = _db.OutletOrders.OrderDetails(id);
             return Ok(model);
         }
 
@@ -132,8 +135,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetOutletUndeliveredOrderList")]
         public IHttpActionResult UndeliveredOrderList()
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.OutletOrders.UndeliveredOrderList_ByUser(RegID);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.OutletOrders.UndeliveredOrderList_ByUser(RegID);
             return Ok(model);
         }
 
@@ -141,8 +144,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetOutletOrderedList")]
         public IHttpActionResult GetOutletOrderedList()
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.OutletOrders.OrderedHistory(RegID);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.OutletOrders.OrderedHistory(RegID);
             return Ok(model);
         }
 
@@ -152,9 +155,9 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (values == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            db.OutletProductReturns.ApprovedReturn(values, id);
-            db.SaveChanges();
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.OutletProductReturns.ApprovedReturn(values, id);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -163,7 +166,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/OutletDeliveryDetails/{id}")]
         public IHttpActionResult OutletDeliveryDetails(int id)
         {
-            var model = db.OutletOrders.OrderDeliveredDetails(id);
+            var model = _db.OutletOrders.OrderDeliveredDetails(id);
             return Ok(model);
         }
 
@@ -172,9 +175,9 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public IHttpActionResult OutletDeliverdProduct(OutletOrderDelivered model)
         {
 
-            var RegistrationID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var r = db.OutletOrders.OrderDelivered(model, RegistrationID);
-            if (r == 0) db.SaveChanges();
+            var RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var r = _db.OutletOrders.OrderDelivered(model, RegistrationID);
+            if (r == 0) _db.SaveChanges();
             return Ok(r);
         }
         [HttpGet]
@@ -183,7 +186,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public List<OutletDueList> getOutletDueList()
         {
             //var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Outlets = db.OutletPaymentRecords.OutletDueList();
+            var Outlets = _db.OutletPaymentRecords.OutletDueList();
             return Outlets;
         }
 
@@ -193,10 +196,10 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             value.PaymentDate = DateTime.Now;
-            db.OutletPaymentRecords.PayDue(value);
-            db.SaveChanges();
+            _db.OutletPaymentRecords.PayDue(value);
+            _db.SaveChanges();
 
             return Ok();
         }

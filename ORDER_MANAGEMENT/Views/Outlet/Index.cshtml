@@ -4,6 +4,13 @@
     Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
 }
 
+@section Styles{
+    <style>
+        .delete { color: red; cursor: pointer }
+    </style>
+}
+
+
 <div class="m-md-3 card card-body">
     <h3 class="mb-3">Outlets</h3>
 
@@ -12,13 +19,15 @@
             <thead>
                 <tr>
                     <th>SN</th>
-                    <th>Outlet Name</th>
+                    <th class="text-left">Outlet Name</th>
                     <th>Proprietor</th>
                     <th>Phone</th>
                     <th>Email</th>
-                    <th>Address</th>
+                    <th class="text-left">Address</th>
                     <th>Due Range</th>
                     <th style="width: 80px">Approved</th>
+                    <th style="width: 50px">Delete</th>
+                    <th style="width: 50px">Edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,11 +37,11 @@
                     {
                         <tr>
                             <td>@index</td>
-                            <td>@item.OutletName</td>
+                            <td class="text-left">@item.OutletName</td>
                             <td>@item.ProprietorName</td>
                             <td>@item.Phone</td>
                             <td>@item.Email</td>
-                            <td>@item.Address</td>
+                            <td class="text-left">@item.Address</td>
                             <td>@item.DueRangeLimit</td>
                             <td>
                                 @{
@@ -45,7 +54,12 @@
                                         <a class="approve text-success" data-due="@item.DueRangeLimit" data-id="@item.OutletID">Approve</a>
                                     }
                                 }
-
+                            </td>
+                            <td><i data-id="@item.OutletID" class="delete fas fa-trash-alt"></i></td>
+                            <td>
+                                <a href="/Outlet/Update/@item.OutletID">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                             </td>
                         </tr>
 
@@ -119,7 +133,7 @@
         const dueRangeForm = document.getElementById("dueRangeForm");
 
         //show modal
-        $('#DataTable').on("click", ".approve", function () {
+        $('#DataTable').on("click", ".approve", function() {
             approveForm.hiddenOutletId.value = $(this).data("id");
             approveForm.inputDueRange.value = $(this).data("due");
 
@@ -127,7 +141,7 @@
         });
 
         //post
-        approveForm.addEventListener("submit", function (evt) {
+        approveForm.addEventListener("submit", function(evt) {
             evt.preventDefault();
 
             const body = {
@@ -139,21 +153,20 @@
                 url: "/Outlet/Approved",
                 type: "POST",
                 data: body,
-                success: function (response) {
+                success: function(response) {
                     // $('#approveModal').modal('hide');
                     location.reload();
                 },
-                error: function (err) {
+                error: function(err) {
                     console.log(err);
                 }
             });
         });
 
 
-
         //***due range update*****//
         //show modal
-        $('#DataTable').on("click", ".updateDueRange", function () {
+        $('#DataTable').on("click", ".updateDueRange", function() {
             dueRangeForm.hiddenOutletId2.value = $(this).data("id");
             dueRangeForm.inputDueRange2.value = $(this).data("due");
 
@@ -161,7 +174,7 @@
         });
 
         //post
-        dueRangeForm.addEventListener("submit", function (evt) {
+        dueRangeForm.addEventListener("submit", function(evt) {
             evt.preventDefault();
 
             const body = {
@@ -173,11 +186,39 @@
                 url: "/Outlet/DueRangeUpdate",
                 type: "POST",
                 data: body,
-                success: function (response) {
+                success: function(response) {
                     // $('#dueRangeModal').modal('hide');
                     location.reload();
                 },
-                error: function (err) {
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        });
+
+
+        //***delete outlet*****//
+        $('#DataTable').on("click", ".delete", function() {
+            const outletId = $(this).data("id");
+            if (!outletId) return;
+
+            const isConfirm = confirm("are you sure want to delete?");
+
+            if (!isConfirm) return;
+
+            $.ajax({
+                url: "/Outlet/DeleteOutlet",
+                type: "POST",
+                data: { outletId },
+                success: function(response) {
+                    if (!response.IsSuccess) {
+                        $.notify(response.Message, "error");
+                        return;
+                    }
+
+                    location.reload();
+                },
+                error: function(err) {
                     console.log(err);
                 }
             });

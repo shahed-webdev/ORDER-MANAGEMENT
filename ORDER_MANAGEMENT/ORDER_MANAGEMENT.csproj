@@ -409,6 +409,7 @@
     <Content Include="Views\UserReport\SalesReport.cshtml" />
     <Content Include="Views\UserReport\RevenueReport.cshtml" />
     <Content Include="Views\UserReport\TargetAchievedReport.cshtml" />
+    <Content Include="Views\Outlet\Update.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ORDER_MANAGEMENT.Data\ORDER_MANAGEMENT.Data.csproj">

@@ -12,12 +12,21 @@ namespace ORDER_MANAGEMENT.Controllers
             _db = unitOfWork;
         }
 
-        [Authorize(Roles = "Admin,Outlets")]
+
         // GET: Outlet
+        [Authorize(Roles = "Admin,Outlets")]
         public ActionResult Index()
         {
             var model = _db.Outlets.OutletList();
             return View(model);
+        }
+
+        // GET: delete outlet
+        [HttpPost]
+        public ActionResult DeleteOutlet(int outletId)
+        {
+            var response = _db.Outlets.DeleteOutlet(outletId);
+            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Approved
@@ -29,15 +38,33 @@ namespace ORDER_MANAGEMENT.Controllers
             return _db.SaveChanges();
         }
 
-        // GET: Approved
+        // GET: Due Range Update
         public int DueRangeUpdate(int outletId, int dueRange = 0)
         {
             _db.Outlets.DueRangeChange(outletId, dueRange);
             return _db.SaveChanges();
         }
 
-        [Authorize(Roles = "Admin,Outlet_Location Map")]
+        //GET: Update outlet
+        public ActionResult Update(int? id)
+        {
+            if (!id.HasValue) return RedirectToAction("Index");
+
+            var model = _db.Outlets.OutletList();
+            return View(model);
+        }
+
+        //POST: Update outlet
+        //public ActionResult Update(OutletCart model)
+        //{
+        //    if (!id.HasValue) return RedirectToAction("Index");
+
+        //    var model1 = _db.Outlets.OutletList();
+        //    return View(model1);
+        //}
+
         //GET: Location Map
+        [Authorize(Roles = "Admin,Outlet_Location Map")]
         public ActionResult LocationMap()
         {
             return View();
@@ -49,7 +76,7 @@ namespace ORDER_MANAGEMENT.Controllers
             return JsonConvert.SerializeObject(list);
         }
 
-        //GET: OrderList
+        //GET: Order List
         [Authorize(Roles = "Admin,Outlet_OrderList")]
         public ActionResult OrderList()
         {

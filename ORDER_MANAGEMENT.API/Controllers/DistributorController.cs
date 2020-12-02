@@ -1,6 +1,7 @@
 ﻿using ORDER_MANAGEMENT.Data;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Web.Http;
 
 namespace ORDER_MANAGEMENT.API.Controllers
@@ -8,10 +9,10 @@ namespace ORDER_MANAGEMENT.API.Controllers
     [Authorize]
     public class DistributorController : ApiController
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public DistributorController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
 
         [HttpGet]
@@ -19,8 +20,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getDistributorList")]
         public List<DistributorListVM> getDistributorList()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var distributors = db.Distributors.DistributorListByUser(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var distributors = _db.Distributors.DistributorListByUser(id);
             return distributors;
         }
 
@@ -29,8 +30,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getDistributorRoutePlan")]
         public List<DistributorListVM> getDistributorRoutePlan()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var distributors = db.UserRoutes.getDistributorByUserRoute(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var distributors = _db.UserRoutes.getDistributorByUserRoute(id);
             return distributors;
         }
 
@@ -38,20 +39,26 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getTerriroryDDL")]
         public List<DDL> getTerriroryDDL()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var TerriroryDDL = db.Territorys.GetUserTerritory(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var TerriroryDDL = _db.Territorys.GetUserTerritory(id);
             return TerriroryDDL;
         }
+       
+        
         [HttpPost]
         // POST: api/Distributor
         [Route("api/Distributor")]
         public IHttpActionResult Post([FromBody] DistributorCreateVM value)
         {
             if (value == null) NotFound();
+            
+            var isExist = _db.Distributors.IsExist(value.Mobile);
+            if (isExist)
+                return Content(HttpStatusCode.BadRequest, "Phone Number Already Exist!");
 
-            value.ReportTo_RegistrationID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            db.Distributors.CreateDistributor(value);
-            db.SaveChanges();
+            value.ReportTo_RegistrationID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            _db.Distributors.CreateDistributor(value);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -62,9 +69,9 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var Receipt = db.DistributorOrders.OrderPlaced(value, id);
-            db.SaveChanges();
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var Receipt = _db.DistributorOrders.OrderPlaced(value, id);
+            _db.SaveChanges();
 
             return Ok(Receipt);
         }
@@ -75,13 +82,13 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             value.RegistrationID = id;
             value.TrackingDate = DateTime.Today;
             value.TrackingDateTime = DateTime.Now;
 
-            db.UserTrackingByDistributors.checkIn(value);
-            db.SaveChanges();
+            _db.UserTrackingByDistributors.checkIn(value);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -90,8 +97,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetDistributorUnapprovedOrderList")]
         public IHttpActionResult GetDistributorOrderList()
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.DistributorOrders.UnapprovedOrderList_ByUser(RegID);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.DistributorOrders.UnapprovedOrderList_ByUser(RegID);
             return Ok(model);
         }
 
@@ -99,8 +106,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetDistributorOrderHistory/{id}")]
         public IHttpActionResult GetDistributorOrderHistory(int id)
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.DistributorOrders.OrderHistory(RegID, id);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.DistributorOrders.OrderHistory(RegID, id);
             return Ok(model);
         }
 
@@ -108,8 +115,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/GetDistributorOrderedList")]
         public IHttpActionResult GetDistributorOrderedList()
         {
-            var RegID = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var model = db.DistributorProductReturns.OrderedHistory(RegID);
+            var RegID = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var model = _db.DistributorProductReturns.OrderedHistory(RegID);
             return Ok(model);
         }
 
@@ -117,7 +124,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/DistributorOrderDetails/{id}")]
         public IHttpActionResult DistributorOrderDetails(int id)
         {
-            var model = db.DistributorOrders.OrderDetails(id);
+            var model = _db.DistributorOrders.OrderDetails(id);
             return Ok(model);
         }
 
@@ -126,7 +133,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public IHttpActionResult DistributorDueLimit(int id)
         {
 
-            double? limit = db.Distributors.GetDueRange(id);
+            double? limit = _db.Distributors.GetDueRange(id);
             if (limit == null) return NotFound();
 
             return Ok(limit);
@@ -138,14 +145,14 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (values == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             foreach (var value in values)
             {
                 value.ReturnBy_RegistrationID = id;
                 value.ReturnDate = DateTime.Now;
             }
-            db.DistributorProductReturns.AddRange(values);
-            db.SaveChanges();
+            _db.DistributorProductReturns.AddRange(values);
+            _db.SaveChanges();
 
             return Ok();
         }
@@ -155,8 +162,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/getDistributorDueList")]
         public List<DistributorDueList> getDistributorDueList()
         {
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var distributors = db.DistributorPaymentRecords.DistributorDueListByUser(id);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var distributors = _db.DistributorPaymentRecords.DistributorDueListByUser(id);
             return distributors;
         }
 
@@ -166,11 +173,11 @@ namespace ORDER_MANAGEMENT.API.Controllers
         {
             if (value == null) NotFound();
 
-            var id = db.Registrations.GetRegID_ByUserName(User.Identity.Name);
+            var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
             value.PaymentDate = DateTime.Now;
 
-            db.DistributorPaymentRecords.PayDue(value);
-            db.SaveChanges();
+            _db.DistributorPaymentRecords.PayDue(value);
+            _db.SaveChanges();
 
             return Ok();
         }
