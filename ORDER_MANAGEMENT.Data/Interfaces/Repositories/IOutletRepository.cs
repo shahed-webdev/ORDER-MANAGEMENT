@@ -8,6 +8,7 @@ namespace ORDER_MANAGEMENT.Data
         void CreateOutlet(OutletCreateVM model);
         DbResponse DeleteOutlet(int outletId);
         DbResponse UpdateDetails(OutletDetailsUpdateModel model);
+        DbResponse<OutletDetailsUpdateModel> GetDetails(int outletId);
         List<OutletListVM> OutletList();
         List<OutletListVM> OutletListByUser(int registrationId);
         double GetDueRange(int OutletID);

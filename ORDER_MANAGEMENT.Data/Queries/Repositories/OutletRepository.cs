@@ -108,6 +108,34 @@ namespace ORDER_MANAGEMENT.Data
 
         }
 
+        public DbResponse<OutletDetailsUpdateModel> GetDetails(int outletId)
+        {
+            try
+            {
+                var outlet = Context.Outlets.Find(outletId);
+                if (outlet == null)
+                    return new DbResponse<OutletDetailsUpdateModel>(false, "Not Found");
+
+                var data = new OutletDetailsUpdateModel
+                {
+                    OutletID = outlet.OutletID,
+                    OutletName = outlet.OutletName,
+                    ProprietorName = outlet.ProprietorName,
+                    Phone = outlet.Phone,
+                    Email = outlet.Email,
+                    DueRangeLimit = outlet.DueRangeLimit
+                };
+
+
+                return new DbResponse<OutletDetailsUpdateModel>(true, "Success", data);
+
+            }
+            catch (Exception e)
+            {
+                return new DbResponse<OutletDetailsUpdateModel>(false, e.Message);
+            }
+        }
+
         public List<OutletListVM> OutletList()
         {
             var Outlets = from o in Context.Outlets
