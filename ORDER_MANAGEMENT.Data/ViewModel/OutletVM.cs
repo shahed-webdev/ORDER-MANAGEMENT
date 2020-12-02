@@ -17,6 +17,15 @@ namespace ORDER_MANAGEMENT.Data
         public string Lon { get; set; }
         public byte[] Logo { get; set; }
     }
+    public class OutletDetailsUpdateModel
+    {
+        public int OutletID { get; set; }
+        public string OutletName { get; set; }
+        public string ProprietorName { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public int DueRangeLimit { get; set; }
+    }
     public class OutletListVM
     {
         public int OutletID { get; set; }

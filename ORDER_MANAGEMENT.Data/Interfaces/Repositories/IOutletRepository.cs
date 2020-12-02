@@ -7,6 +7,7 @@ namespace ORDER_MANAGEMENT.Data
         bool IsExist(string number);
         void CreateOutlet(OutletCreateVM model);
         DbResponse DeleteOutlet(int outletId);
+        DbResponse UpdateDetails(OutletDetailsUpdateModel model);
         List<OutletListVM> OutletList();
         List<OutletListVM> OutletListByUser(int registrationId);
         double GetDueRange(int OutletID);
@@ -17,4 +18,6 @@ namespace ORDER_MANAGEMENT.Data
         ICollection<OutletSearch> Search(string key);
         ICollection<OutletSearch> Search(string key, int currentOutletId);
     }
+
+
 }
