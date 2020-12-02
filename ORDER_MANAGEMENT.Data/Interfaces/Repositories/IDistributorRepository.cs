@@ -6,6 +6,9 @@ namespace ORDER_MANAGEMENT.Data
     {
         void CreateDistributor(DistributorCreateVM model);
 
+        DbResponse DeleteDistributor(int distributorId);
+
+        bool IsExist(string number);
         List<DistributorListVM> DistributorListByUser(int id);
 
         List<DistributorListWithUserVM> DistributorListWithUser();

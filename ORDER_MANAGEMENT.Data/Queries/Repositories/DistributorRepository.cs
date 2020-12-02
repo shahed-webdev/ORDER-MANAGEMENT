@@ -29,6 +29,35 @@ namespace ORDER_MANAGEMENT.Data
 
             Add(dis);
         }
+
+        public DbResponse DeleteDistributor(int distributorId)
+        {
+            try
+            {
+                var distributor = Context.Distributors.Find(distributorId);
+                if (distributor == null)
+                    return new DbResponse(false, "Not Found");
+
+                if (Context.DistributorOrders.Any(o => o.DistributorID == distributorId))
+                    return new DbResponse(false, "Order taken from this Distributor");
+
+                Context.Distributors.Remove(distributor);
+                Context.SaveChanges();
+
+                return new DbResponse(true, "Success");
+
+            }
+            catch (Exception e)
+            {
+                return new DbResponse(false, e.Message);
+            }
+        }
+
+        public bool IsExist(string number)
+        {
+            return Context.Distributors.Any(d => d.Mobile == number);
+        }
+
         public List<DistributorListWithUserVM> DistributorListWithUser()
         {
             var Distributors = (from d in Context.Distributors

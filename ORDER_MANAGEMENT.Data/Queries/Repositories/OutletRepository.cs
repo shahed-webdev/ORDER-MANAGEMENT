@@ -30,6 +30,11 @@ namespace ORDER_MANAGEMENT.Data
             Update(Outlet);
         }
 
+        public bool IsExist(string number)
+        {
+            return Context.Outlets.Any(o => o.Phone == number);
+        }
+
         public void CreateOutlet(OutletCreateVM model)
         {
             var outlet = new Outlet();
@@ -47,6 +52,28 @@ namespace ORDER_MANAGEMENT.Data
             outlet.Logo = model.Logo;
 
             Add(outlet);
+        }
+
+        public DbResponse DeleteOutlet(int outletId)
+        {
+            try
+            {
+                var outlet = Context.Outlets.Find(outletId);
+                if (outlet == null)
+                    return new DbResponse(false, "Not Found");
+                if (Context.OutletOrders.Any(o => o.OutletID == outletId))
+                    return new DbResponse(false, "Order taken from this outlet");
+
+                Context.Outlets.Remove(outlet);
+                Context.SaveChanges();
+
+                return new DbResponse(true, "Success");
+
+            }
+            catch (Exception e)
+            {
+                return new DbResponse(false, e.Message);
+            }
         }
 
         public List<OutletListVM> OutletList()
