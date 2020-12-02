@@ -76,6 +76,38 @@ namespace ORDER_MANAGEMENT.Data
             }
         }
 
+        public DbResponse UpdateDetails(OutletDetailsUpdateModel model)
+        {
+            try
+            {
+                var outlet = Context.Outlets.Find(model.OutletID);
+                if (outlet == null)
+                    return new DbResponse(false, "Not Found");
+
+                if (Context.Outlets.Any(o => o.Phone == model.Phone && o.OutletID != model.OutletID))
+                    return new DbResponse(false, $"{model.Phone} already exist");
+
+                outlet.OutletName = model.OutletName;
+                outlet.Phone = model.Phone;
+                outlet.Email = model.Email;
+                outlet.ProprietorName = model.ProprietorName;
+                outlet.DueRangeLimit = model.DueRangeLimit;
+
+                Context.Entry(outlet).State = EntityState.Modified;
+                Context.SaveChanges();
+
+                return new DbResponse(true, "Success");
+
+            }
+            catch (Exception e)
+            {
+                return new DbResponse(false, e.Message);
+            }
+
+
+
+        }
+
         public List<OutletListVM> OutletList()
         {
             var Outlets = from o in Context.Outlets
