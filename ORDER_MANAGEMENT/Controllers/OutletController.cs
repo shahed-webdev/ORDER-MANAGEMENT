@@ -50,16 +50,18 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             if (!id.HasValue) return RedirectToAction("Index");
 
-            var model = _db.Outlets.OutletList();
-            return View(model);
+            var response = _db.Outlets.GetDetails(id.GetValueOrDefault());
+            
+            if(!response.IsSuccess)
+                return RedirectToAction("Index");
+
+            return View(response.Data);
         }
 
         //POST: Update outlet
-        //public ActionResult Update(OutletCart model)
+        //public ActionResult Update(OutletDetailsUpdateModel model)
         //{
-        //    if (!id.HasValue) return RedirectToAction("Index");
-
-        //    var model1 = _db.Outlets.OutletList();
+        //    var response = _db.Outlets
         //    return View(model1);
         //}
 
