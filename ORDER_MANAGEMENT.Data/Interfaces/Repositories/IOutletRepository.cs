@@ -4,7 +4,9 @@ namespace ORDER_MANAGEMENT.Data
 {
     public interface IOutletRepository : IRepository<Outlet>
     {
+        bool IsExist(string number);
         void CreateOutlet(OutletCreateVM model);
+        DbResponse DeleteOutlet(int outletId);
         List<OutletListVM> OutletList();
         List<OutletListVM> OutletListByUser(int registrationId);
         double GetDueRange(int OutletID);
