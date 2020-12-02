@@ -1,0 +1,137 @@
+﻿
+@{
+    ViewBag.Title = "User Revenue Report";
+    Layout = "~/Views/Shared/_AdminLayoutPage.cshtml";
+}
+
+<h3 class="mb-3">User Revenue Report</h3>
+
+<div class="card card-body">
+    <form id="formFind">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>From Date</label>
+                    <input id="inputFromDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>To Date</label>
+                    <input id="inputToDate" type="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>Hierarchy</label>
+                    @Html.DropDownList("Hierarchy", (IEnumerable<SelectListItem>)ViewBag.Region, "[ Select Hierarchy ]", new { @class = "form-control", id = "selectHierarchy" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label>User</label>
+                    <select id="selectUser" class="form-control" required></select>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" value="Find" class="btn btn-primary d-print-none" />
+    </form>
+
+    <table class="table table-bordered table-sm mt-3">
+        <thead>
+            <tr>
+                <th class="text-center"><strong>SN</strong></th>
+                <th class="text-center"><strong>Product Code</strong></th>
+                <th><strong>Product Name</strong></th>
+                <th class="text-center"><strong>Sales Quantity</strong></th>
+                <th class="text-right"><strong>Revenue</strong></th>
+            </tr>
+        </thead>
+        <tbody id="tBody"></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        const selectHierarchy = document.getElementById("selectHierarchy");
+        const selectUser = document.getElementById("selectUser");
+
+        //select Hierarchy
+        selectHierarchy.addEventListener("change", function(evt) {
+            const rank = this.value;
+
+            selectUser.options.length = 0;
+
+            if (!rank) return;
+
+            $.ajax({
+                url: "/UserReport/GetUserByRank",
+                data: { rank },
+                success: function (response) {
+                    if (!response.length) return;
+
+                    selectUser.appendChild(AddOption("", "[ Select Users ]"));
+                    response.forEach(item => {
+                        selectUser.appendChild(AddOption(item.value, item.label));
+                    });
+                },
+                error: err => console.log(err)
+            });
+        });
+
+        //add options in select
+        function AddOption(value, text) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.innerHTML = text;
+
+            return option;
+        }
+
+
+        //find submit
+        const formFind = document.getElementById("formFind");
+        formFind.addEventListener("submit", function(evt) {
+            evt.preventDefault();
+
+            const filter = {
+                RegistrationId: +this.selectUser.value,
+                SDateTime: this.inputFromDate.value,
+                EDateTime: this.inputToDate.value
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url: "/UserReport/GetRevenueReport",
+                data: filter,
+                success: function (response) {
+                    appendToTable(response);
+                },
+                error: err => console.log(err)
+            });
+        });
+
+
+        //add data to table
+        const tBody = document.getElementById("tBody");
+        function appendToTable(response) {
+            tBody.innerHTML = "";
+            const fragment = document.createDocumentFragment();
+
+            response.forEach((data, i) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td class="text-center">${i + 1}</td>
+                                <td class="text-center">${data.ProductCode}</td>
+                                <td>${data.ProductName}</td>
+                                <td class="text-center">${data.OrderQuantity}</td>
+                                <td class="text-right">৳${data.Revenue}</td>`;
+                fragment.appendChild(tr);
+            });
+
+            tBody.append(fragment);
+        }
+    </script>
+}
+

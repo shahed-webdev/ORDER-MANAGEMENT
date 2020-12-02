@@ -94,76 +94,76 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
-  <script>
-      var $uploadCrop,
-          opt = {
-          viewport: { width:100, height:100 },
-          boundary: { width: 120, height:120 },
-          showZoomer: false,
-          enableResize: true,
-          enableOrientation: true
-      };
+    <script>
+        var $uploadCrop,
+            opt = {
+                viewport: { width: 80, height: 80 },
+                boundary: { width: 90, height: 90 },
+                showZoomer: false,
+                enableResize: true,
+                enableOrientation: true
+            };
 
-      $(function () {
-          $uploadCrop = $('#upload-demo').croppie(opt);
+        $(function() {
+            $uploadCrop = $('#upload-demo').croppie(opt);
 
-          $('#upload').on('change', function () {
-              readFile(this);
-          });
+            $('#upload').on('change', function() {
+                readFile(this);
+            });
 
-          $('#doneButton').on('click', function () {
-              $uploadCrop.croppie('result', { type: 'base64' }).then(function (res) {
-                  $('#ProductImage').val(res.split(',')[1]);
-                  $('#upload-demo').hide();
-                  $('#doneButton').hide();
-                  $('#prevImage').attr('src', res).addClass('img-thumbnail');
-              });
-          });
-      });
+            $('#doneButton').on('click', function() {
+                $uploadCrop.croppie('result', { type: 'base64'}).then(function(res) {
+                    $('#ProductImage').val(res.split(',')[1]);
+                    $('#upload-demo').hide();
+                    $('#doneButton').hide();
+                    $('#prevImage').attr('src', res).addClass('img-thumbnail');
+                });
+            });
+        });
 
-      function readFile(input) {
-          if (input.files && input.files[0]) {
-              const reader = new FileReader();
+        function readFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
 
-              reader.onload = function (e) {
-                  $uploadCrop.croppie('bind', { url: e.target.result});
+                reader.onload = function(e) {
+                    $uploadCrop.croppie('bind', { url: e.target.result });
 
-                  $('#ProductImage').val('');
-                  $('#upload-demo').show();
-                  $('#doneButton').show();
-                  $('#prevImage').attr('src', '').removeClass('img-thumbnail');
-              }
-              reader.readAsDataURL(input.files[0]);
-          }
-      }
+                    $('#ProductImage').val('');
+                    $('#upload-demo').show();
+                    $('#doneButton').show();
+                    $('#prevImage').attr('src', '').removeClass('img-thumbnail');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-      function clearImage(ctrl) {
-          if ($(ctrl).val() == "") {
-              $('#upload-demo').croppie('destroy');
-              $uploadCrop = $('#upload-demo').croppie(opt);
-          }
-      }
+        function clearImage(ctrl) {
+            if ($(ctrl).val() == "") {
+                $('#upload-demo').croppie('destroy');
+                $uploadCrop = $('#upload-demo').croppie(opt);
+            }
+        }
 
-      //Get sub-category
-      $("#MainCategory").change(function() {
-          const url = "@Url.Action("GetSubCategory")";
-          const id = $(this).val();
-          var select = $('#selectSubCategory');
+        //Get sub-category
+        $("#MainCategory").change(function() {
+            const url = "@Url.Action("GetSubCategory")";
+            const id = $(this).val();
+            var select = $('#selectSubCategory');
 
-          select.empty();
+            select.empty();
 
-          if (!id) return;
+            if (!id) return;
 
-          $.get(url, { id }, function(response) {
-              if (response.length) {
-                  select.append($('<option/>', { value: "", text: "[ SELECT ]" }));
-                  $.each(response, function(i, item) {
-                      select.append($('<option/>', { value: item.value, text: item.label }));
-                  });
-              };
-          });
-      });
-  </script>
+            $.get(url, { id }, function(response) {
+                if (response.length) {
+                    select.append($('<option/>', { value: "", text: "[ SELECT ]" }));
+                    $.each(response, function(i, item) {
+                        select.append($('<option/>', { value: item.value, text: item.label }));
+                    });
+                };
+            });
+        });
+    </script>
 }
 
 
