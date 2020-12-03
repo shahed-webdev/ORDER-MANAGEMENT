@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -86,8 +87,31 @@ namespace ORDER_MANAGEMENT.Data
                 PermanentAddress = r.PermanentAddress,
                 PersonalContact = r.PersonalContact,
                 PersonalEmail = r.PersonalEmail,
-                PresentAddress = r.PresentAddress
+                PresentAddress = r.PresentAddress,
+                IsDeactivated = r.IsDeactivated
             }).ToList();
+        }
+
+        public DbResponse ToggleActivation(int registrationId)
+        {
+            try
+            {
+                var registration = Context.Registrations.Find(registrationId);
+                if (registration == null)
+                    return new DbResponse(false, "No found");
+                var IsDeactivated = registration.IsDeactivated;
+
+                registration.IsDeactivated = !IsDeactivated;
+                Context.Entry(registration).State = EntityState.Modified;
+                Context.SaveChanges();
+
+
+                return new DbResponse(true, $"{registration.UserName} " + (!IsDeactivated ? "Activated" : "Deactivated"));
+            }
+            catch (Exception e)
+            {
+                return new DbResponse(false, e.Message);
+            }
         }
 
         public Registration Reg_Update(string userName, UserDetails reg)

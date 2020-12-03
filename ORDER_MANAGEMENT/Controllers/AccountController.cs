@@ -44,7 +44,7 @@ namespace ORDER_MANAGEMENT.Controllers
                 if (User.IsInRole("User"))
                     return RedirectToAction("Index", "UserDashboard");
 
-                if(User.IsInRole("Distributor"))
+                if (User.IsInRole("Distributor"))
                     return RedirectToAction("Index", "DistributorDashboard");
 
                 return RedirectToAction("Index", "Dashboard");
@@ -73,7 +73,23 @@ namespace ORDER_MANAGEMENT.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    {
+                        using (var db = new DataContext())
+                        {
+                            var isDeactivated = db.Registrations.FirstOrDefault(r => r.UserName.ToLower() == model.UserName.ToLower())?.IsDeactivated ?? true;
+                            if (isDeactivated)
+                            {
+                                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                                Session["RegistrationID"] = null;
+                                return View("Lockout");
+                            }
+                            else
+                            {
+                                return RedirectToLocal(returnUrl);
+                            }
+
+                        }
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:

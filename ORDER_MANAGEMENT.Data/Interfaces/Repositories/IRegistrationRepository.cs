@@ -12,5 +12,6 @@ namespace ORDER_MANAGEMENT.Data
 
         ICollection<DDL> SubAdmins();
         ICollection<AdminInfo> GetSubAdminList();
+        DbResponse ToggleActivation(int registrationId);
     }
 }

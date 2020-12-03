@@ -129,6 +129,7 @@ namespace ORDER_MANAGEMENT.Data
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:d MMM yyyy}")]
         public DateTime JoiningDate { get; set; }
+        public bool IsDeactivated { get; set; }
 
     }
 
@@ -255,6 +256,7 @@ namespace ORDER_MANAGEMENT.Data
         public string OfficeEmail { get; set; }
         public string PersonalEmail { get; set; }
         public string BloodGroup { get; set; }
+        public bool IsDeactivated { get; set; }
     }
     public class UserDetails : AdminInfo
     {

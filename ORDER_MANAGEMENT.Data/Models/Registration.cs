@@ -42,6 +42,7 @@ namespace ORDER_MANAGEMENT.Data
         public DateTime? SignUpDate { get; set; } = DateTime.Now;
         public string PS { get; set; }
         public byte[] Photo { get; set; }
+        public bool IsDeactivated { get; set; }
         public virtual User User { get; set; }
 
         public ICollection<Target> Target_Creates { get; set; }

@@ -14,7 +14,7 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: Dashboard
         public ActionResult Index()
         {
-            var data = new AdminDashboardViewModel(db);
+            var data = new AdminDashboardViewModel(_db);
             return View(data);
         }
 
