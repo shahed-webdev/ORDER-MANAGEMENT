@@ -67,6 +67,11 @@ namespace ORDER_MANAGEMENT.Data
             Context.Entry(entity).State = EntityState.Modified;
         }
 
+        public int Count()
+        {
+            return Context.Set<TEntity>().Count();
+        }
+
 
         //Async and await
         public Task<TEntity> FindAsync(int id)

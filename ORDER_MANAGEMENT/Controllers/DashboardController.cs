@@ -14,7 +14,8 @@ namespace ORDER_MANAGEMENT.Controllers
         // GET: Deshboard
         public ActionResult Index()
         {
-            return View();
+            var data = new AdminDashboardViewModel(db);
+            return View(data);
         }
 
         //Profile update

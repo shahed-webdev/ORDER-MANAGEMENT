@@ -1,6 +1,7 @@
 ﻿using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,5 +38,17 @@ namespace ORDER_MANAGEMENT.Data
             return Hierarchys;
         }
 
+        public ICollection<RankWiseUser> RankWiseNumberOfUser()
+        {
+            var list = Context.Users.Include(u => u.Organization_hierarchy).GroupBy(u => u.Organization_hierarchy)
+                .Select(g => new RankWiseUser
+                {
+                    Rank = g.Key.Rank,
+                    HierarchyName = g.Key.HierarchyName,
+                    UserCount = g.Count()
+                }).ToList();
+
+            return list;
+        }
     }
 }

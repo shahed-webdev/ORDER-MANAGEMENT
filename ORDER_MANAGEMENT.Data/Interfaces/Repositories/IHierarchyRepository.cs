@@ -10,5 +10,6 @@ namespace ORDER_MANAGEMENT.Data
         Task<DataTablesResponse> DataTable_DataAsync(IDataTablesRequest requestModel);
 
         List<HierarchyDll_VM> GetDll_Hierarchy();
+        ICollection<RankWiseUser> RankWiseNumberOfUser();
     }
 }
