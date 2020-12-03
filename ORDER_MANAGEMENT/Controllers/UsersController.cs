@@ -25,6 +25,15 @@ namespace ORDER_MANAGEMENT.Controllers
             return View(_db.Users.GetAllUser());
         }
 
+        //Deactivate User Login
+        public ActionResult DeactivateUserLogin(int id)
+        {
+            var response = _db.Registrations.ToggleActivation(id);
+            return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         public ActionResult Dll_user(int rank, int regId = 0)
         {
             var list = _db.Users.GetUsersDLLByHierarchy(rank, regId);

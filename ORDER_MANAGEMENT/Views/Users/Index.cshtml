@@ -59,7 +59,7 @@
                     </td>
                     <td>
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="@item.RegistrationID" checked>
+                            <input type="checkbox" class="custom-control-input lockClick" id="@item.RegistrationID" @(item.IsDeactivated ? "checked" : "")>
                             <label class="custom-control-label" for="@item.RegistrationID"></label>
                         </div>
                     </td>
@@ -73,12 +73,24 @@
     <script>
         $(function () {
             $('#DataTable').DataTable();
+        });
 
-            //$('#DataTable').DataTable({
-            //    "aoColumnDefs": [
-            //        { 'bSortable': false, 'aTargets': [9,10,11] }
-            //    ]
-            //});
+        //on lock click
+        $('#DataTable').on("click", ".lockClick", function () {
+            const id = $(this).attr("id");
+            if (!id) return;
+
+            $.ajax({
+                url: "/Users/DeactivateUserLogin",
+                data: { id },
+                success: function (response) {
+                    console.log(response);
+                    $.notify(response.Message, response.IsSuccess ? "success" : "error");
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
         });
     </script>
 }

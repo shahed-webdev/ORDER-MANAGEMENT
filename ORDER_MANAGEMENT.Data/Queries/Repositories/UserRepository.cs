@@ -93,7 +93,8 @@ namespace ORDER_MANAGEMENT.Data
                 OfficeEmail = u.Registration.OfficeEmail,
                 PersonalContact = u.Registration.PersonalContact,
                 UserName = u.Registration.UserName,
-                ReportingTo = u.UpperUser.Registration.Name
+                ReportingTo = u.UpperUser.Registration.Name,
+                IsDeactivated = u.Registration.IsDeactivated
 
             }).ToList();
 
