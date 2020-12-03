@@ -11,35 +11,26 @@
         <table id="DataTable" class="table table-sm table-bordered nowrap">
             <thead>
                 <tr>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Username
-                    </th>
-                    <th>
-                        Mobile
-                    </th>
-                    <th>
-                        Email
-                    </th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th style="width:30px">Locked?</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td>@item.Name</td>
+                        <td>@item.UserName</td>
+                        <td>@item.PersonalContact</td>
+                        <td>@item.PersonalEmail</td>
                         <td>
-                            @item.Name
-                        </td>
-                        <td>
-                            @item.UserName
-                        </td>
-                        <td>
-                            @item.PersonalContact
-                        </td>
-                        <td>
-                            @item.PersonalEmail
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input lockClick" id="@item.RegistrationID" @(item.IsDeactivated ? "checked" : "")>
+                                <label class="custom-control-label" for="@item.RegistrationID"></label>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -47,3 +38,24 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        //on lock click
+        $('#DataTable').on("click", ".lockClick", function () {
+            const id = $(this).attr("id");
+            if (!id) return;
+
+            $.ajax({
+                url: "/Users/DeactivateUserLogin",
+                data: { id },
+                success: response=> {
+                    $.notify(response.Message, $(this).is(':checked') ? "error": "success");
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        });
+    </script>
+}
