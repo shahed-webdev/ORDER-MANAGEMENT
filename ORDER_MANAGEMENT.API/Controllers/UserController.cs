@@ -88,8 +88,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
         [Route("api/CheckActivation")]
         public IHttpActionResult CheckActivation()
         {
-
-            var isDeactivated = db.Registrations.IsDeactivated(User.Identity.Name);
+            var isDeactivated = _db.Registrations.IsDeactivated(User.Identity.Name);
 
             if (isDeactivated) Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
 
