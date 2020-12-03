@@ -3,15 +3,15 @@ using System.Web.Mvc;
 
 namespace ORDER_MANAGEMENT.Controllers
 {
-    [Authorize(Roles = ("Admin,Sub-admin"))]
+    [Authorize(Roles = ("Admin, Sub-admin"))]
     public class DashboardController : Controller
     {
-        private readonly IUnitOfWork db;
+        private readonly IUnitOfWork _db;
         public DashboardController(IUnitOfWork unitOfWork)
         {
-            db = unitOfWork;
+            _db = unitOfWork;
         }
-        // GET: Deshboard
+        // GET: Dashboard
         public ActionResult Index()
         {
             var data = new AdminDashboardViewModel(db);
@@ -21,7 +21,7 @@ namespace ORDER_MANAGEMENT.Controllers
         //Profile update
         public ActionResult UserProfile()
         {
-            var user = db.Registrations.GetAdminInfo(User.Identity.Name);
+            var user = _db.Registrations.GetAdminInfo(User.Identity.Name);
             return View(user);
         }
 
@@ -31,9 +31,9 @@ namespace ORDER_MANAGEMENT.Controllers
         {
             if (!ModelState.IsValid) return View(user);
 
-            var registration = db.Registrations.Reg_Update(User.Identity.Name, user);
-            db.Registrations.Update(registration);
-            db.SaveChanges();
+            var registration = _db.Registrations.Reg_Update(User.Identity.Name, user);
+            _db.Registrations.Update(registration);
+            _db.SaveChanges();
 
             return RedirectToAction("Index");
         }

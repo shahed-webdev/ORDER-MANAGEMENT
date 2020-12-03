@@ -39,6 +39,20 @@ namespace ORDER_MANAGEMENT.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("User"))
+                    return RedirectToAction("Index", "UserDashboard");
+
+                if(User.IsInRole("Distributor"))
+                    return RedirectToAction("Index", "DistributorDashboard");
+
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+
+
+
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
