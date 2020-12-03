@@ -16,7 +16,7 @@ namespace ORDER_MANAGEMENT.Data
         public int TotalDistributor { get; set; }
         public int TotalOutlet { get; set; }
         public int TotalDepot { get; set; }
-        ICollection<RankWiseUser> RankWiseNumberOfUser { get; set; }
+        public ICollection<RankWiseUser> RankWiseNumberOfUser { get; set; }
     }
 
     public class RankWiseUser
