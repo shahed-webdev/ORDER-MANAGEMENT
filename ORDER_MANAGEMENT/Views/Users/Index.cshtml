@@ -22,65 +22,57 @@
     <table id="DataTable" class="table table-sm table-bordered">
         <thead>
             <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    User Name
-                </th>
-                <th>
-                    Hierarchy Name
-                </th>
-                <th>
-                    Personal Contact
-                </th>
-                <th>
-                    Reporting To
-                </th>
-
-                <th>
-                    Joining Date
-                </th>
-                <th class="all" style="width:30px">
-                   Edit
-                </th>
+                <th>Name</th>
+                <th>User Name</th>
+                <th>Hierarchy Name</th>
+                <th>Personal Contact</th>
+                <th>Reporting To</th>
+                <th>Joining Date</th>
+                <th style="width:30px">Edit</th>
+                <th style="width:30px">Locked?</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-            <tr>
-                <td>
-                    @item.Name
-                </td>
-                <td>
-                    @item.UserName
-                </td>
-                <td>
-                    @item.HierarchyName
-                </td> 
-                <td>
-                    @item.PersonalContact
-                </td>
-                <td>
-                    @item.ReportingTo
-                </td>
-                <td>
-                    @Html.DisplayFor(model => item.JoiningDate)
-                </td>
-                <td>
-                    <a class="blue-text" href="/Users/UpdateUsers/@item.RegistrationID"><i class="fas fa-edit"></i></a>
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.UserName
+                    </td>
+                    <td>
+                        @item.HierarchyName
+                    </td>
+                    <td>
+                        @item.PersonalContact
+                    </td>
+                    <td>
+                        @item.ReportingTo
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.JoiningDate)
+                    </td>
+                    <td>
+                        <a class="blue-text" href="/Users/UpdateUsers/@item.RegistrationID"><i class="fas fa-edit"></i></a>
+                    </td>
+                    <td>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="@item.RegistrationID" checked>
+                            <label class="custom-control-label" for="@item.RegistrationID"></label>
+                        </div>
+                    </td>
+                </tr>
             }
         </tbody>
-</table>
+    </table>
 </div>
 
 @section Scripts {
     <script>
         $(function () {
-             $('#DataTable').DataTable();
+            $('#DataTable').DataTable();
 
             //$('#DataTable').DataTable({
             //    "aoColumnDefs": [
