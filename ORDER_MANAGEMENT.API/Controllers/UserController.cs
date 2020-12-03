@@ -1,14 +1,14 @@
-﻿using ORDER_MANAGEMENT.Data;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using ORDER_MANAGEMENT.API.Models;
+using ORDER_MANAGEMENT.Data;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Microsoft.AspNet.Identity;
-using ORDER_MANAGEMENT.API.Models;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using Microsoft.AspNet.Identity.Owin;
 
 namespace ORDER_MANAGEMENT.API.Controllers
 {
@@ -58,7 +58,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
 
         [HttpPost]
         [Route("api/UserProfileUpdate")]
-        public IHttpActionResult UserProfileUpdate([FromBody]UserInfoUpdate value)
+        public IHttpActionResult UserProfileUpdate([FromBody] UserInfoUpdate value)
         {
             if (value == null) NotFound();
 
@@ -76,13 +76,29 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public async Task<IHttpActionResult> ChangePassword([FromBody] ChangePasswordBindingModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            
+
             var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
             var result = await userManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            
-            if(result.Succeeded) return Ok();
+
+            if (result.Succeeded) return Ok();
 
             return Content(HttpStatusCode.InternalServerError, result);
+        }
+
+        [Route("api/CheckActivation")]
+        public IHttpActionResult CheckActivation()
+        {
+
+            var isDeactivated = db.Registrations.IsDeactivated(User.Identity.Name);
+
+            if (isDeactivated) Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+
+            return Ok(isDeactivated);
+        }
+
+        private IAuthenticationManager Authentication
+        {
+            get { return Request.GetOwinContext().Authentication; }
         }
     }
 }
