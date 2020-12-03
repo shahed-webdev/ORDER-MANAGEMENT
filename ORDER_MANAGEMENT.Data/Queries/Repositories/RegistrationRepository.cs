@@ -114,6 +114,11 @@ namespace ORDER_MANAGEMENT.Data
             }
         }
 
+        public bool IsDeactivated(string userName)
+        {
+            return Context.Registrations.FirstOrDefault(r => r.UserName == userName)?.IsDeactivated ?? true;
+        }
+
         public Registration Reg_Update(string userName, UserDetails reg)
         {
             var r = Context.Registrations.FirstOrDefault(u => u.UserName == userName);
