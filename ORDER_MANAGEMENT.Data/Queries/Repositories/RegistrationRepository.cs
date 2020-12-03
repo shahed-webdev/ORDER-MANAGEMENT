@@ -106,7 +106,7 @@ namespace ORDER_MANAGEMENT.Data
                 Context.SaveChanges();
 
 
-                return new DbResponse(true, $"{registration.UserName} " + (!IsDeactivated ? "Activated" : "Deactivated"));
+                return new DbResponse(true, $"{registration.UserName} " + (IsDeactivated ? "Activated" : "Deactivated"));
             }
             catch (Exception e)
             {
