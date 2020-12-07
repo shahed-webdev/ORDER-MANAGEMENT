@@ -33,7 +33,6 @@ namespace ORDER_MANAGEMENT.Controllers
         }
 
 
-
         public ActionResult Dll_user(int rank, int regId = 0)
         {
             var list = _db.Users.GetUsersDLLByHierarchy(rank, regId);

@@ -35,8 +35,8 @@ namespace ORDER_MANAGEMENT.API.Controllers
         public UserNameRank getUserInfo()
         {
             var id = _db.Registrations.GetRegID_ByUserName(User.Identity.Name);
-            var U = _db.Users.API_getUserInfo(id);
-            return U;
+            var user = _db.Users.API_getUserInfo(id);
+            return user;
         }
 
         // GET: api/getUserInfo
@@ -85,6 +85,7 @@ namespace ORDER_MANAGEMENT.API.Controllers
             return Content(HttpStatusCode.InternalServerError, result);
         }
 
+        [HttpPost]
         [Route("api/CheckActivation")]
         public IHttpActionResult CheckActivation()
         {
