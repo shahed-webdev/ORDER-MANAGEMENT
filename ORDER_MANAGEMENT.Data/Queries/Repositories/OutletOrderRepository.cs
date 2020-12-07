@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 
 namespace ORDER_MANAGEMENT.Data
@@ -284,8 +285,8 @@ namespace ORDER_MANAGEMENT.Data
                         join outlet in Context.Outlets on outletOrder.OutletID equals outlet.OutletID
                         join area in Context.Areas on outlet.Territory.AreaID equals area.AreaID
                         where outletOrderList.NetQuantity > 0 &&
-                              outletOrder.InsertDate >= filterModel.SDateTime &&
-                              outletOrder.InsertDate <= filterModel.EDateTime
+                              EntityFunctions.TruncateTime(outletOrder.InsertDate) >= filterModel.SDateTime &&
+                              EntityFunctions.TruncateTime(outletOrder.InsertDate) <= filterModel.EDateTime
                         select new OutletReportWithFilterModel
                         {
                             RegionID = area.RegionID,
