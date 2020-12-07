@@ -111,8 +111,10 @@
             const regionId = this.value;
 
             selectArea.options.length = 0;
-            selectTerritory.options.length = 0;
             selectDepot.options.length = 0;
+
+            selectTerritory.options.length = 0;
+            $("#dlTerritory").selectpicker("refresh");
 
             if (!regionId) return;
 
