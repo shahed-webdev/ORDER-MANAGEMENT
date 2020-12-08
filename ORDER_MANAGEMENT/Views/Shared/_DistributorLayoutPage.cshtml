@@ -1,10 +1,14 @@
-﻿<!DOCTYPE html>
-
+﻿@using System.Configuration
+<!DOCTYPE html>
+@{
+    var appName = ConfigurationManager.AppSettings["appName"].ToString();
+    var footerName = ConfigurationManager.AppSettings["footerName"].ToString();
+}
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Order Management</title>
+    <title>@ViewBag.Title - @appName</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
@@ -21,7 +25,7 @@
 <body>
     <nav class="mb-1 navbar navbar-expand-lg navbar-dark blue-gradient">
         <div class="container">
-            <a class="navbar-brand" href="/Account/Login">ORDER MANAGEMENT</a>
+            <a class="navbar-brand" href="/Account/Login">@appName</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavToggle" aria-controls="NavToggle" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -43,7 +47,7 @@
 
     <footer id="footer" class="page-footer mt-4 wow fadeIn blue-gradient p-0 d-print-none">
         <div class="footer-copyright text-center py-3">
-            © @DateTime.Now.Year Copyright: <a href="#">ordermanagement.com</a>
+            © @DateTime.Now.Year Copyright: <a href="#">@footerName</a>
         </div>
     </footer>
 
@@ -78,7 +82,6 @@
             // Animations initialization
             new WOW().init();
         });
-
     </script>
 </body>
 </html>

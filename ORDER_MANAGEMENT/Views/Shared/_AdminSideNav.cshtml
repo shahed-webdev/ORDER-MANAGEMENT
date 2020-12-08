@@ -1,12 +1,15 @@
-﻿@model IEnumerable<ORDER_MANAGEMENT.Data.SideMenuCategory>
+﻿@using System.Configuration
+@model IEnumerable<ORDER_MANAGEMENT.Data.SideMenuCategory>
 @{
     Layout = null;
+    var appName = ConfigurationManager.AppSettings["appName"].ToString();
 }
 
 <header>
     <div id="slide-out" class="side-nav sn-bg-4 fixed">
         <ul class="collapsible collapsible-accordion">
-            @foreach (var item in Model) { 
+            @foreach (var item in Model)
+            {
                 <li>
                     <a class="collapsible-header waves-effect arrow-r">
                         <i class="@item.IconClass"></i> @item.Category<i class="fas fa-angle-down rotate-icon"></i>
@@ -21,17 +24,17 @@
                         </ul>
                     </div>
                 </li>
-                }
-            </ul>
-            <div class="sidenav-bg mask-strong"></div>
-        </div>
+            }
+        </ul>
+        <div class="sidenav-bg mask-strong"></div>
+    </div>
 
     <nav class="navbar fixed-top navbar-toggleable-md navbar-expand-lg scrolling-navbar double-nav">
         <div class="float-left">
             <a href="#" data-activates="slide-out" class="button-collapse"><i class="fas fa-bars"></i></a>
         </div>
         <div class="breadcrumb-dn mr-auto">
-            <p>ORDER MANAGEMENT</p>
+            <p>@appName</p>
         </div>
     </nav>
 </header>

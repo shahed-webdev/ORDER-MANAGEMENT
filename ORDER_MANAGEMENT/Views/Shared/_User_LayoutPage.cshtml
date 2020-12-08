@@ -1,10 +1,14 @@
-﻿<!DOCTYPE html>
-
+﻿@using System.Configuration
+<!DOCTYPE html>
+@{
+    var appName = ConfigurationManager.AppSettings["appName"].ToString();
+    var footerName = ConfigurationManager.AppSettings["footerName"].ToString();
+}
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Order Management</title>
+    <title>@ViewBag.Title - @appName</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
@@ -52,7 +56,7 @@
                     <a class="sidedrawer-toggle d-md-none js-show-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
                     <a class="sidedrawer-toggle d-none d-md-inline-block js-hide-sidedrawer d-print-none"><i class="fas fa-bars"></i></a>
 
-                    <div class="navbar-brand">ORDER MANAGEMENT</div>
+                    <div class="navbar-brand">@appName</div>
                 </div>
             </div>
         </nav>
@@ -63,10 +67,10 @@
             @RenderBody()
         </div>
     </main>
- 
+
     <footer id="footer" class="page-footer mt-4 wow fadeIn blue-gradient p-0 d-print-none">
         <div class="footer-copyright text-center py-3">
-            © @DateTime.Now.Year Copyright: <a href="#">ordermanagement.com</a>
+            © @DateTime.Now.Year Copyright: <a href="#">@footerName</a>
         </div>
     </footer>
 
@@ -79,9 +83,9 @@
     <!-- MDB core JavaScript -->
     @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/js/mdb.min.js"></script>*@
     <script type="text/javascript" src="~/MDB/js/mdb_core.js"></script>
-    <!-- datatables -->
+    <!-- data-tables -->
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
-    <!-- datatables responsive -->
+    <!-- data-tables responsive -->
     <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
     <!-- Image croper -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.4/croppie.min.js"></script>
@@ -105,7 +109,7 @@
             $.get(url, response => {
                 const data = JSON.parse(response);
                 if (!data) return;
-                
+
                 if (data.Photo)
                     $("#loginUserPhoto").attr("src", `data:image/png;base64,${data.Photo}`);
 
@@ -144,7 +148,6 @@
                 $("#sidedrawer").getNiceScroll().resize();
             });
         });
-
     </script>
 </body>
 </html>
